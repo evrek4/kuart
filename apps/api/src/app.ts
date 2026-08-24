@@ -43,6 +43,15 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Root Health Check Rotaları (Vercel & İzleme Araçları için)
+app.get(['/', '/health', '/api/health'], (_req, res) => {
+  res.status(200).json({
+    status: 'ok',
+    message: 'Kuafor.art API Server is running successfully',
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // Webhook rotalarını kiracı domain kontrolünden muaf tutmak için en üste ekliyoruz
 app.use('/api/webhooks', webhooksRouter);
 
@@ -633,6 +642,12 @@ app.get('/api/storefront/:slug', async (req: any, res: any) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(Number(PORT), '0.0.0.0', () => {
-  console.log(`Kuafor.art API Server running on http://0.0.0.0:${PORT}`);
-});
+
+if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
+  app.listen(Number(PORT), '0.0.0.0', () => {
+    console.log(`Kuafor.art API Server running on http://0.0.0.0:${PORT}`);
+  });
+}
+
+export default app;
+module.exports = app;
