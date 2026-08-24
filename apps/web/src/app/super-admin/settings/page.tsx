@@ -1,0 +1,373 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+
+interface GlobalPrismaSettings {
+  smsConfig: {
+    provider?: string;
+    apiKey?: string;
+    title?: string;
+  };
+  posConfig: {
+    provider?: string;
+    apiKey?: string;
+    secretKey?: string;
+  };
+}
+
+export default function SettingsPage() {
+  const [loadingR2, setLoadingR2] = useState(true);
+  const [loadingPrisma, setLoadingPrisma] = useState(true);
+  const [savingR2, setSavingR2] = useState(false);
+  const [savingPrisma, setSavingPrisma] = useState(false);
+  const [notification, setNotification] = useState<string | null>(null);
+
+  // Cloudflare R2 Settings (JSON based with CDN URL)
+  const [r2AccountId, setR2AccountId] = useState("");
+  const [r2AccessKey, setR2AccessKey] = useState("");
+  const [r2SecretKey, setR2SecretKey] = useState("");
+  const [r2BucketName, setR2BucketName] = useState("");
+  const [r2PublicCdnUrl, setR2PublicCdnUrl] = useState("");
+
+  // SMS Entegrasyonu (Prisma based)
+  const [smsProvider, setSmsProvider] = useState("netgsm");
+  const [smsApiKey, setSmsApiKey] = useState("");
+  const [smsTitle, setSmsTitle] = useState("");
+
+  // POS Entegrasyonu (Prisma based)
+  const [posProvider, setPosProvider] = useState("iyzico");
+  const [posApiKey, setPosApiKey] = useState("");
+  const [posSecretKey, setPosSecretKey] = useState("");
+
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
+  // Load Cloudflare R2 settings
+  useEffect(() => {
+    async function loadR2Settings() {
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/r2-settings`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            setR2AccountId(json.data.accountId || "");
+            setR2AccessKey(json.data.accessKey || "");
+            setR2SecretKey(json.data.secretKey || "");
+            setR2BucketName(json.data.bucketName || "");
+            setR2PublicCdnUrl(json.data.publicCdnUrl || "");
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load R2 settings:", err);
+      } finally {
+        setLoadingR2(false);
+      }
+    }
+    loadR2Settings();
+  }, [API_BASE]);
+
+  // Load Prisma global SMS & POS settings
+  useEffect(() => {
+    async function loadPrismaSettings() {
+      try {
+        const res = await fetch(`${API_BASE}/api/admin/settings`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.success && json.data) {
+            const data: GlobalPrismaSettings = json.data;
+            setSmsProvider(data.smsConfig.provider || "netgsm");
+            setSmsApiKey(data.smsConfig.apiKey || "");
+            setSmsTitle(data.smsConfig.title || "");
+            setPosProvider(data.posConfig.provider || "iyzico");
+            setPosApiKey(data.posConfig.apiKey || "");
+            setPosSecretKey(data.posConfig.secretKey || "");
+          }
+        }
+      } catch (err) {
+        console.error("Failed to load Prisma global settings:", err);
+      } finally {
+        setLoadingPrisma(false);
+      }
+    }
+    loadPrismaSettings();
+  }, [API_BASE]);
+
+  const triggerNotification = (message: string) => {
+    setNotification(message);
+    setTimeout(() => setNotification(null), 3000);
+  };
+
+  const handleR2Submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingR2(true);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/r2-settings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          accountId: r2AccountId,
+          accessKey: r2AccessKey,
+          secretKey: r2SecretKey,
+          bucketName: r2BucketName,
+          publicCdnUrl: r2PublicCdnUrl
+        })
+      });
+      const json = await res.json();
+      if (res.ok && json.success) {
+        setR2SecretKey(json.data.secretKey || "");
+        triggerNotification("Global R2 depolama ve bulut bağlantı ayarları güncellendi.");
+      } else {
+        triggerNotification(json.error?.message || "Ayarlar kaydedilemedi.");
+      }
+    } catch (err) {
+      console.error("Save R2 settings error:", err);
+      triggerNotification("R2 ayarları kaydedilirken hata oluştu.");
+    } finally {
+      setSavingR2(false);
+    }
+  };
+
+  const handlePrismaSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingPrisma(true);
+
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/settings`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cloudflareR2Config: {}, // kept empty/deprecated since we use R2 config json endpoint
+          smsConfig: {
+            provider: smsProvider,
+            apiKey: smsApiKey,
+            title: smsTitle
+          },
+          posConfig: {
+            provider: posProvider,
+            apiKey: posApiKey,
+            secretKey: posSecretKey
+          }
+        })
+      });
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success) {
+          triggerNotification("SMS ve Sanal POS API altyapı ayarları güncellendi.");
+        }
+      } else {
+        triggerNotification("Ayarlar kaydedilemedi.");
+      }
+    } catch (err) {
+      console.error("Save Prisma settings error:", err);
+      triggerNotification("SMS & POS ayarları kaydedilirken hata oluştu.");
+    } finally {
+      setSavingPrisma(false);
+    }
+  };
+
+  const isLoading = loadingR2 || loadingPrisma;
+
+  return (
+    <div className="flex flex-col gap-6 w-full relative">
+      {/* Toast Notification */}
+      <AnimatePresence>
+        {notification && (
+          <motion.div
+            initial={{ opacity: 0, y: -50, x: "-50%" }}
+            animate={{ opacity: 1, y: 0, x: "-50%" }}
+            exit={{ opacity: 0, y: -20, x: "-50%" }}
+            className="fixed top-6 left-1/2 z-50 px-6 py-3 rounded-full border border-purple-200 dark:border-purple-500/30 bg-white/95 dark:bg-[#120822]/90 backdrop-blur-md text-purple-700 dark:text-purple-400 font-semibold text-sm shadow-xl flex items-center gap-2"
+          >
+            <span className="w-2 h-2 rounded-full bg-purple-500 animate-ping" />
+            {notification}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Header */}
+      <div className="pb-6 border-b border-neutral-200 dark:border-[#a78bfa]/10">
+        <h1 className="text-2xl font-black text-neutral-900 dark:text-white uppercase tracking-tight">SİSTEM ALTYAPISI</h1>
+        <p className="text-xs text-neutral-500 dark:text-gray-400 mt-1">Platform genelinde kullanılan 3. parti entegrasyon anahtarlarını yapılandırın (Kuaförler bu ayarları göremez).</p>
+      </div>
+
+      {isLoading ? (
+        <div className="flex items-center justify-center py-20">
+          <span className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : (
+        <div className="flex flex-col gap-6 max-w-4xl">
+          {/* Cloudflare R2 Card */}
+          <div className="p-8 rounded-[2rem] border border-neutral-200 dark:border-[#a78bfa]/10 bg-white dark:bg-[#120822]/60 shadow-sm dark:shadow-xl backdrop-blur-md flex flex-col gap-6 transition-colors">
+            <div>
+              <h3 className="font-extrabold text-base text-neutral-900 dark:text-white uppercase tracking-wide">☁️ Cloudflare R2 Medya Depolama & CDN</h3>
+              <p className="text-xs text-neutral-500 dark:text-gray-400 mt-1">Salon sahiplerinin galeriye yüklediği fotoğrafların saklanacağı S3 uyumlu R2 ve CDN ayarları.</p>
+            </div>
+
+            <form onSubmit={handleR2Submit} className="flex flex-col gap-4">
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] uppercase font-bold text-neutral-600 dark:text-gray-400">Account ID</label>
+                <input
+                  type="text"
+                  placeholder="örn: 8a4c..."
+                  value={r2AccountId}
+                  onChange={(e) => setR2AccountId(e.target.value)}
+                  className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-bold text-neutral-600 dark:text-gray-400">Access Key ID</label>
+                  <input
+                    type="text"
+                    placeholder="örn: c219..."
+                    value={r2AccessKey}
+                    onChange={(e) => setR2AccessKey(e.target.value)}
+                    className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-bold text-neutral-600 dark:text-gray-400">Secret Access Key</label>
+                  <input
+                    type="text"
+                    placeholder="Değiştirmek istemiyorsanız maskeli bırakın"
+                    value={r2SecretKey}
+                    onChange={(e) => setR2SecretKey(e.target.value)}
+                    className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] uppercase font-bold text-neutral-600 dark:text-gray-400">Bucket Name</label>
+                <input
+                  type="text"
+                  placeholder="kuafor-art-gallery"
+                  value={r2BucketName}
+                  onChange={(e) => setR2BucketName(e.target.value)}
+                  className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[10px] uppercase font-bold text-neutral-600 dark:text-gray-400">Public CDN / Gateway URL</label>
+                <input
+                  type="url"
+                  placeholder="https://pub-8a4c.r2.dev veya http://localhost:3001/uploads"
+                  value={r2PublicCdnUrl}
+                  onChange={(e) => setR2PublicCdnUrl(e.target.value)}
+                  className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={savingR2}
+                className="w-full py-3 rounded-xl bg-purple-600 text-white font-extrabold text-xs uppercase tracking-wider hover:brightness-110 shadow-sm dark:shadow-lg flex items-center justify-center gap-2 mt-2"
+              >
+                {savingR2 ? (
+                  <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  "Depolama & CDN Ayarlarını Güncelle"
+                )}
+              </button>
+            </form>
+          </div>
+
+          {/* SMS API Integration */}
+          <div className="p-8 rounded-[2rem] border border-neutral-200 dark:border-[#a78bfa]/10 bg-white dark:bg-[#120822]/60 shadow-sm dark:shadow-xl backdrop-blur-md flex flex-col gap-6 transition-colors">
+            <div>
+              <h3 className="font-extrabold text-base text-neutral-900 dark:text-white uppercase tracking-wide">💬 SMS & Sanal POS API Entegrasyonları</h3>
+              <p className="text-xs text-neutral-500 dark:text-gray-400 mt-1">Platform genelinde gönderilen OTP, randevu hatırlatma ve ortak Sanal POS API ayarları.</p>
+            </div>
+
+            <form onSubmit={handlePrismaSubmit} className="flex flex-col gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-neutral-200 dark:border-white/5 pb-6 mb-2">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-bold text-neutral-600 dark:text-gray-400">SMS Servis Sağlayıcı</label>
+                  <select
+                    value={smsProvider}
+                    onChange={(e) => setSmsProvider(e.target.value)}
+                    className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-purple-500"
+                  >
+                    <option value="netgsm" className="bg-white dark:bg-[#120822] text-neutral-900 dark:text-white">Netgsm</option>
+                    <option value="iletimerkezi" className="bg-white dark:bg-[#120822] text-neutral-900 dark:text-white">İleti Merkezi</option>
+                    <option value="twilio" className="bg-white dark:bg-[#120822] text-neutral-900 dark:text-white">Twilio</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-bold text-neutral-600 dark:text-gray-400">SMS API Key</label>
+                  <input
+                    type="text"
+                    placeholder="api-key-code"
+                    value={smsApiKey}
+                    onChange={(e) => setSmsApiKey(e.target.value)}
+                    className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-bold text-neutral-600 dark:text-gray-400">SMS Başlığı</label>
+                  <input
+                    type="text"
+                    placeholder="KuaforArt"
+                    value={smsTitle}
+                    onChange={(e) => setSmsTitle(e.target.value)}
+                    className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-bold text-neutral-600 dark:text-gray-400">Sanal POS Sağlayıcı</label>
+                  <select
+                    value={posProvider}
+                    onChange={(e) => setPosProvider(e.target.value)}
+                    className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-purple-500"
+                  >
+                    <option value="iyzico" className="bg-white dark:bg-[#120822] text-neutral-900 dark:text-white">iyzico</option>
+                    <option value="paytr" className="bg-white dark:bg-[#120822] text-neutral-900 dark:text-white">PayTR</option>
+                    <option value="stripe" className="bg-white dark:bg-[#120822] text-neutral-900 dark:text-white">Stripe</option>
+                  </select>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-bold text-neutral-600 dark:text-gray-400">POS API Key</label>
+                  <input
+                    type="text"
+                    placeholder="pos-api-key"
+                    value={posApiKey}
+                    onChange={(e) => setPosApiKey(e.target.value)}
+                    className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[10px] uppercase font-bold text-neutral-600 dark:text-gray-400">POS Secret Key</label>
+                  <input
+                    type="password"
+                    placeholder="••••••••••••••••••••••••"
+                    value={posSecretKey}
+                    onChange={(e) => setPosSecretKey(e.target.value)}
+                    className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={savingPrisma}
+                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-extrabold text-xs uppercase tracking-wider hover:brightness-110 shadow-sm dark:shadow-lg flex items-center justify-center gap-2 mt-4"
+              >
+                {savingPrisma ? (
+                  <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  "SMS & POS Altyapı Ayarlarını Kaydet"
+                )}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

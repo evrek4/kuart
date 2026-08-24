@@ -1,0 +1,521 @@
+// file: packages/database/prisma/schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+
+/// Kullanıcı Rolleri
+enum UserRole {
+  SUPER_ADMIN
+  SALON_OWNER
+  SALON_STAFF
+}
+
+/// Randevu Durumları
+enum AppointmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  NO_SHOW
+  CANCELLED
+}
+
+/// Ödeme Durumları
+enum PaymentStatus {
+  PENDING
+  SUCCESSFUL
+  FAILED
+  REFUNDED
+}
+
+/// Ödeme Tipleri
+enum PaymentType {
+  DEPOSIT       // Kapora
+  FULL_PAYMENT  // Tam Ödeme
+}
+
+// ==========================================
+// 1. TENANT (KİRACI) MODELİ
+// ==========================================
+model Tenant {
+  id            String            @id @default(uuid()) @db.Uuid
+  name          String            @db.VarChar(100)
+  slug          String            @unique @db.VarChar(50) // Ücretsiz paket için: kuafor.art/slug
+  subdomain     String?           @unique @db.VarChar(50) // Pro paket için: slug.kuafor.art
+  customDomain  String?           @unique @db.VarChar(100)// Elite/Addon için: customdomain.com
+  
+  planId        String            @db.Uuid
+  plan          SubscriptionPlan  @relation(fields: [planId], references: [id])
+  billingStatus String            @default("ACTIVE")
+  nextBillingDate DateTime?
+
+  mediaCapacity BigInt      @default(104857600)     // Byte cinsinden medya limiti (Örn: 100MB varsayılan)
+  isActive      Boolean     @default(true)
+  
+  lastPaymentWarningSentAt DateTime?
+  dunningStage            Int       @default(0)
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  cardUserKey   String?           @db.VarChar(255)
+  cardToken     String?           @db.VarChar(255)
+  autoRenewal   Boolean           @default(true)
+
+  // İlişkiler
+  users         User[]
+  customers     Customer[]
+  services      Service[]
+  staff         Staff[]
+  appointments  Appointment[]
+  media         Media[]
+  payments      Payment[]
+  paymentHistories PaymentHistory[]
+  settings      TenantSettings?
+  financeRecords FinanceRecord[]
+  coupons        TenantCoupon[]
+  loyaltyCards   LoyaltyCard[]
+  marketingLogs  MarketingLog[]
+  reviewRequests ReviewRequest[]
+
+  @@index([slug])
+  @@index([subdomain])
+  @@index([customDomain])
+}
+
+// ==========================================
+// 2. TENANT AYARLARI
+// ==========================================
+model TenantSettings {
+  id                    String   @id @default(uuid()) @db.Uuid
+  tenantId              String   @unique @db.Uuid
+  tenant                Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  // Bildirim Kanalları Aktiflik Durumu
+  emailEnabled          Boolean  @default(true)
+  smsEnabled            Boolean  @default(false)
+  whatsappEnabled       Boolean  @default(false)
+  preferredNotificationChannel String @default("WHATSAPP") // WHATSAPP, SMS, EMAIL
+  globalPaymentPolicy   String   @default("DEPOSIT")
+  themeTemplate         String   @default("template-minimalist")
+  storefrontMode        String   @default("SIMPLE") // SIMPLE veya PRO_PORTAL
+  selectedThemeId       String   @default("SIMPLE_MINIMALIST")
+
+  // No-Show Limiti ve Zorunlu Kapora Miktarı
+  noShowLimit           Int      @default(1)       // Kaç no-show'dan sonra kapora istenecek?
+  requiredDepositAmount Decimal  @default(0.00) @db.Decimal(10, 2) // Zorunlu kapora miktarı (0 ise kapora istenmez)
+  defaultDepositAmount  Decimal  @default(150.00) @db.Decimal(10, 2)
+  
+  // Sanal POS Ayarları (Elite pakette kuaför kendi API bilgilerini girer)
+  customPaymentGateway  Boolean  @default(false)
+  posProviderName       String   @default("iyzico") @db.VarChar(50)
+  gatewayApiKey         String?  @db.VarChar(255)
+  gatewaySecretKey      String?  @db.VarChar(255)
+
+  // Tema ve CMS Yönetim Ayarları
+  heroTitle             String?  @db.VarChar(255)
+  heroSubtitle          String?  @db.VarChar(255)
+  aboutText             String?  @db.Text
+  instagramUrl          String?  @db.VarChar(255)
+  coverImage            String?  @db.VarChar(512)
+  logo                  String?  @db.VarChar(512)
+  portalThemeTier       String   @default("BASIC")
+  portalColorMode       String   @default("DARK")
+  googleReviewUrl       String?
+  enableReengagementBot Boolean  @default(true)
+  reengagementDays      Int      @default(35)
+  enableBirthdayBot     Boolean  @default(true)
+  enableLoyaltySystem   Boolean  @default(true)
+  loyaltyTargetStamps   Int      @default(10)
+  loyaltyRewardText     String   @default("1 Bakım Ücretsiz")
+  workingHours          Json?
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+// ==========================================
+// 3. KULLANICILAR (Sistem & Salon Çalışanları)
+// ==========================================
+model User {
+  id           String      @id @default(uuid()) @db.Uuid
+  tenantId     String?     @db.Uuid // Super Admin için NULL, salon sahipleri/çalışanları için zorunlu
+  tenant       Tenant?     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  email        String      @unique @db.VarChar(150)
+  passwordHash String      @db.VarChar(255)
+  name         String      @db.VarChar(100)
+  role         UserRole    @default(SALON_STAFF)
+  phone        String?     @db.VarChar(20)
+  isActive     Boolean     @default(true)
+  
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  // İlişkiler
+  media        Media[]       // Yüklediği medyalar
+
+  @@index([tenantId])
+}
+
+// ==========================================
+// 4. MÜŞTERİLER
+// ==========================================
+model Customer {
+  id           String      @id @default(uuid()) @db.Uuid
+  tenantId     String      @db.Uuid
+  tenant       Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  name         String      @db.VarChar(100)
+  email        String?     @db.VarChar(150)
+  phone        String      @db.VarChar(20) // Formatlanmış telefon no (Kara liste kontrolü için kritik)
+  
+  noShowCount  Int         @default(0)
+  isBlacklisted Boolean    @default(false)
+  requiresDeposit Boolean    @default(true)
+  birthDate       DateTime?
+  loyaltyStamps   Int        @default(0)
+  lastAppointmentAt DateTime?
+  lastMarketingSentAt DateTime?
+
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  // İlişkiler
+  appointments Appointment[]
+  loyaltyCards LoyaltyCard[]
+
+  @@unique([tenantId, phone]) // Her salonda bir telefon numarası sadece bir kez kayıtlı olabilir
+  @@index([tenantId])
+  @@index([phone]) // Global kara liste hızlı sorgulama için indeks
+}
+
+// ==========================================
+// 5. HİZMETLER
+// ==========================================
+model Service {
+  id          String      @id @default(uuid()) @db.Uuid
+  tenantId    String      @db.Uuid
+  tenant      Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  name        String      @db.VarChar(100)
+  description String?     @db.Text
+  price       Decimal?    @db.Decimal(10, 2)
+  duration    Int         @default(30) // Dakika cinsinden hizmet süresi (Örn: 30, 45, 60)
+  isActive    Boolean     @default(true)
+  requiresDeposit Boolean @default(false)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // İlişkiler
+  appointments Appointment[]
+
+  @@index([tenantId])
+}
+
+// ==========================================
+// 5.5. PERSONEL / ÇALIŞANLAR
+// ==========================================
+model Staff {
+  id        String   @id @default(uuid()) @db.Uuid
+  tenantId  String   @db.Uuid
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  name      String   @db.VarChar(100)
+  title     String?  @db.VarChar(100) // Unvan (Örn: Usta Kuaför, Renk Uzmanı)
+  phone     String?  @db.VarChar(20)
+  avatar    String?  @db.VarChar(512)
+  isActive  Boolean  @default(true)
+  commissionRate Float    @default(0.0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // İlişkiler
+  appointments Appointment[]
+
+  @@index([tenantId])
+}
+
+// ==========================================
+// 6. RANDEVULAR
+// ==========================================
+model Appointment {
+  id          String            @id @default(uuid()) @db.Uuid
+  tenantId    String            @db.Uuid
+  tenant      Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  customerId  String            @db.Uuid
+  customer    Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  serviceId   String            @db.Uuid
+  service     Service           @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  
+  staffId     String?           @db.Uuid
+  staff       Staff?            @relation(fields: [staffId], references: [id], onDelete: SetNull)
+  
+  dateTime    DateTime          // Randevu tarihi ve saati
+  endTime     DateTime?         // Randevu bitiş saati (duration ile hesaplanır)
+  status      AppointmentStatus @default(PENDING)
+  notes       String?           @db.Text
+  confirmationStatus String   @default("PENDING")
+  reminderSentAt     DateTime?
+  reviewSentAt       DateTime?
+  paymentMethod      String?   @default("N/A")
+  isPaid             Boolean   @default(false)
+  paidAmount         Float?    @default(0.0)
+  staffCommissionEarned Float?  @default(0.0)
+
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  // İlişkiler
+  payments      Payment[]
+  reviewRequest ReviewRequest?
+
+  @@index([tenantId])
+  @@index([customerId])
+  @@index([staffId])
+  @@index([dateTime])
+}
+
+// ==========================================
+// 7. MEDYA GALERİSİ (Cloudflare R2 İzolasyonu)
+// ==========================================
+model Media {
+  id          String   @id @default(uuid()) @db.Uuid
+  tenantId    String   @db.Uuid
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  url         String   @db.VarChar(512) // Cloudflare CDN / R2 Public URL'i
+  storageKey  String   @db.VarChar(255) // R2 bucket içerisindeki eşsiz dosya yolu
+  fileSize    Int      // Byte cinsinden dosya boyutu (Kapasite kontrolü için)
+  mimeType    String   @db.VarChar(50)  // Örn: image/jpeg, image/png
+  
+  uploadedById String  @db.Uuid
+  uploadedBy   User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([tenantId])
+}
+
+// ==========================================
+// 8. ÖDEMELER (Kapora ve Tam Ödemeler)
+// ==========================================
+model Payment {
+  id            String        @id @default(uuid()) @db.Uuid
+  tenantId      String        @db.Uuid
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  appointmentId String        @db.Uuid
+  appointment   Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  
+  amount        Decimal       @db.Decimal(10, 2)
+  status        PaymentStatus @default(PENDING)
+  type          PaymentType   @default(DEPOSIT)
+  
+  provider      String        @db.VarChar(50)  // Örn: "iyzico", "stripe"
+  transactionId String?       @db.VarChar(255) // Sanal POS'tan dönen eşsiz işlem ID'si
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  @@index([tenantId])
+  @@index([appointmentId])
+  @@index([transactionId])
+}
+
+// ==========================================
+// 9. ABONELİK PAKETLERİ (SubscriptionPlan)
+// ==========================================
+model SubscriptionPlan {
+  id             String    @id @default(uuid()) @db.Uuid
+  name           String    @db.VarChar(100)
+  price          Decimal   @db.Decimal(10, 2)
+  interval       String    @default("MONTHLY") @db.VarChar(20) // "MONTHLY" veya "YEARLY"
+  storageLimitMB Int       @default(1024)
+  features       Json      // Özellikler listesi (Örn: ["sms_enabled", "custom_domain"])
+  
+  maxAppointments Int?    // FREE paket için kota, sınırsız ise NULL
+  maxStaff       Int?     // Personel kotası, sınırsız ise NULL
+
+  isFree         Boolean  @default(false)
+  isActive       Boolean  @default(true)
+  
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  tenants        Tenant[]
+}
+
+// ==========================================
+// 10. GLOBAL AYARLAR (GlobalSettings)
+// ==========================================
+model GlobalSettings {
+  id                 String   @id @default(uuid()) @db.Uuid
+  cloudflareR2Config Json     // { accountId, accessKeyId, secretAccessKey, bucketName }
+  smsConfig          Json     // { provider, apiKey, title }
+  posConfig          Json     // { provider, apiKey, secretKey }
+  
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+// ==========================================
+// 11. ABONELİK ÖDEME GEÇMİŞİ (PaymentHistory)
+// ==========================================
+model PaymentHistory {
+  id              String   @id @default(uuid()) @db.Uuid
+  tenantId        String   @db.Uuid
+  tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  
+  amount          Float
+  currency        String   @default("TRY") @db.VarChar(10)
+  status          String   @db.VarChar(20) // SUCCESS, FAILED
+  transactionId   String   @db.VarChar(255)
+  planName        String   @db.VarChar(100)
+  paidAt          DateTime @default(now())
+  nextBillingDate DateTime
+  cardLastFour       String?  @db.VarChar(4)
+  appliedCouponCode  String?
+  originalAmount     Float?
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@index([tenantId])
+}
+
+// ==========================================
+// 12. İNDİRİM KUPONLARI (Coupon)
+// ==========================================
+model Coupon {
+  id             String    @id @default(uuid()) @db.Uuid
+  code           String    @unique @db.VarChar(50)
+  discountType   String    @db.VarChar(20) // "PERCENTAGE" veya "FIXED"
+  discountAmount Float
+  maxUses        Int?
+  usedCount      Int       @default(0)
+  expiresAt      DateTime?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+}
+
+// ==========================================
+// 13. SÜPER ADMİN AÇILIŞ SAYFASI (LandingPageConfig)
+// ==========================================
+model LandingPageConfig {
+  id              String   @id @default(uuid()) @db.Uuid
+  heroTitle       String?  @db.VarChar(255)
+  heroDescription String?  @db.Text
+  ctaText         String?  @db.VarChar(50)
+  ctaLink         String?  @db.VarChar(255)
+  logoLight       String?  @db.VarChar(512)
+  logoDark        String?  @db.VarChar(512)
+  favicon         String?  @db.VarChar(512)
+  seoTitle        String?  @db.VarChar(255)
+  seoDescription  String?  @db.Text
+  seoOgImage      String?  @db.VarChar(512)
+  activeSections  Json      // Hangi bölümlerin aktif olduğunu tutan nesne
+  isPublished     Boolean  @default(false)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+// ==========================================
+// 14. KASA İŞLEMLERİ (FinanceRecord)
+// ==========================================
+model FinanceRecord {
+  id            String    @id @default(uuid()) @db.Uuid
+  tenantId      String    @db.Uuid
+  tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  type          String    @db.VarChar(20) // "INCOME" veya "EXPENSE"
+  category      String    @db.VarChar(50) // "APPOINTMENT", "SALARY", "SUPPLY", "OTHER"
+  amount        Decimal   @db.Decimal(10, 2)
+  paymentMethod String    @default("CASH") @db.VarChar(20)
+  description   String?   @db.VarChar(255)
+  date          DateTime  @default(now())
+  
+  @@index([tenantId])
+  @@index([date])
+}
+
+// ==========================================
+// 15. SALON İÇİ KUPONLAR (TenantCoupon)
+// ==========================================
+model TenantCoupon {
+  id             String    @id @default(uuid()) @db.Uuid
+  tenantId       String    @db.Uuid
+  tenant         Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  code           String    @db.VarChar(50)
+  discountType   String    @db.VarChar(20) // "PERCENTAGE" veya "FIXED"
+  discountAmount Float
+  maxUses        Int?
+  usedCount      Int       @default(0)
+  expiresAt      DateTime?
+  isActive       Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  
+  @@unique([tenantId, code])
+  @@index([tenantId])
+}
+
+// ==========================================
+// 16. SADAKAT KARTLARI (LoyaltyCard)
+// ==========================================
+model LoyaltyCard {
+  id             String    @id @default(uuid()) @db.Uuid
+  tenantId       String    @db.Uuid
+  tenant         Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  customerId     String    @db.Uuid
+  customer       Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  totalStamps    Int       @default(0)
+  isCompleted    Boolean   @default(false)
+  completedAt    DateTime?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  @@index([tenantId])
+  @@index([customerId])
+}
+
+// ==========================================
+// 17. PAZARLAMA/BİLDİRİM GEÇMİŞİ (MarketingLog)
+// ==========================================
+model MarketingLog {
+  id             String    @id @default(uuid()) @db.Uuid
+  tenantId       String    @db.Uuid
+  tenant         Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  channel        String    @db.VarChar(20) // "WHATSAPP", "SMS", "EMAIL"
+  type           String    @db.VarChar(50) // "BIRTHDAY", "REENGAGEMENT", "REMINDER"
+  recipient      String    @db.VarChar(100)
+  status         String    @default("SENT") @db.VarChar(20)
+  sentAt         DateTime  @default(now())
+  
+  @@index([tenantId])
+}
+
+// ==========================================
+// 18. YORUM İSTEKLERİ (ReviewRequest)
+// ==========================================
+model ReviewRequest {
+  id             String    @id @default(uuid()) @db.Uuid
+  tenantId       String    @db.Uuid
+  tenant         Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  appointmentId  String    @unique @db.Uuid
+  appointment    Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  status         String    @default("PENDING") @db.VarChar(20) // "PENDING", "SENT", "CLICKED", "REVIEWED"
+  sentAt         DateTime?
+  createdAt      DateTime  @default(now())
+  
+  @@index([tenantId])
+}
