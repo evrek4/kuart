@@ -13,7 +13,15 @@ const SECTIONS = [
 ];
 
 export default function LandingCmsPage() {
-  const [draft, setDraft] = useState<any>(null);
+  const [draft, setDraft] = useState<any>({
+    heroTitle: 'Apple Kalitesinde Salon Yönetimi',
+    heroDescription: 'Randevulardan kasaya kadar tüm operasyonunuz için tek sistem.',
+    ctaText: 'Ücretsiz Dene',
+    ctaLink: '/register',
+    isPublished: false,
+    activeSections: { hero: true, timeline: true, chat: true, loyalty: true, finance: true, storefront: true, pricing: true },
+    seoTitle: '', seoDescription: '', logoLight: '', logoDark: '', favicon: ''
+  });
   const [loading, setLoading] = useState(true);
   const [toast, setToast] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
@@ -23,19 +31,37 @@ export default function LandingCmsPage() {
       .then((data) => {
         if (data.success && data.data) {
           const config = data.data;
-          // Ensure activeSections is a valid object
           if (typeof config.activeSections === 'string') {
-            config.activeSections = JSON.parse(config.activeSections);
+            try { config.activeSections = JSON.parse(config.activeSections); } catch(e){}
           }
           if (!config.activeSections || Object.keys(config.activeSections).length === 0) {
             config.activeSections = { hero: true, timeline: true, chat: true, loyalty: true, finance: true, storefront: true, pricing: true };
           }
           setDraft(config);
+        } else {
+          setDraft({
+            heroTitle: 'Apple Kalitesinde Salon Yönetimi',
+            heroDescription: 'Randevulardan kasaya kadar tüm operasyonunuz için tek sistem.',
+            ctaText: 'Ücretsiz Dene',
+            ctaLink: '/register',
+            isPublished: false,
+            activeSections: { hero: true, timeline: true, chat: true, loyalty: true, finance: true, storefront: true, pricing: true },
+            seoTitle: '', seoDescription: '', logoLight: '', logoDark: '', favicon: ''
+          });
         }
         setLoading(false);
       })
       .catch((err) => {
         console.error('Error fetching CMS draft:', err);
+        setDraft({
+          heroTitle: 'Apple Kalitesinde Salon Yönetimi',
+          heroDescription: 'Randevulardan kasaya kadar tüm operasyonunuz için tek sistem.',
+          ctaText: 'Ücretsiz Dene',
+          ctaLink: '/register',
+          isPublished: false,
+          activeSections: { hero: true, timeline: true, chat: true, loyalty: true, finance: true, storefront: true, pricing: true },
+          seoTitle: '', seoDescription: '', logoLight: '', logoDark: '', favicon: ''
+        });
         setLoading(false);
       });
   }, []);
@@ -93,9 +119,7 @@ export default function LandingCmsPage() {
     return <div className="p-8 text-gray-500 text-center font-bold">CMS Yükleniyor...</div>;
   }
 
-  if (!draft) {
-    return <div className="p-8 text-red-500 text-center font-bold">CMS Verisi Alınamadı.</div>;
-  }
+  // Removed blocking error view as per instructions
 
   return (
     <div className="min-h-screen bg-transparent text-neutral-900 dark:text-white p-4 md:p-8 transition-colors">

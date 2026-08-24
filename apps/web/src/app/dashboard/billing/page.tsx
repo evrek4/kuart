@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getCurrentTenantInfo } from "@/lib/auth";
@@ -39,7 +39,7 @@ interface PaymentHistoryItem {
   originalAmount?: number | null;
 }
 
-export default function BillingPage() {
+function BillingPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -705,5 +705,14 @@ export default function BillingPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+
+export default function BillingPageWrapper() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center">Yükleniyor...</div>}>
+      <BillingPageContent />
+    </Suspense>
   );
 }
