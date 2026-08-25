@@ -1,7 +1,7 @@
 // file: packages/database/prisma/schema.prisma
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -44,13 +44,13 @@ enum PaymentType {
 // 1. TENANT (KİRACI) MODELİ
 // ==========================================
 model Tenant {
-  id            String            @id @default(uuid()) @db.Uuid
+  id            String            @id @default(uuid())
   name          String            @db.VarChar(100)
   slug          String            @unique @db.VarChar(50) // Ücretsiz paket için: kuafor.art/slug
   subdomain     String?           @unique @db.VarChar(50) // Pro paket için: slug.kuafor.art
   customDomain  String?           @unique @db.VarChar(100)// Elite/Addon için: customdomain.com
   
-  planId        String            @db.Uuid
+  planId        String
   plan          SubscriptionPlan  @relation(fields: [planId], references: [id])
   billingStatus String            @default("ACTIVE")
   nextBillingDate DateTime?
@@ -93,8 +93,8 @@ model Tenant {
 // 2. TENANT AYARLARI
 // ==========================================
 model TenantSettings {
-  id                    String   @id @default(uuid()) @db.Uuid
-  tenantId              String   @unique @db.Uuid
+  id                    String   @id @default(uuid())
+  tenantId              String   @unique
   tenant                Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   
   // Bildirim Kanalları Aktiflik Durumu
@@ -144,8 +144,8 @@ model TenantSettings {
 // 3. KULLANICILAR (Sistem & Salon Çalışanları)
 // ==========================================
 model User {
-  id           String      @id @default(uuid()) @db.Uuid
-  tenantId     String?     @db.Uuid // Super Admin için NULL, salon sahipleri/çalışanları için zorunlu
+  id           String      @id @default(uuid())
+  tenantId     String?     // Super Admin için NULL, salon sahipleri/çalışanları için zorunlu
   tenant       Tenant?     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   
   email        String      @unique @db.VarChar(150)
@@ -168,8 +168,8 @@ model User {
 // 4. MÜŞTERİLER
 // ==========================================
 model Customer {
-  id           String      @id @default(uuid()) @db.Uuid
-  tenantId     String      @db.Uuid
+  id           String      @id @default(uuid())
+  tenantId     String
   tenant       Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   
   name         String      @db.VarChar(100)
@@ -200,8 +200,8 @@ model Customer {
 // 5. HİZMETLER
 // ==========================================
 model Service {
-  id          String      @id @default(uuid()) @db.Uuid
-  tenantId    String      @db.Uuid
+  id          String      @id @default(uuid())
+  tenantId    String
   tenant      Tenant      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   
   name        String      @db.VarChar(100)
@@ -224,8 +224,8 @@ model Service {
 // 5.5. PERSONEL / ÇALIŞANLAR
 // ==========================================
 model Staff {
-  id        String   @id @default(uuid()) @db.Uuid
-  tenantId  String   @db.Uuid
+  id        String   @id @default(uuid())
+  tenantId  String
   tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
 
   name      String   @db.VarChar(100)
@@ -248,17 +248,17 @@ model Staff {
 // 6. RANDEVULAR
 // ==========================================
 model Appointment {
-  id          String            @id @default(uuid()) @db.Uuid
-  tenantId    String            @db.Uuid
+  id          String            @id @default(uuid())
+  tenantId    String
   tenant      Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   
-  customerId  String            @db.Uuid
+  customerId  String
   customer    Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
   
-  serviceId   String            @db.Uuid
+  serviceId   String
   service     Service           @relation(fields: [serviceId], references: [id], onDelete: Cascade)
   
-  staffId     String?           @db.Uuid
+  staffId     String?
   staff       Staff?            @relation(fields: [staffId], references: [id], onDelete: SetNull)
   
   dateTime    DateTime          // Randevu tarihi ve saati
@@ -290,8 +290,8 @@ model Appointment {
 // 7. MEDYA GALERİSİ (Cloudflare R2 İzolasyonu)
 // ==========================================
 model Media {
-  id          String   @id @default(uuid()) @db.Uuid
-  tenantId    String   @db.Uuid
+  id          String   @id @default(uuid())
+  tenantId    String
   tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   
   url         String   @db.VarChar(512) // Cloudflare CDN / R2 Public URL'i
@@ -299,7 +299,7 @@ model Media {
   fileSize    Int      // Byte cinsinden dosya boyutu (Kapasite kontrolü için)
   mimeType    String   @db.VarChar(50)  // Örn: image/jpeg, image/png
   
-  uploadedById String  @db.Uuid
+  uploadedById String
   uploadedBy   User     @relation(fields: [uploadedById], references: [id], onDelete: Cascade)
 
   createdAt   DateTime @default(now())
@@ -312,11 +312,11 @@ model Media {
 // 8. ÖDEMELER (Kapora ve Tam Ödemeler)
 // ==========================================
 model Payment {
-  id            String        @id @default(uuid()) @db.Uuid
-  tenantId      String        @db.Uuid
+  id            String        @id @default(uuid())
+  tenantId      String
   tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   
-  appointmentId String        @db.Uuid
+  appointmentId String
   appointment   Appointment   @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
   
   amount        Decimal       @db.Decimal(10, 2)
@@ -338,7 +338,7 @@ model Payment {
 // 9. ABONELİK PAKETLERİ (SubscriptionPlan)
 // ==========================================
 model SubscriptionPlan {
-  id             String    @id @default(uuid()) @db.Uuid
+  id             String    @id @default(uuid())
   name           String    @db.VarChar(100)
   price          Decimal   @db.Decimal(10, 2)
   interval       String    @default("MONTHLY") @db.VarChar(20) // "MONTHLY" veya "YEARLY"
@@ -361,7 +361,7 @@ model SubscriptionPlan {
 // 10. GLOBAL AYARLAR (GlobalSettings)
 // ==========================================
 model GlobalSettings {
-  id                 String   @id @default(uuid()) @db.Uuid
+  id                 String   @id @default(uuid())
   cloudflareR2Config Json     // { accountId, accessKeyId, secretAccessKey, bucketName }
   smsConfig          Json     // { provider, apiKey, title }
   posConfig          Json     // { provider, apiKey, secretKey }
@@ -374,8 +374,8 @@ model GlobalSettings {
 // 11. ABONELİK ÖDEME GEÇMİŞİ (PaymentHistory)
 // ==========================================
 model PaymentHistory {
-  id              String   @id @default(uuid()) @db.Uuid
-  tenantId        String   @db.Uuid
+  id              String   @id @default(uuid())
+  tenantId        String
   tenant          Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   
   amount          Float
@@ -399,7 +399,7 @@ model PaymentHistory {
 // 12. İNDİRİM KUPONLARI (Coupon)
 // ==========================================
 model Coupon {
-  id             String    @id @default(uuid()) @db.Uuid
+  id             String    @id @default(uuid())
   code           String    @unique @db.VarChar(50)
   discountType   String    @db.VarChar(20) // "PERCENTAGE" veya "FIXED"
   discountAmount Float
@@ -414,7 +414,7 @@ model Coupon {
 // 13. SÜPER ADMİN AÇILIŞ SAYFASI (LandingPageConfig)
 // ==========================================
 model LandingPageConfig {
-  id              String   @id @default(uuid()) @db.Uuid
+  id              String   @id @default(uuid())
   heroTitle       String?  @db.VarChar(255)
   heroDescription String?  @db.Text
   ctaText         String?  @db.VarChar(50)
@@ -435,8 +435,8 @@ model LandingPageConfig {
 // 14. KASA İŞLEMLERİ (FinanceRecord)
 // ==========================================
 model FinanceRecord {
-  id            String    @id @default(uuid()) @db.Uuid
-  tenantId      String    @db.Uuid
+  id            String    @id @default(uuid())
+  tenantId      String
   tenant        Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   type          String    @db.VarChar(20) // "INCOME" veya "EXPENSE"
   category      String    @db.VarChar(50) // "APPOINTMENT", "SALARY", "SUPPLY", "OTHER"
@@ -453,8 +453,8 @@ model FinanceRecord {
 // 15. SALON İÇİ KUPONLAR (TenantCoupon)
 // ==========================================
 model TenantCoupon {
-  id             String    @id @default(uuid()) @db.Uuid
-  tenantId       String    @db.Uuid
+  id             String    @id @default(uuid())
+  tenantId       String
   tenant         Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   code           String    @db.VarChar(50)
   discountType   String    @db.VarChar(20) // "PERCENTAGE" veya "FIXED"
@@ -473,10 +473,10 @@ model TenantCoupon {
 // 16. SADAKAT KARTLARI (LoyaltyCard)
 // ==========================================
 model LoyaltyCard {
-  id             String    @id @default(uuid()) @db.Uuid
-  tenantId       String    @db.Uuid
+  id             String    @id @default(uuid())
+  tenantId       String
   tenant         Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  customerId     String    @db.Uuid
+  customerId     String
   customer       Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
   totalStamps    Int       @default(0)
   isCompleted    Boolean   @default(false)
@@ -492,8 +492,8 @@ model LoyaltyCard {
 // 17. PAZARLAMA/BİLDİRİM GEÇMİŞİ (MarketingLog)
 // ==========================================
 model MarketingLog {
-  id             String    @id @default(uuid()) @db.Uuid
-  tenantId       String    @db.Uuid
+  id             String    @id @default(uuid())
+  tenantId       String
   tenant         Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
   channel        String    @db.VarChar(20) // "WHATSAPP", "SMS", "EMAIL"
   type           String    @db.VarChar(50) // "BIRTHDAY", "REENGAGEMENT", "REMINDER"
@@ -508,10 +508,10 @@ model MarketingLog {
 // 18. YORUM İSTEKLERİ (ReviewRequest)
 // ==========================================
 model ReviewRequest {
-  id             String    @id @default(uuid()) @db.Uuid
-  tenantId       String    @db.Uuid
+  id             String    @id @default(uuid())
+  tenantId       String
   tenant         Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  appointmentId  String    @unique @db.Uuid
+  appointmentId  String    @unique
   appointment    Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
   status         String    @default("PENDING") @db.VarChar(20) // "PENDING", "SENT", "CLICKED", "REVIEWED"
   sentAt         DateTime?
