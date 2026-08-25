@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present && node -e \"require('fs').cpSync('apps/web/.next', '.next', { recursive: true })\"",
     "dev": "concurrently \"npm run dev --workspace=@kuafor-art/api\" \"npm run dev --workspace=@kuafor-art/web\"",
     "db:generate": "npm run db:generate --workspace=packages/database",
     "db:push": "npm run db:push --workspace=packages/database",
