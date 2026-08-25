@@ -2,55 +2,43 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { ArrowRight, CheckCircle2, Scissors } from 'lucide-react';
+import { ArrowRight, Sparkles } from 'lucide-react';
 
 export default function FinalCTA() {
   return (
-    <section className="py-24 bg-navy-950 text-white relative overflow-hidden">
-      {/* Background Decorative Accent */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-gold/10 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="max-w-5xl mx-auto px-6 text-center space-y-8 relative z-10">
-        <div className="w-12 h-12 rounded-2xl bg-gold text-navy-950 mx-auto flex items-center justify-center font-bold shadow-lg">
-          <Scissors className="w-6 h-6" />
+    <section className="py-24 bg-navy-900 dark:bg-[#060D1A] border-y border-navy-800 dark:border-[#09152B] relative overflow-hidden">
+      
+      <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
+        
+        <div className="inline-flex items-center justify-center w-12 h-12 rounded-lg bg-navy-800 dark:bg-dark-highlight mb-8 border border-navy-700 dark:border-dark-border">
+          <Sparkles className="w-6 h-6 text-gold" />
         </div>
 
-        <h2 className="font-serif text-4xl md:text-6xl font-bold tracking-tight text-white leading-tight">
-          Salonunuzu Yönetmek İçin <br />
-          <span className="italic text-gold font-normal">Daha Akıllı Bir Yol Var.</span>
+        <h2 className="font-serif text-3xl md:text-5xl font-bold text-white leading-tight mb-6">
+          Salonunuzu Dijitale Taşımaya <br className="hidden sm:block" />
+          <span className="italic font-normal">Hazır mısınız?</span>
         </h2>
-
-        <p className="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto font-normal">
-          Randevularınızı, müşterilerinizi ve salonunuzu tek yerden yönetin. Kurulum sadece 2 dakikanızı alır.
+        
+        <p className="text-[16px] text-gray-300 max-w-xl mx-auto mb-10 leading-relaxed">
+          Türkiye'nin dört bir yanındaki yüzlerce kuaför arasına katılın. Randevularınızı otomatikleştirin, cironuzu artırın. Kredi kartı gerekmeden hemen deneyin.
         </p>
-
-        <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+        
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/register"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-9 py-4 bg-gold hover:bg-gold-400 text-navy-950 font-bold text-base rounded-2xl shadow-xl hover:shadow-2xl transition-all active:scale-95"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-gold hover:bg-gold-400 text-navy-950 font-bold rounded-lg transition-transform hover:-translate-y-0.5 shadow-sm text-[15px]"
           >
-            <span>Ücretsiz Başla</span>
-            <ArrowRight className="w-5 h-5" />
+            <span>Hemen Ücretsiz Başla</span>
+            <ArrowRight className="w-4 h-4" />
           </Link>
-
-          <Link
-            href="/login"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-white/10 hover:bg-white/20 text-white border border-white/15 font-semibold text-base rounded-2xl transition-colors"
+          <a
+            href="https://wa.me/905000000000"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-navy-800 hover:bg-navy-700 dark:bg-dark-card dark:hover:bg-dark-highlight border border-navy-700 dark:border-dark-border text-white font-semibold rounded-lg transition-colors text-[15px]"
           >
-            <span>Giriş Yap</span>
-          </Link>
-        </div>
-
-        <div className="pt-6 flex flex-wrap items-center justify-center gap-6 text-xs text-gray-400 font-medium">
-          <span className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Kredi kartı gerekmez
-          </span>
-          <span className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" /> Saniyeler içinde kurulum
-          </span>
-          <span className="flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" /> İstediğiniz zaman iptal imkanı
-          </span>
+            Satış Ekibiyle Görüş
+          </a>
         </div>
       </div>
     </section>

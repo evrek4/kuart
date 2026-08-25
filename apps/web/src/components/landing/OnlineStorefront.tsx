@@ -2,138 +2,112 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Globe, ArrowRight, CheckCircle2, Scissors, Star, MapPin, Phone } from 'lucide-react';
+import { ArrowRight, Check } from 'lucide-react';
+import Image from 'next/image';
 
 export default function OnlineStorefront() {
   return (
-    <section id="website" className="py-24 bg-white dark:bg-[#070D18] border-t border-[#E6E7EA] dark:border-white/10">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          {/* Left Text Explanation */}
-          <div className="lg:col-span-5 space-y-6">
-            <span className="text-xs font-bold tracking-widest text-gold uppercase">
-              PRESTİJLİ DİJİTAL KİMLİK
-            </span>
-
-            <h2 className="font-serif text-3xl md:text-5xl font-bold text-navy-900 dark:text-white leading-tight">
-              Instagram Profiliniz Var. <br />
-              <span className="italic text-gold font-normal">Peki Kendi Salon Web Siteniz?</span>
-            </h2>
-
-            <p className="text-navy-800/75 dark:text-gray-300 text-base leading-relaxed">
-              Müşterilerinize sadece bir sosyal medya hesabı değil, kendi alan adınızla (`adiniz.kuafor.art`) yayın yapan 7/24 randevu kabul eden profesyonel bir web sitesi sunun.
-            </p>
-
-            <div className="space-y-3.5 pt-2">
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-gold shrink-0 mt-0.5" />
-                <div>
-                  <span className="font-bold text-navy-900 dark:text-white text-sm block">Özelleştirilebilir Salon Sayfası</span>
-                  <span className="text-xs text-navy-800/70 dark:text-gray-400">Salon fotoğraflarınız, çalışma saatleriniz ve konumunuz tek sayfada.</span>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-gold shrink-0 mt-0.5" />
-                <div>
-                  <span className="font-bold text-navy-900 dark:text-white text-sm block">Hizmet Ve Fiyat Listesi</span>
-                  <span className="text-xs text-navy-800/70 dark:text-gray-400">Müşterileriniz salona gelmeden önce sunduğunuz hizmetleri ve güncel fiyatları inceler.</span>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <CheckCircle2 className="w-5 h-5 text-gold shrink-0 mt-0.5" />
-                <div>
-                  <span className="font-bold text-navy-900 dark:text-white text-sm block">Google'da Bulunabilirlik</span>
-                  <span className="text-xs text-navy-800/70 dark:text-gray-400">Bölgenizdeki potansiyel müşterilerin sizi internette bulmasını sağlayın.</span>
-                </div>
-              </div>
+    <section className="py-24 bg-warmbg dark:bg-dark-DEFAULT border-y border-borderlight dark:border-dark-border overflow-hidden">
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-10 items-center">
+        
+        {/* Left Side: Mockups */}
+        <div className="order-2 lg:order-1 relative flex justify-center lg:justify-start mt-10 lg:mt-0">
+          <div className="relative w-[280px] h-[580px] rounded-[32px] border-[6px] border-[#F8F9FA] dark:border-[#0A111E] shadow-[0_0_0_1px_rgba(0,0,0,0.1),0_20px_40px_-15px_rgba(0,0,0,0.1)] dark:shadow-[0_0_0_1px_rgba(255,255,255,0.1)] bg-white dark:bg-dark-card overflow-hidden">
+            {/* Phone Top Bar */}
+            <div className="h-6 w-full absolute top-0 left-0 bg-transparent z-20 flex justify-center pt-2">
+              <div className="w-20 h-4 bg-black dark:bg-[#0A111E] rounded-full" />
             </div>
 
-            <div className="pt-4">
-              <Link
-                href="/register"
-                className="inline-flex items-center gap-2 px-7 py-3.5 bg-navy-900 text-white dark:bg-gold dark:text-navy-950 font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all"
-              >
-                <span>Web Sayfanızı Oluşturun</span>
-                <ArrowRight className="w-4 h-4" />
-              </Link>
+            {/* Mobile App UI Simulation */}
+            <div className="h-full w-full bg-[#FAFAFA] dark:bg-dark-DEFAULT flex flex-col pt-12 pb-6 px-4">
+              <div className="text-center mb-6">
+                <div className="w-16 h-16 mx-auto rounded-full bg-gray-200 dark:bg-dark-highlight mb-3" />
+                <h4 className="font-serif text-lg font-bold text-lightText-primary dark:text-darkText-primary">Artisan Studio</h4>
+                <p className="text-[10px] text-lightText-muted dark:text-darkText-muted mt-1">Nişantaşı, İstanbul</p>
+              </div>
+
+              <div className="space-y-3 mb-6">
+                <div className="p-3 rounded border border-borderlight dark:border-dark-border bg-white dark:bg-dark-card flex justify-between items-center">
+                  <span className="text-xs font-semibold text-lightText-primary dark:text-darkText-primary">Saç Kesimi</span>
+                  <span className="text-xs font-bold text-lightText-secondary dark:text-darkText-secondary">₺350</span>
+                </div>
+                <div className="p-3 rounded border border-borderlight dark:border-dark-border bg-white dark:bg-dark-card flex justify-between items-center">
+                  <span className="text-xs font-semibold text-lightText-primary dark:text-darkText-primary">Ombre & Sombre</span>
+                  <span className="text-xs font-bold text-lightText-secondary dark:text-darkText-secondary">₺1.800</span>
+                </div>
+                <div className="p-3 rounded border border-borderlight dark:border-dark-border bg-white dark:bg-dark-card flex justify-between items-center">
+                  <span className="text-xs font-semibold text-lightText-primary dark:text-darkText-primary">Keratin Bakım</span>
+                  <span className="text-xs font-bold text-lightText-secondary dark:text-darkText-secondary">₺900</span>
+                </div>
+              </div>
+
+              <div className="mt-auto">
+                <div className="w-full py-2.5 rounded bg-navy-900 dark:bg-gold text-white dark:text-navy-950 text-xs font-bold text-center">
+                  Randevu Al
+                </div>
+              </div>
             </div>
           </div>
-
-          {/* Right Browser Mockup Display */}
-          <div className="lg:col-span-7">
-            <div className="rounded-3xl border border-borderlight dark:border-white/10 bg-warmbg dark:bg-[#111A2E] shadow-2xl p-6 md:p-8 space-y-6">
-              {/* Browser Address Bar Header */}
-              <div className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-navy-950 border border-gray-200 dark:border-white/10 shadow-sm">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-400" />
-                  <div className="w-3 h-3 rounded-full bg-amber-400" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-400" />
-                </div>
-                <div className="flex items-center gap-2 text-xs font-mono text-navy-900 dark:text-gold font-bold">
-                  <Globe className="w-3.5 h-3.5" />
-                  <span>https://artisan.kuafor.art</span>
-                </div>
-                <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">
-                  Canlı
-                </span>
-              </div>
-
-              {/* Mockup Storefront UI */}
-              <div className="p-6 rounded-2xl bg-white dark:bg-navy-900 border border-gray-200/80 dark:border-white/5 space-y-5">
-                <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/5 pb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-11 h-11 rounded-xl bg-navy-900 text-white dark:bg-gold dark:text-navy-950 flex items-center justify-center font-bold">
-                      <Scissors className="w-5 h-5" />
-                    </div>
-                    <div>
-                      <h4 className="font-serif text-lg font-bold text-navy-900 dark:text-white">Artisan Coiffure</h4>
-                      <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
-                        <span className="flex items-center text-amber-500 font-bold">
-                          <Star className="w-3.5 h-3.5 fill-amber-400 mr-1" /> 4.9 (128 Değerlendirme)
-                        </span>
-                        <span>• Nişantaşı, İstanbul</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <button className="px-4 py-2 bg-navy-900 text-white dark:bg-gold dark:text-navy-950 font-bold text-xs rounded-xl shadow">
-                    Randevu Al
-                  </button>
-                </div>
-
-                {/* Service Cards */}
-                <div className="space-y-2">
-                  <div className="text-xs font-bold text-navy-900 dark:text-white uppercase tracking-wider">Popüler Hizmetler</div>
-
-                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-navy-950/40 border border-gray-200/50 dark:border-white/5 flex items-center justify-between text-xs">
-                    <div>
-                      <span className="font-bold text-navy-900 dark:text-white block">Kadın Saç Kesimi & Fön</span>
-                      <span className="text-gray-400 text-[11px]">45 Dakika</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="font-bold text-navy-900 dark:text-gold block">₺650</span>
-                      <span className="text-[10px] text-emerald-600 font-semibold">Online Randevuya Açık</span>
-                    </div>
-                  </div>
-
-                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-navy-950/40 border border-gray-200/50 dark:border-white/5 flex items-center justify-between text-xs">
-                    <div>
-                      <span className="font-bold text-navy-900 dark:text-white block">Organik Keratin Bakım</span>
-                      <span className="text-gray-400 text-[11px]">90 Dakika</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="font-bold text-navy-900 dark:text-gold block">₺1.850</span>
-                      <span className="text-[10px] text-emerald-600 font-semibold">Online Randevuya Açık</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
+          
+          {/* Subtle Accent Box (Replaces messy floating items) */}
+          <div className="absolute bottom-10 -right-4 md:-right-8 p-4 rounded-xl bg-white dark:bg-dark-highlight border border-borderlight dark:border-dark-border shadow-md">
+            <p className="text-[11px] font-bold text-lightText-primary dark:text-darkText-primary mb-1">Yeni Randevu Talebi</p>
+            <p className="text-[10px] text-lightText-muted dark:text-darkText-muted mb-2">Ayşe Kaya - Saç Kesimi</p>
+            <div className="flex gap-2">
+              <span className="px-2 py-1 rounded bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400 text-[9px] font-bold">ONAYLA</span>
             </div>
           </div>
         </div>
+
+        {/* Right Side: Copy */}
+        <div className="order-1 lg:order-2 space-y-6">
+          <span className="inline-block px-3 py-1.5 rounded-lg bg-white dark:bg-dark-card border border-borderlight dark:border-dark-border text-[11px] font-semibold tracking-widest text-lightText-secondary dark:text-darkText-secondary uppercase shadow-sm">
+            MARKA KİMLİĞİ
+          </span>
+          <h2 className="font-serif text-3xl md:text-[2.75rem] font-bold text-lightText-primary dark:text-darkText-primary leading-tight">
+            Salonunuz <br />
+            Online Dünyada
+          </h2>
+          <p className="text-[16px] text-lightText-secondary dark:text-darkText-secondary leading-relaxed max-w-lg">
+            Sadece bir randevu defteri değil, salonunuza özel tasarlanmış modern bir web sitesi veriyoruz. Instagram hesabınıza ekleyeceğiniz profesyonel link ile müşterilerinizin saniyeler içinde randevu almasını sağlayın.
+          </p>
+
+          <ul className="space-y-4 pt-2 pb-6">
+            <li className="flex items-start gap-3">
+              <div className="w-5 h-5 rounded bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0 mt-0.5">
+                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <span className="text-[15px] text-lightText-secondary dark:text-darkText-secondary">
+                <strong className="text-lightText-primary dark:text-darkText-primary font-semibold">Mobil Uyumlu:</strong> Tüm telefon ve tabletlerde kusursuz görünüm.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <div className="w-5 h-5 rounded bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0 mt-0.5">
+                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <span className="text-[15px] text-lightText-secondary dark:text-darkText-secondary">
+                <strong className="text-lightText-primary dark:text-darkText-primary font-semibold">Özel URL:</strong> salonadi.kuafor.art şeklinde profesyonel adres.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <div className="w-5 h-5 rounded bg-emerald-100 dark:bg-emerald-900/30 flex items-center justify-center shrink-0 mt-0.5">
+                <Check className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+              </div>
+              <span className="text-[15px] text-lightText-secondary dark:text-darkText-secondary">
+                <strong className="text-lightText-primary dark:text-darkText-primary font-semibold">7/24 Açık Dükkan:</strong> Siz uyurken bile randevu kabul etmeye devam edin.
+              </span>
+            </li>
+          </ul>
+
+          <Link
+            href="/register"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-dark-card border border-borderlight dark:border-dark-border text-lightText-primary dark:text-darkText-primary font-bold rounded-lg transition-colors hover:bg-gray-50 dark:hover:bg-[#12233D] shadow-sm text-[14px]"
+          >
+            Örnek Sayfayı İncele
+            <ArrowRight className="w-4 h-4" />
+          </Link>
+        </div>
+        
       </div>
     </section>
   );

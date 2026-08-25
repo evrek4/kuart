@@ -39,9 +39,20 @@ const config = {
         warmbg: "#F8F8F6",
         borderlight: "#E6E7EA",
         dark: {
-          DEFAULT: "#0A111E",
-          card: "rgba(255, 255, 255, 0.03)",
+          DEFAULT: "#081326",
+          card: "#0E1D34",
+          highlight: "#132A4A",
           border: "rgba(255, 255, 255, 0.08)",
+        },
+        lightText: {
+          primary: "#0B1933",
+          secondary: "#596475",
+          muted: "#707A89",
+        },
+        darkText: {
+          primary: "#F7F8FA",
+          secondary: "#B9C1CE",
+          muted: "#8E99AA",
         }
       },
       backgroundImage: {

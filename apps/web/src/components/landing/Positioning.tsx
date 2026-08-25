@@ -7,10 +7,7 @@ import {
   Globe,
   Users,
   PieChart,
-  UserCheck,
-  BellRing,
-  ChevronRight,
-  Sparkles
+  UserCheck
 } from 'lucide-react';
 
 const pillars = [
@@ -20,7 +17,6 @@ const pillars = [
     title: 'Akıllı Randevu Takvimi',
     badge: '7/24 Online',
     description: 'WhatsApp karmaşasına son verin. Müşterileriniz boş saatlerinizi görüp anında randevu alır. Çift rezervasyon riski tamamen ortadan kalkar.',
-    stat: '%40 Daha Fazla Randevu'
   },
   {
     id: 'website',
@@ -28,7 +24,6 @@ const pillars = [
     title: 'Kişisel Salon Web Sitesi',
     badge: 'adiniz.kuafor.art',
     description: 'Instagram biyonuza ekleyeceğiniz profesyonel sayfanızla salona özel marka imajı yaratın. Hizmetlerinizi, fiyatlarınızı ve salon fotoğraflarınızı sergileyin.',
-    stat: 'Prestijli Dijital Kimlik'
   },
   {
     id: 'customers',
@@ -36,7 +31,6 @@ const pillars = [
     title: 'Müşteri Hafızası & CRM',
     badge: 'Sadakat Takibi',
     description: 'Müşterinizin tercih ettiği saç boyası numarasından son geliş tarihine kadar tüm geçmiş detayları kaydedin. Kişiselleştirilmiş hizmet sunun.',
-    stat: '%85 Müşteri Tutundurma'
   },
   {
     id: 'finance',
@@ -44,7 +38,6 @@ const pillars = [
     title: 'Kasa, Ciro & Gelir Analizi',
     badge: 'Anlık Rapor',
     description: 'Hangi hizmetin ne kadar kazandırdığını, günlük ve aylık cironuzu tek dokunuşla görün. Kayıp-kaçak oranını sıfırlayın.',
-    stat: '%100 Finansal Kontrol'
   },
   {
     id: 'staff',
@@ -52,7 +45,6 @@ const pillars = [
     title: 'Personel Performansı & Prim',
     badge: 'Ekip Yönetimi',
     description: 'Hangi personelin kaç randevu tamamladığını, hak ettiği primi ve çalışma saatlerini otomatik hesaplayın.',
-    stat: 'Adil & Şeffaf Prim'
   }
 ];
 
@@ -60,26 +52,28 @@ export default function Positioning() {
   const [activePillar, setActivePillar] = useState(pillars[0]);
 
   return (
-    <section className="py-24 bg-white dark:bg-[#070D18] border-y border-[#E6E7EA] dark:border-white/10">
+    <section className="py-24 bg-warmbg dark:bg-dark-DEFAULT border-y border-borderlight dark:border-dark-border">
       <div className="max-w-7xl mx-auto px-6">
+        
         {/* Section Header */}
-        <div className="max-w-3xl">
-          <span className="text-xs font-bold tracking-widest text-gold uppercase">
-            TÜM İHTİYAÇLARINIZ TEK YERDE
+        <div className="max-w-3xl mx-auto text-center">
+          <span className="inline-block px-3 py-1.5 rounded-lg bg-white dark:bg-dark-card border border-borderlight dark:border-dark-border text-[11px] font-semibold tracking-widest text-lightText-secondary dark:text-darkText-secondary uppercase shadow-sm">
+            PLATFORM ÖZELLİKLERİ
           </span>
-          <h2 className="mt-3 font-serif text-3xl md:text-5xl font-bold text-navy-900 dark:text-white leading-tight">
-            Bu Sadece Bir Randevu Sistemi Değil. <br />
-            <span className="italic text-navy-700 dark:text-gray-300 font-normal">Salonunuzun Dijital İşletim Sistemi.</span>
+          <h2 className="mt-5 font-serif text-3xl md:text-[2.75rem] font-bold text-lightText-primary dark:text-darkText-primary leading-tight">
+            Salonunuzu Yönetmek Hiç Bu <br className="hidden md:block" />
+            Kadar Kolay Olmamıştı
           </h2>
-          <p className="mt-4 text-base md:text-lg text-navy-800/70 dark:text-gray-400">
-            Salonunuzu büyütmek, müşterilerinizi elde tutmak ve ekibinizi yönetmek için ayrı ayrı 5 farklı program kullanmanıza gerek yok.
+          <p className="mt-4 text-[16px] text-lightText-secondary dark:text-darkText-secondary max-w-2xl mx-auto">
+            Salonunuzu büyütmek, müşterilerinizi elde tutmak ve ekibinizi yönetmek için ayrı ayrı 5 farklı program kullanmanıza gerek yok. Tüm dijital altyapınız tek yerde.
           </p>
         </div>
 
         {/* Editorial Split Showcase */}
-        <div className="mt-16 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+        <div className="mt-20 grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
+          
           {/* Left Column: Interactive Pillar List */}
-          <div className="lg:col-span-5 space-y-3">
+          <div className="lg:col-span-5 space-y-2">
             {pillars.map((item) => {
               const Icon = item.icon;
               const isActive = activePillar.id === item.id;
@@ -87,17 +81,17 @@ export default function Positioning() {
                 <button
                   key={item.id}
                   onClick={() => setActivePillar(item)}
-                  className={`w-full text-left p-5 rounded-2xl transition-all duration-300 flex items-start gap-4 border ${
+                  className={`w-full text-left p-4 rounded-xl transition-all duration-200 flex items-start gap-4 border ${
                     isActive
-                      ? 'bg-navy-900 text-white dark:bg-gold dark:text-navy-950 border-navy-900 dark:border-gold shadow-xl scale-[1.01]'
-                      : 'bg-warmbg dark:bg-navy-900/40 text-navy-900 dark:text-gray-200 border-borderlight dark:border-white/5 hover:border-navy-900/30 dark:hover:border-white/20'
+                      ? 'bg-white dark:bg-dark-highlight text-lightText-primary dark:text-darkText-primary border-borderlight dark:border-dark-border shadow-sm'
+                      : 'bg-transparent text-lightText-secondary dark:text-darkText-secondary border-transparent hover:bg-gray-100/50 dark:hover:bg-dark-card/50'
                   }`}
                 >
                   <div
-                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                    className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
                       isActive
-                        ? 'bg-white/10 dark:bg-navy-950/20 text-white dark:text-navy-950'
-                        : 'bg-white dark:bg-navy-800 text-navy-900 dark:text-gold shadow-sm'
+                        ? 'bg-gray-100 dark:bg-[#1C3A63] text-navy-900 dark:text-white'
+                        : 'bg-white dark:bg-dark-card text-lightText-muted dark:text-darkText-muted border border-borderlight dark:border-dark-border'
                     }`}
                   >
                     <Icon className="w-5 h-5" />
@@ -105,20 +99,11 @@ export default function Positioning() {
 
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-base">{item.title}</span>
-                      <span
-                        className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
-                          isActive
-                            ? 'bg-white/20 text-white dark:bg-navy-950/20 dark:text-navy-950'
-                            : 'bg-gold/15 text-gold dark:bg-gold/20 dark:text-gold'
-                        }`}
-                      >
-                        {item.badge}
-                      </span>
+                      <span className="font-bold text-[15px]">{item.title}</span>
                     </div>
                     <p
-                      className={`mt-1.5 text-xs line-clamp-2 ${
-                        isActive ? 'text-white/80 dark:text-navy-950/80' : 'text-navy-800/70 dark:text-gray-400'
+                      className={`mt-1 text-[13px] leading-relaxed line-clamp-2 ${
+                        isActive ? 'text-lightText-secondary dark:text-darkText-secondary' : 'text-lightText-muted dark:text-darkText-muted'
                       }`}
                     >
                       {item.description}
@@ -129,61 +114,44 @@ export default function Positioning() {
             })}
           </div>
 
-          {/* Right Column: Live Editorial Preview Display */}
-          <div className="lg:col-span-7 sticky top-28">
+          {/* Right Column: Static Information Preview Display */}
+          <div className="lg:col-span-7 lg:sticky lg:top-28">
             <motion.div
               key={activePillar.id}
-              initial={{ opacity: 0, x: 20 }}
+              initial={{ opacity: 0, x: 10 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4 }}
-              className="p-8 md:p-10 rounded-3xl bg-warmbg dark:bg-navy-900 border border-borderlight dark:border-white/10 shadow-2xl relative overflow-hidden"
+              transition={{ duration: 0.3 }}
+              className="p-8 md:p-10 rounded-xl bg-white dark:bg-dark-card border border-borderlight dark:border-dark-border shadow-sm"
             >
-              {/* Background Decorative Accent */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-gold/10 rounded-full blur-3xl pointer-events-none" />
-
-              <div className="flex items-center gap-3">
-                <span className="px-3 py-1 rounded-full bg-gold/20 text-gold text-xs font-bold uppercase tracking-wider">
+              <div className="flex items-center gap-3 mb-6">
+                <span className="px-3 py-1 rounded bg-gray-50 dark:bg-dark-highlight border border-borderlight dark:border-transparent text-lightText-secondary dark:text-darkText-primary text-[10px] font-bold uppercase tracking-wider">
                   {activePillar.badge}
-                </span>
-                <span className="text-xs font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  {activePillar.stat}
                 </span>
               </div>
 
-              <h3 className="mt-4 font-serif text-2xl md:text-3xl font-bold text-navy-900 dark:text-white">
+              <h3 className="font-serif text-2xl md:text-3xl font-bold text-lightText-primary dark:text-darkText-primary">
                 {activePillar.title}
               </h3>
 
-              <p className="mt-3 text-sm md:text-base text-navy-800/80 dark:text-gray-300 leading-relaxed">
+              <p className="mt-4 text-[15px] text-lightText-secondary dark:text-darkText-secondary leading-relaxed">
                 {activePillar.description}
               </p>
 
-              {/* Mockup Card Feature Card */}
-              <div className="mt-8 p-6 rounded-2xl bg-white dark:bg-[#111A2E] border border-borderlight dark:border-white/10 shadow-lg space-y-4">
-                <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/5 pb-3">
-                  <span className="text-xs font-bold text-navy-900 dark:text-white flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-gold" />
-                    {activePillar.title} Görünümü
-                  </span>
-                  <span className="text-[11px] font-mono text-gray-400">Canlı Önizleme</span>
+              {/* Simple Feature Demo Box */}
+              <div className="mt-8 p-5 rounded-lg border border-borderlight dark:border-dark-border bg-gray-50 dark:bg-[#0A111E]">
+                <div className="flex items-center justify-between border-b border-borderlight dark:border-dark-border pb-3 mb-4">
+                  <span className="text-[11px] font-bold text-lightText-primary dark:text-darkText-primary">Modül Özeti</span>
                 </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-navy-950/50 border border-gray-200/50 dark:border-white/5">
-                    <div className="text-[10px] text-gray-400 uppercase font-semibold">Ana Avantaj</div>
-                    <div className="text-sm font-bold text-navy-900 dark:text-white mt-0.5">{activePillar.stat}</div>
+                
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center text-[13px]">
+                    <span className="text-lightText-muted dark:text-darkText-muted">Durum</span>
+                    <span className="font-semibold text-emerald-600 dark:text-emerald-400">Tüm Paketlerde Aktif</span>
                   </div>
-
-                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-navy-950/50 border border-gray-200/50 dark:border-white/5">
-                    <div className="text-[10px] text-gray-400 uppercase font-semibold">Kurulum Süresi</div>
-                    <div className="text-sm font-bold text-emerald-600 dark:text-emerald-400 mt-0.5">Yalnızca 2 Dakika</div>
+                  <div className="flex justify-between items-center text-[13px]">
+                    <span className="text-lightText-muted dark:text-darkText-muted">Kullanım Kolaylığı</span>
+                    <span className="font-semibold text-lightText-primary dark:text-darkText-primary">Yüksek</span>
                   </div>
-                </div>
-
-                <div className="p-3 rounded-xl bg-gold/10 border border-gold/20 text-xs font-medium text-navy-900 dark:text-gold flex items-center justify-between">
-                  <span>Bu modül ücretsiz pakete dahildir.</span>
-                  <ChevronRight className="w-4 h-4" />
                 </div>
               </div>
             </motion.div>

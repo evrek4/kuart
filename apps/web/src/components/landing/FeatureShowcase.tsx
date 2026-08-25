@@ -1,179 +1,124 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import {
   Calendar,
   MessageSquare,
-  ShieldCheck,
-  Zap,
+  Globe,
   TrendingUp,
   UserCheck,
-  Sparkles,
   Scissors,
-  CheckCircle,
-  Clock,
-  Phone
 } from 'lucide-react';
+
+const features = [
+  {
+    id: 1,
+    title: 'Akıllı Randevu Sistemi',
+    description: 'Telefon başında saatler harcamayın. Müşterileriniz boş saatlerinizi görüp anında randevu oluşturur.',
+    icon: Calendar,
+    isPopular: false
+  },
+  {
+    id: 2,
+    title: 'Kişisel Web Sayfanız',
+    description: 'Instagram biyonuza ekleyeceğiniz profesyonel sayfanızla 7/24 randevu kabul edin. Fiyatlarınızı sergileyin.',
+    icon: Globe,
+    isPopular: true // The highlighted deep navy card
+  },
+  {
+    id: 3,
+    title: 'Müşteri Yönetimi (CRM)',
+    description: 'Müşterilerinizin geçmiş randevularını, boya numaralarını ve özel isteklerini sistem hafızasında tutun.',
+    icon: UserCheck,
+    isPopular: false
+  },
+  {
+    id: 4,
+    title: 'Gelir & Raporlama',
+    description: 'Hangi hizmetin ne kadar kazandırdığını, günlük ve aylık cironuzu tek dokunuşla görün. Kasanız kontrolünüzde.',
+    icon: TrendingUp,
+    isPopular: false
+  },
+  {
+    id: 5,
+    title: 'WhatsApp Hatırlatmaları',
+    description: 'Müşterilerinize randevudan 2 saat önce otomatik WhatsApp hatırlatma mesajı göndererek gelmeme (no-show) oranını azaltın.',
+    icon: MessageSquare,
+    isPopular: false
+  },
+  {
+    id: 6,
+    title: 'Personel Prim Takibi',
+    description: 'Hangi personelin kaç randevu tamamladığını ve hak ettiği primi otomatik olarak hatasız hesaplayın.',
+    icon: Scissors,
+    isPopular: false
+  }
+];
 
 export default function FeatureShowcase() {
   return (
-    <section id="features" className="py-24 bg-warmbg dark:bg-dark text-navy-900 dark:text-white overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 space-y-24">
+    <section id="features" className="py-24 bg-white dark:bg-dark-DEFAULT">
+      <div className="max-w-7xl mx-auto px-6 space-y-16">
+        
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto space-y-4">
-          <span className="text-xs font-bold tracking-widest text-gold uppercase">
+        <div className="text-center max-w-3xl mx-auto space-y-5">
+          <span className="inline-block px-3 py-1.5 rounded-lg bg-gray-50 dark:bg-dark-card border border-borderlight dark:border-dark-border text-[11px] font-semibold tracking-widest text-lightText-secondary dark:text-darkText-secondary uppercase shadow-sm">
             ÖNE ÇIKAN SİSTEM ÖZELLİKLERİ
           </span>
-          <h2 className="font-serif text-3xl md:text-5xl font-bold text-navy-900 dark:text-white">
-            Salonunuzu Yönetmek Hiç Bu Kadar <br className="hidden md:inline" />
-            <span className="italic text-gold font-normal">Kolay Ve Düzenli Olmamıştı.</span>
+          <h2 className="font-serif text-3xl md:text-[2.75rem] font-bold text-lightText-primary dark:text-darkText-primary leading-tight">
+            İşinizi Kolaylaştıran <br />
+            <span className="italic font-normal">Güçlü Özellikler</span>
           </h2>
-          <p className="text-base text-navy-800/70 dark:text-gray-400">
-            Telefon başında saatler harcamak yerine işinize odaklanın. Sistem sizin yerinize randevu toplasın, hatırlatsın ve raporlasın.
+          <p className="text-[16px] text-lightText-secondary dark:text-darkText-secondary max-w-2xl mx-auto">
+            Sistem sizin yerinize randevu toplasın, hatırlatsın ve raporlasın. Siz sadece işinize odaklanın.
           </p>
         </div>
 
-        {/* Showcase Item 1: Randevu & WhatsApp (Text Left, Image Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 space-y-6">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 text-xs font-bold border border-emerald-200 dark:border-emerald-800/30">
-              <Zap className="w-3.5 h-3.5" />
-              <span>7/24 Randevu Kabulü</span>
-            </div>
-
-            <h3 className="font-serif text-3xl md:text-4xl font-bold leading-tight">
-              Müşterileriniz Uyurken Bile Randevu Alabilsin.
-            </h3>
-
-            <p className="text-navy-800/75 dark:text-gray-300 text-base leading-relaxed">
-              Müşterileriniz Instagram profilinizdeki veya WhatsApp biyografi linkinizdeki web sayfanıza girer, istediği personeli ve uygun saati seçerek saniyeler içinde randevu oluşturur.
-            </p>
-
-            <ul className="space-y-3 text-sm text-navy-900 dark:text-gray-200 font-medium">
-              <li className="flex items-center gap-3">
-                <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Otomatik WhatsApp ve SMS onay mesajları</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Randevu saatinden 2 saat önce otomatik hatırlatma</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>Müşterinin randevuya gelmeme (no-show) oranını %70 azaltır</span>
-              </li>
-            </ul>
-          </div>
-
-          <div className="lg:col-span-6">
-            <div className="p-6 md:p-8 rounded-3xl bg-white dark:bg-[#111A2E] border border-borderlight dark:border-white/10 shadow-2xl relative">
-              <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/5 pb-4 mb-6">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center font-bold">
-                    <MessageSquare className="w-5 h-5" />
-                  </div>
+        {/* 3-Column / 4-Column Grid based on layout preferences */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {features.map((feature) => {
+            const Icon = feature.icon;
+            if (feature.isPopular) {
+              // Highlighted Card
+              return (
+                <div key={feature.id} className="p-8 rounded-xl bg-navy-900 dark:bg-dark-highlight border border-navy-800 dark:border-dark-border shadow-sm flex flex-col justify-between">
                   <div>
-                    <span className="font-bold text-sm text-navy-900 dark:text-white block">WhatsApp Bildirim Modülü</span>
-                    <span className="text-[11px] text-gray-400">Canlı Hatırlatma Gönderimi</span>
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="w-12 h-12 rounded-lg bg-navy-800 dark:bg-[#1C3A63] text-white flex items-center justify-center">
+                        <Icon className="w-6 h-6" />
+                      </div>
+                      <span className="px-2.5 py-1 rounded bg-white/10 text-white text-[10px] font-bold uppercase tracking-wider">
+                        POPÜLER
+                      </span>
+                    </div>
+                    <h3 className="font-serif text-xl font-bold text-white mb-3">
+                      {feature.title}
+                    </h3>
+                    <p className="text-sm text-gray-300 leading-relaxed">
+                      {feature.description}
+                    </p>
                   </div>
                 </div>
-                <span className="px-2.5 py-1 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-400 text-[10px] font-bold">
-                  Aktif Servis
-                </span>
-              </div>
+              );
+            }
 
-              {/* Chat Bubble Graphic */}
-              <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-900/30 text-xs space-y-2">
-                  <div className="flex items-center justify-between text-emerald-800 dark:text-emerald-300 font-bold">
-                    <span>💬 WhatsApp Otomatik Mesaj</span>
-                    <span>14:00</span>
+            // Normal Card
+            return (
+              <div key={feature.id} className="p-8 rounded-xl bg-white dark:bg-dark-card border border-borderlight dark:border-dark-border shadow-sm flex flex-col justify-between">
+                <div>
+                  <div className="w-12 h-12 rounded-lg bg-gray-50 dark:bg-[#0A111E] border border-borderlight dark:border-transparent text-lightText-primary dark:text-darkText-primary flex items-center justify-center mb-6">
+                    <Icon className="w-6 h-6" />
                   </div>
-                  <p className="text-gray-700 dark:text-gray-300 leading-normal">
-                    "Sayın Zeynep Hanım, bugün saat 16:30'da Artisan Hair Studio'daki 'Boya & Kesim' randevunuzu hatırlatırız. Randevuyu onaylamak için 1'i tuşlayabilirsiniz."
+                  <h3 className="font-serif text-xl font-bold text-lightText-primary dark:text-darkText-primary mb-3">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-lightText-secondary dark:text-darkText-secondary leading-relaxed">
+                    {feature.description}
                   </p>
                 </div>
-
-                <div className="p-3 rounded-xl bg-gray-50 dark:bg-navy-950/40 border border-gray-200/40 dark:border-white/5 text-xs flex items-center justify-between">
-                  <span className="font-semibold text-gray-600 dark:text-gray-300">Yanıt Durumu:</span>
-                  <span className="text-emerald-600 dark:text-emerald-400 font-bold">✓ Müşteri Tarafından Onaylandı</span>
-                </div>
               </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Showcase Item 2: Müşteri Hafızası & CRM (Image Left, Text Right) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 order-2 lg:order-1">
-            <div className="p-6 md:p-8 rounded-3xl bg-white dark:bg-[#111A2E] border border-borderlight dark:border-white/10 shadow-2xl space-y-5">
-              <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/5 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gold/15 text-gold flex items-center justify-center font-bold">
-                    <Scissors className="w-5 h-5" />
-                  </div>
-                  <div>
-                    <span className="font-bold text-sm text-navy-900 dark:text-white block">Müşteri Kartı — Elif Yıldız</span>
-                    <span className="text-[11px] text-gray-400">14 Toplam Ziyaret | VIP Müşteri</span>
-                  </div>
-                </div>
-                <span className="px-2.5 py-1 rounded-full bg-gold/20 text-gold text-[10px] font-bold">
-                  VIP Kart
-                </span>
-              </div>
-
-              <div className="space-y-3 text-xs">
-                <div className="p-3.5 rounded-xl bg-warmbg dark:bg-navy-950/50 border border-gray-200/50 dark:border-white/5 space-y-1">
-                  <span className="text-gray-400 font-semibold block text-[10px] uppercase">Özel Kuaför Notu</span>
-                  <p className="font-medium text-navy-900 dark:text-gray-200">
-                    "Dip boya numarası: 7.1 Küllü Kumral + %6 Oksidan. Hassas saç derisi var, organik şampuan tercih ediyor."
-                  </p>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 rounded-xl bg-gray-50 dark:bg-navy-950/40 border border-gray-200/40 dark:border-white/5">
-                    <span className="text-[10px] text-gray-400 block">Son Ziyaret</span>
-                    <span className="font-bold text-navy-900 dark:text-white">12 Ağustos 2026</span>
-                  </div>
-                  <div className="p-3 rounded-xl bg-gray-50 dark:bg-navy-950/40 border border-gray-200/40 dark:border-white/5">
-                    <span className="text-[10px] text-gray-400 block">Toplam Harcama</span>
-                    <span className="font-bold text-emerald-600 dark:text-emerald-400">₺6.850</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="lg:col-span-6 space-y-6 order-1 lg:order-2">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold/15 text-gold text-xs font-bold border border-gold/30">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span>Müşteri Sadakati & CRM</span>
-            </div>
-
-            <h3 className="font-serif text-3xl md:text-4xl font-bold leading-tight">
-              Müşterinizin Neyi Sevdiğini Unutmayın.
-            </h3>
-
-            <p className="text-navy-800/75 dark:text-gray-300 text-base leading-relaxed">
-              Her müşterinizin geçmiş randevularını, kullandığınız boya numaralarını ve özel isteklerini sistem hafızasında tutun. Müşteriniz salona geldiğinde ona özel muamele yapın.
-            </p>
-
-            <ul className="space-y-3 text-sm text-navy-900 dark:text-gray-200 font-medium">
-              <li className="flex items-center gap-3">
-                <CheckCircle className="w-4 h-4 text-gold shrink-0" />
-                <span>Tek tıklamayla müşteri geçmişi ve not kartı</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle className="w-4 h-4 text-gold shrink-0" />
-                <span>Ziyaret sıklığına göre VIP müşteri tanımlama</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <CheckCircle className="w-4 h-4 text-gold shrink-0" />
-                <span>Doğum günü ve özel gün tebrik mesajları</span>
-              </li>
-            </ul>
-          </div>
+            );
+          })}
         </div>
       </div>
     </section>

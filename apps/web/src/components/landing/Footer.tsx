@@ -2,102 +2,89 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { Scissors } from 'lucide-react';
+import { Scissors, Instagram, Twitter, Linkedin } from 'lucide-react';
 
 export default function Footer() {
+  const currentYear = new Date().getFullYear();
+
   return (
-    <footer className="bg-navy-950 text-gray-400 py-16 border-t border-white/10 text-sm">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-white/10">
-        {/* Left Column: Brand Statement */}
-        <div className="md:col-span-5 space-y-4">
-          <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-gold text-navy-950 flex items-center justify-center font-bold shadow-md">
-              <Scissors className="w-5 h-5" />
+    <footer className="bg-white dark:bg-[#081326] pt-20 pb-10 border-t border-borderlight dark:border-dark-border selection:bg-gold/30">
+      <div className="max-w-7xl mx-auto px-6">
+        
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+          {/* Brand Info */}
+          <div className="md:col-span-4">
+            <Link href="/" className="flex items-center gap-2 mb-6">
+              <Scissors className="w-5 h-5 text-lightText-primary dark:text-darkText-primary" />
+              <span className="font-serif text-xl font-bold text-lightText-primary dark:text-darkText-primary flex items-center gap-0.5">
+                kuaför<span className="text-gold font-sans font-extrabold tracking-tight">.art</span>
+              </span>
+            </Link>
+            <p className="text-[14px] text-lightText-secondary dark:text-darkText-secondary mb-6 leading-relaxed">
+              Kuaför ve güzellik salonları için tasarlanmış profesyonel dijital yönetim platformu. Müşterilerinizi, randevularınızı ve gelirinizi tek noktadan kolayca yönetin.
+            </p>
+            <div className="flex gap-4">
+              <a href="#" className="w-9 h-9 flex items-center justify-center rounded bg-gray-50 dark:bg-dark-card border border-borderlight dark:border-dark-border text-lightText-muted dark:text-darkText-muted hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">
+                <Instagram className="w-4 h-4" />
+              </a>
+              <a href="#" className="w-9 h-9 flex items-center justify-center rounded bg-gray-50 dark:bg-dark-card border border-borderlight dark:border-dark-border text-lightText-muted dark:text-darkText-muted hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">
+                <Twitter className="w-4 h-4" />
+              </a>
+              <a href="#" className="w-9 h-9 flex items-center justify-center rounded bg-gray-50 dark:bg-dark-card border border-borderlight dark:border-dark-border text-lightText-muted dark:text-darkText-muted hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">
+                <Linkedin className="w-4 h-4" />
+              </a>
             </div>
-            <span className="font-serif text-2xl font-bold text-white tracking-tight">
-              kuaför<span className="text-gold font-sans font-extrabold">.art</span>
-            </span>
-          </Link>
+          </div>
 
-          <p className="text-xs text-gray-400 max-w-sm leading-relaxed">
-            Kuaförler ve güzellik salonları için tasarlanmış yeni nesil randevu, müşteri ve salon yönetim platformu.
-          </p>
+          {/* Spacer */}
+          <div className="hidden md:block md:col-span-1"></div>
 
-          <div className="pt-2 text-xs text-gold font-semibold">
-            7/24 Canlı Randevu & Müşteri Altyapısı
+          {/* Links */}
+          <div className="md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-8">
+            
+            <div className="space-y-4">
+              <h4 className="text-[13px] font-bold text-lightText-primary dark:text-darkText-primary uppercase tracking-wider">Ürün</h4>
+              <ul className="space-y-3">
+                <li><a href="#features" className="text-[14px] text-lightText-secondary dark:text-darkText-secondary hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">Özellikler</a></li>
+                <li><a href="#pricing" className="text-[14px] text-lightText-secondary dark:text-darkText-secondary hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">Fiyatlandırma</a></li>
+                <li><a href="#how-it-works" className="text-[14px] text-lightText-secondary dark:text-darkText-secondary hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">Kurulum</a></li>
+                <li><Link href="/register" className="text-[14px] text-lightText-secondary dark:text-darkText-secondary hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">Kayıt Ol</Link></li>
+              </ul>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="text-[13px] font-bold text-lightText-primary dark:text-darkText-primary uppercase tracking-wider">Destek</h4>
+              <ul className="space-y-3">
+                <li><a href="#" className="text-[14px] text-lightText-secondary dark:text-darkText-secondary hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">Yardım Merkezi</a></li>
+                <li><a href="#" className="text-[14px] text-lightText-secondary dark:text-darkText-secondary hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">Sıkça Sorulan Sorular</a></li>
+                <li><a href="#" className="text-[14px] text-lightText-secondary dark:text-darkText-secondary hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">İletişim</a></li>
+                <li><a href="#" className="text-[14px] text-lightText-secondary dark:text-darkText-secondary hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">Sistem Durumu</a></li>
+              </ul>
+            </div>
+
+            <div className="space-y-4">
+              <h4 className="text-[13px] font-bold text-lightText-primary dark:text-darkText-primary uppercase tracking-wider">Kurumsal</h4>
+              <ul className="space-y-3">
+                <li><a href="#" className="text-[14px] text-lightText-secondary dark:text-darkText-secondary hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">Hakkımızda</a></li>
+                <li><a href="#" className="text-[14px] text-lightText-secondary dark:text-darkText-secondary hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">Gizlilik Politikası</a></li>
+                <li><a href="#" className="text-[14px] text-lightText-secondary dark:text-darkText-secondary hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">Kullanım Şartları</a></li>
+                <li><a href="#" className="text-[14px] text-lightText-secondary dark:text-darkText-secondary hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">KVKK Aydınlatma Metni</a></li>
+              </ul>
+            </div>
+            
           </div>
         </div>
 
-        {/* Column 2: Ürün */}
-        <div className="md:col-span-2 space-y-3">
-          <h4 className="text-xs font-bold text-white uppercase tracking-wider">Ürün</h4>
-          <ul className="space-y-2 text-xs">
-            <li>
-              <a href="#features" className="hover:text-gold transition-colors">
-                Özellikler
-              </a>
-            </li>
-            <li>
-              <a href="#how-it-works" className="hover:text-gold transition-colors">
-                Nasıl Çalışır?
-              </a>
-            </li>
-            <li>
-              <a href="#website" className="hover:text-gold transition-colors">
-                Kişisel Web Sitesi
-              </a>
-            </li>
-            <li>
-              <a href="#pricing" className="hover:text-gold transition-colors">
-                Fiyatlandırma
-              </a>
-            </li>
-          </ul>
-        </div>
-
-        {/* Column 3: Hesabım */}
-        <div className="md:col-span-2 space-y-3">
-          <h4 className="text-xs font-bold text-white uppercase tracking-wider">Hızlı Erişim</h4>
-          <ul className="space-y-2 text-xs">
-            <li>
-              <Link href="/login" className="hover:text-gold transition-colors">
-                Salon Girişi
-              </Link>
-            </li>
-            <li>
-              <Link href="/register" className="hover:text-gold transition-colors">
-                Ücretsiz Kayıt Ol
-              </Link>
-            </li>
-            <li>
-              <Link href="/pricing" className="hover:text-gold transition-colors">
-                Paketler
-              </Link>
-            </li>
-          </ul>
-        </div>
-
-        {/* Column 4: İletişim & Destek */}
-        <div className="md:col-span-3 space-y-3">
-          <h4 className="text-xs font-bold text-white uppercase tracking-wider">İletişim & Destek</h4>
-          <p className="text-xs text-gray-400">
-            Sorularınız veya yardım talepleriniz için bize e-posta gönderebilirsiniz:
+        <div className="pt-8 border-t border-borderlight dark:border-dark-border flex flex-col md:flex-row items-center justify-between gap-4">
+          <p className="text-[13px] text-lightText-muted dark:text-darkText-muted">
+            &copy; {currentYear} Kuaför Art Dijital Çözümler. Tüm hakları saklıdır.
           </p>
-          <a href="mailto:destek@kuafor.art" className="text-xs font-bold text-gold hover:underline block">
-            destek@kuafor.art
-          </a>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-emerald-500" />
+            <span className="text-[12px] font-medium text-lightText-secondary dark:text-darkText-secondary">Sistemler Aktif</span>
+          </div>
         </div>
-      </div>
 
-      {/* Bottom Legal Copyright */}
-      <div className="max-w-7xl mx-auto px-6 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-500">
-        <div>
-          &copy; {new Date().getFullYear()} KuaförArt. Tüm hakları saklıdır.
-        </div>
-        <div className="flex gap-6">
-          <span className="hover:text-gray-400 cursor-pointer">Gizlilik Politikası</span>
-          <span className="hover:text-gray-400 cursor-pointer">Kullanım Koşulları</span>
-        </div>
       </div>
     </footer>
   );
