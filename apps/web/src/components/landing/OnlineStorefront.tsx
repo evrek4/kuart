@@ -42,7 +42,7 @@ export default function OnlineStorefront() {
               </div>
 
               <div className="mt-auto">
-                <div className="w-full py-2.5 rounded bg-navy-900 dark:bg-gold text-white dark:text-navy-950 text-xs font-bold text-center">
+                <div className="w-full py-2.5 rounded-lg bg-[#0B1933] text-white dark:bg-[#F7F8FA] dark:text-[#0B1933] text-xs font-bold text-center">
                   Randevu Al
                 </div>
               </div>
@@ -101,7 +101,7 @@ export default function OnlineStorefront() {
 
           <Link
             href="/register"
-            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-white dark:bg-dark-card border border-borderlight dark:border-dark-border text-lightText-primary dark:text-darkText-primary font-bold rounded-lg transition-colors hover:bg-gray-50 dark:hover:bg-[#12233D] shadow-sm text-[14px]"
+            className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#0B1933] text-white dark:bg-[#F7F8FA] dark:text-[#0B1933] font-bold rounded-lg transition-opacity hover:opacity-90 shadow-sm text-[14px]"
           >
             Örnek Sayfayı İncele
             <ArrowRight className="w-4 h-4" />

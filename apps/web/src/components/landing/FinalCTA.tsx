@@ -26,7 +26,7 @@ export default function FinalCTA() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href="/register"
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-gold hover:bg-gold-400 text-navy-950 font-bold rounded-lg transition-transform hover:-translate-y-0.5 shadow-sm text-[15px]"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 bg-[#F7F8FA] text-[#0B1933] font-bold rounded-lg transition-opacity hover:opacity-90 shadow-sm text-[15px]"
           >
             <span>Hemen Ücretsiz Başla</span>
             <ArrowRight className="w-4 h-4" />
@@ -35,7 +35,7 @@ export default function FinalCTA() {
             href="https://wa.me/905000000000"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-navy-800 hover:bg-navy-700 dark:bg-dark-card dark:hover:bg-dark-highlight border border-navy-700 dark:border-dark-border text-white font-semibold rounded-lg transition-colors text-[15px]"
+            className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-4 bg-transparent border border-white/20 text-[#F7F8FA] font-semibold rounded-lg transition-opacity hover:opacity-90 text-[15px]"
           >
             Satış Ekibiyle Görüş
           </a>

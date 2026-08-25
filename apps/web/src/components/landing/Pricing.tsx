@@ -50,7 +50,7 @@ export default function Pricing() {
 
             <Link
               href="/register"
-              className="w-full py-3.5 text-center bg-gray-50 dark:bg-dark-highlight hover:bg-gray-100 dark:hover:bg-[#12233D] border border-borderlight dark:border-dark-border text-lightText-primary dark:text-darkText-primary font-bold rounded-lg transition-colors text-[14px]"
+              className="w-full py-3.5 text-center bg-transparent border border-[#0B1933] text-[#0B1933] dark:border-white/20 dark:text-[#F7F8FA] font-bold rounded-lg transition-opacity hover:opacity-90 text-[14px]"
             >
               Hemen Başla
             </Link>
@@ -92,7 +92,7 @@ export default function Pricing() {
 
             <Link
               href="/register"
-              className="w-full py-3.5 text-center bg-gold hover:bg-gold-400 text-navy-950 font-bold rounded-lg transition-colors text-[14px] shadow-sm"
+              className="w-full py-3.5 text-center bg-[#0B1933] text-white dark:bg-[#F7F8FA] dark:text-[#0B1933] font-bold rounded-lg transition-opacity hover:opacity-90 text-[14px] shadow-sm"
             >
               14 Gün Ücretsiz Dene
             </Link>

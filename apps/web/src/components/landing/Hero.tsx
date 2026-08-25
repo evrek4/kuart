@@ -68,7 +68,7 @@ export default function Hero() {
           >
             <Link
               href="/register"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-navy-900 text-white dark:bg-gold dark:text-navy-950 font-bold rounded-lg transition-transform hover:-translate-y-0.5 shadow-[0_4px_14px_rgba(11,27,54,0.15)] text-[15px]"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-3.5 bg-[#0B1933] text-white dark:bg-[#F7F8FA] dark:text-[#0B1933] font-bold rounded-lg transition-opacity hover:opacity-90 text-[15px]"
             >
               <span>Ücretsiz Başla</span>
               <ArrowRight className="w-4 h-4" />
@@ -76,7 +76,7 @@ export default function Hero() {
 
             <a
               href="#how-it-works"
-              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 bg-white dark:bg-dark-card border border-borderlight dark:border-dark-border text-lightText-primary dark:text-darkText-primary font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-[#12233D] transition-colors text-[15px]"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-8 py-3.5 bg-transparent border border-[#0B1933] text-[#0B1933] dark:border-white/20 dark:text-[#F7F8FA] font-semibold rounded-lg hover:opacity-90 transition-opacity text-[15px]"
             >
               Nasıl Çalışır?
             </a>

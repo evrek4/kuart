@@ -81,14 +81,14 @@ export default function Navbar() {
 
           <Link
             href="/login"
-            className="text-[15px] font-semibold text-lightText-primary dark:text-darkText-primary hover:text-gold transition-colors"
+            className="px-4 py-2 text-[15px] font-semibold bg-transparent text-[#0B1933] hover:bg-gray-100 dark:text-[#F7F8FA] dark:hover:bg-white/10 rounded-lg transition-colors"
           >
             Giriş Yap
           </Link>
 
           <Link
             href="/register"
-            className="px-5 py-2.5 text-[14px] font-bold text-white bg-navy-900 hover:bg-navy-800 dark:bg-gold dark:text-navy-950 dark:hover:bg-gold-400 rounded-lg transition-all shadow-[0_4px_14px_rgba(11,27,54,0.1)] hover:-translate-y-0.5"
+            className="px-5 py-2.5 text-[14px] font-bold rounded-lg transition-all hover:opacity-90 bg-[#0B1933] text-white dark:bg-[#F7F8FA] dark:text-[#0B1933]"
           >
             Ücretsiz Başla
           </Link>
@@ -128,14 +128,14 @@ export default function Navbar() {
             <Link
               href="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center py-3 rounded-lg border border-borderlight dark:border-dark-border font-semibold text-lightText-primary dark:text-darkText-primary"
+              className="w-full text-center py-3 rounded-lg border border-[#0B1933] bg-transparent text-[#0B1933] hover:bg-gray-100 dark:border-white/20 dark:text-[#F7F8FA] dark:hover:bg-white/10 font-semibold"
             >
               Giriş Yap
             </Link>
             <Link
               href="/register"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center py-3 rounded-lg bg-navy-900 text-white dark:bg-gold dark:text-navy-950 font-bold"
+              className="w-full text-center py-3 rounded-lg bg-[#0B1933] text-white hover:opacity-90 dark:bg-[#F7F8FA] dark:text-[#0B1933] font-bold"
             >
               Ücretsiz Başla
             </Link>
