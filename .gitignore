@@ -33,4 +33,5 @@ yarn-error.log*
 *.log
 *.zip
 env
+under_construction_site/
 
