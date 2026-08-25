@@ -1,0 +1,14 @@
+﻿<IfModule mod_env.c>
+    SetEnv no-gzip 1
+    SetEnv dont-vary 1
+</IfModule>
+<IfModule mod_headers.c>
+    RequestHeader unset Accept-Encoding
+    RequestHeader set X-Forwarded-Proto "https"
+</IfModule>
+RewriteEngine On
+RewriteCond %{HTTP:Upgrade} =websocket [NC]
+RewriteRule /(.*) ws://127.0.0.1:3000/ [P,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ http://127.0.0.1:3000/ [P,L]
