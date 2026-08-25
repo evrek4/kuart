@@ -3,6 +3,7 @@
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
+import Navbar from "@/components/landing/Navbar";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
@@ -78,7 +79,7 @@ function LoginForm() {
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold leading-relaxed"
+          className="mb-6 p-4 rounded-2xl bg-red-50 text-red-800 border border-red-200 dark:bg-red-900/30 dark:text-red-200 dark:border-red-800/50 text-xs font-semibold leading-relaxed"
         >
           ⚠️ {error}
         </motion.div>
@@ -86,7 +87,7 @@ function LoginForm() {
 
       <form onSubmit={handleLogin} className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
-          <label className="text-xs uppercase font-bold text-lightText-secondary dark:text-darkText-secondary tracking-wider">E-Posta Adresi</label>
+          <label className="text-xs uppercase font-bold text-[#0B1933] dark:text-gray-200 tracking-wider">E-Posta Adresi</label>
           <input
             id="login-email"
             type="email"
@@ -94,12 +95,12 @@ function LoginForm() {
             placeholder="salon@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-3.5 text-sm text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20 transition-colors"
+            className="bg-white dark:bg-[#081326] border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3.5 text-sm text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933] transition-colors"
           />
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs uppercase font-bold text-lightText-secondary dark:text-darkText-secondary tracking-wider">Şifre</label>
+          <label className="text-xs uppercase font-bold text-[#0B1933] dark:text-gray-200 tracking-wider">Şifre</label>
           <input
             id="login-password"
             type="password"
@@ -107,7 +108,7 @@ function LoginForm() {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-3.5 text-sm text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20 transition-colors"
+            className="bg-white dark:bg-[#081326] border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-3.5 text-sm text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933] transition-colors"
           />
         </div>
 
@@ -135,15 +136,18 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#081326] text-lightText-primary dark:text-darkText-primary font-sans flex items-center justify-center p-4 relative overflow-hidden">
-      <Suspense fallback={
-        <div className="flex flex-col items-center justify-center gap-3">
-          <div className="w-8 h-8 border-4 border-[#0B1933] dark:border-white border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs uppercase tracking-widest">Yükleniyor...</p>
-        </div>
-      }>
-        <LoginForm />
-      </Suspense>
+    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#081326] text-lightText-primary dark:text-darkText-primary font-sans flex items-center justify-center p-4 relative overflow-hidden">
+      <Navbar />
+      <div className="pt-20 w-full flex items-center justify-center">
+        <Suspense fallback={
+          <div className="flex flex-col items-center justify-center gap-3">
+            <div className="w-8 h-8 border-4 border-[#0B1933] dark:border-white border-t-transparent rounded-full animate-spin" />
+            <p className="text-xs uppercase tracking-widest text-[#0B1933] dark:text-white">Yükleniyor...</p>
+          </div>
+        }>
+          <LoginForm />
+        </Suspense>
+      </div>
     </div>
   );
 }

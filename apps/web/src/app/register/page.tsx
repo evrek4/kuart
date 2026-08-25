@@ -6,6 +6,9 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion, AnimatePresence } from "framer-motion";
+import Navbar from "@/components/landing/Navbar";
+
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
 
 const registerSchema = z.object({
   name: z.string().min(3, "Salon adı en az 3 karakter olmalıdır."),
@@ -65,7 +68,7 @@ function RegisterForm() {
   useEffect(() => {
     async function fetchPlans() {
       try {
-        const res = await fetch("http://localhost:3001/api/storefront/plans");
+        const res = await fetch(`${API_URL}/api/storefront/plans`);
         if (res.ok) {
           const json = await res.json();
           if (json.success) {
@@ -96,7 +99,7 @@ function RegisterForm() {
     setErrorMsg(null);
 
     try {
-      const res = await fetch("http://localhost:3001/api/storefront/register", {
+      const res = await fetch(`${API_URL}/api/storefront/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -159,7 +162,7 @@ function RegisterForm() {
         .find((row) => row.startsWith("kuafor-token="))
         ?.split("=")[1];
 
-      const res = await fetch(`http://localhost:3001/api/payments/checkout`, {
+      const res = await fetch(`${API_URL}/api/payments/checkout`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -192,7 +195,7 @@ function RegisterForm() {
       </div>
 
       {errorMsg && (
-        <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-semibold leading-relaxed">
+        <div className="mb-6 p-4 rounded-2xl bg-red-50 text-red-800 border border-red-200 dark:bg-red-900/30 dark:text-red-200 dark:border-red-800/50 text-xs font-semibold leading-relaxed">
           ⚠️ {errorMsg}
         </div>
       )}
@@ -201,60 +204,65 @@ function RegisterForm() {
       {step === 1 && (
         <form onSubmit={handleSubmit(onSubmitStep1)} className="flex flex-col gap-4 text-xs font-semibold">
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] uppercase font-bold text-gray-500 dark:text-gray-400">Salon / Kuaför Adı *</label>
+            <label className="text-[11px] uppercase font-bold text-[#0B1933] dark:text-gray-200">Salon / Kuaför Adı *</label>
             <input
               type="text"
               placeholder="Prestij Hair Studio"
               {...register("name")}
-              className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
+              className="bg-white dark:bg-[#081326] border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-xs text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933]"
             />
-            {errors.name && <span className="text-red-400 text-[10px]">{errors.name.message}</span>}
+            {errors.name && <span className="text-red-500 dark:text-red-400 text-[10px]">{errors.name.message}</span>}
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Yetkili Ad Soyad *</label>
+            <label className="text-[11px] uppercase font-bold text-[#0B1933] dark:text-gray-200">Yetkili Ad Soyad *</label>
             <input
               type="text"
               placeholder="Ahmet Yılmaz"
               {...register("ownerName")}
-              className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
+              className="bg-white dark:bg-[#081326] border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-xs text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933]"
             />
-            {errors.ownerName && <span className="text-red-400 text-[10px]">{errors.ownerName.message}</span>}
+            {errors.ownerName && <span className="text-red-500 dark:text-red-400 text-[10px]">{errors.ownerName.message}</span>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Telefon Numarası *</label>
+              <label className="text-[11px] uppercase font-bold text-[#0B1933] dark:text-gray-200">Telefon Numarası *</label>
               <input
                 type="tel"
-                placeholder="0532 999 8877"
-                {...register("phone")}
-                className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
+                maxLength={11}
+                placeholder="05329998877"
+                {...register("phone", {
+                  onChange: (e) => {
+                    e.target.value = e.target.value.replace(/\D/g, "");
+                  }
+                })}
+                className="bg-white dark:bg-[#081326] border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-xs text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933]"
               />
-              {errors.phone && <span className="text-red-400 text-[10px]">{errors.phone.message}</span>}
+              {errors.phone && <span className="text-red-500 dark:text-red-400 text-[10px]">{errors.phone.message}</span>}
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">E-Posta Adresi *</label>
+              <label className="text-[11px] uppercase font-bold text-[#0B1933] dark:text-gray-200">E-Posta Adresi *</label>
               <input
                 type="email"
                 placeholder="ahmet@example.com"
                 {...register("email")}
-                className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
+                className="bg-white dark:bg-[#081326] border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-xs text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933]"
               />
-              {errors.email && <span className="text-red-400 text-[10px]">{errors.email.message}</span>}
+              {errors.email && <span className="text-red-500 dark:text-red-400 text-[10px]">{errors.email.message}</span>}
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Yönetici Şifresi *</label>
+            <label className="text-[11px] uppercase font-bold text-[#0B1933] dark:text-gray-200">Yönetici Şifresi *</label>
             <input
               type="password"
               placeholder="••••••••"
               {...register("password")}
-              className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
+              className="bg-white dark:bg-[#081326] border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-xs text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933]"
             />
-            {errors.password && <span className="text-red-400 text-[10px]">{errors.password.message}</span>}
+            {errors.password && <span className="text-red-500 dark:text-red-400 text-[10px]">{errors.password.message}</span>}
           </div>
 
           <button
@@ -275,7 +283,7 @@ function RegisterForm() {
       {step === 2 && (
         <form onSubmit={handleFinalizePlan} className="flex flex-col gap-5 text-xs font-semibold">
           <div className="flex flex-col gap-2">
-            <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Paket Seçimi</label>
+            <label className="text-[11px] uppercase font-bold text-[#0B1933] dark:text-gray-200">Paket Seçimi</label>
             <div className="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1">
               {plans.map((p) => (
                 <div
@@ -320,19 +328,19 @@ function RegisterForm() {
 
               <div className="flex flex-col gap-2 mt-1">
                 <div className="flex flex-col gap-1">
-                  <label className="text-[9px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Kart Üzerindeki İsim</label>
+                  <label className="text-[9px] uppercase font-bold text-[#0B1933] dark:text-gray-200">Kart Üzerindeki İsim</label>
                   <input
                     type="text"
                     required
                     placeholder="Ahmet Yılmaz"
                     value={cardName}
                     onChange={(e) => setCardName(e.target.value)}
-                    className="bg-white dark:bg-[#0A111E] border border-borderlight dark:border-dark-border rounded-lg px-3 py-2 text-[11px] text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
+                    className="bg-white dark:bg-[#0A111E] border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-[11px] text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933]"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[9px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Kart Numarası</label>
+                  <label className="text-[9px] uppercase font-bold text-[#0B1933] dark:text-gray-200">Kart Numarası</label>
                   <input
                     type="text"
                     required
@@ -340,13 +348,13 @@ function RegisterForm() {
                     placeholder="4355 0000 0000 1234"
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, "").replace(/(.{4})/g, "$1 ").trim())}
-                    className="bg-white dark:bg-[#0A111E] border border-borderlight dark:border-dark-border rounded-lg px-3 py-2 text-[11px] text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
+                    className="bg-white dark:bg-[#0A111E] border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-[11px] text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933]"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[9px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">AA/YY</label>
+                    <label className="text-[9px] uppercase font-bold text-[#0B1933] dark:text-gray-200">AA/YY</label>
                     <input
                       type="text"
                       required
@@ -358,11 +366,11 @@ function RegisterForm() {
                         if (val.length > 2) val = val.slice(0, 2) + "/" + val.slice(2);
                         setCardExpiry(val);
                       }}
-                      className="bg-white dark:bg-[#0A111E] border border-borderlight dark:border-dark-border rounded-lg px-3 py-2 text-[11px] text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
+                      className="bg-white dark:bg-[#0A111E] border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-[11px] text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933]"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-[9px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">CVC</label>
+                    <label className="text-[9px] uppercase font-bold text-[#0B1933] dark:text-gray-200">CVC</label>
                     <input
                       type="password"
                       required
@@ -370,7 +378,7 @@ function RegisterForm() {
                       placeholder="***"
                       value={cardCvv}
                       onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, ""))}
-                      className="bg-white dark:bg-[#0A111E] border border-borderlight dark:border-dark-border rounded-lg px-3 py-2 text-[11px] text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
+                      className="bg-white dark:bg-[#0A111E] border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 text-[11px] text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933]"
                     />
                   </div>
                 </div>
@@ -399,15 +407,18 @@ function RegisterForm() {
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#081326] text-lightText-primary dark:text-darkText-primary font-sans flex items-center justify-center p-4 relative overflow-hidden">
-      <Suspense fallback={
-        <div className="flex flex-col items-center justify-center gap-3">
-          <div className="w-8 h-8 border-4 border-[#0B1933] dark:border-white border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs uppercase tracking-widest text-[#0B1933] dark:text-white">Yükleniyor...</p>
-        </div>
-      }>
-        <RegisterForm />
-      </Suspense>
+    <div className="min-h-screen bg-[#F8F9FA] dark:bg-[#081326] text-lightText-primary dark:text-darkText-primary font-sans flex items-center justify-center p-4 relative overflow-hidden">
+      <Navbar />
+      <div className="pt-20 w-full flex items-center justify-center">
+        <Suspense fallback={
+          <div className="flex flex-col items-center justify-center gap-3">
+            <div className="w-8 h-8 border-4 border-[#0B1933] dark:border-white border-t-transparent rounded-full animate-spin" />
+            <p className="text-xs uppercase tracking-widest text-[#0B1933] dark:text-white">Yükleniyor...</p>
+          </div>
+        }>
+          <RegisterForm />
+        </Suspense>
+      </div>
     </div>
   );
 }
