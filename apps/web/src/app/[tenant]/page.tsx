@@ -2,6 +2,8 @@ import { slugify } from "@/lib/slugify";
 import DynamicStorefront from "./DynamicStorefront";
 
 // Next.js Server Side Cache Disabler
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 export const revalidate = 0;
 
 export interface Service {

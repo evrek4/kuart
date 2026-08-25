@@ -12,7 +12,8 @@ import OnlineStorefront from '@/components/landing/OnlineStorefront';
 import Pricing from '@/components/landing/Pricing';
 
 // Super Admin CMS API Endpoint
-const CMS_API_URL = 'http://localhost:3001/api/public/landing';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const CMS_API_URL = `${API_BASE}/api/public/landing`;
 
 export default function LandingPage() {
   const [cmsData, setCmsData] = useState<any>(null);
@@ -29,9 +30,13 @@ export default function LandingPage() {
     fetch(CMS_API_URL)
       .then(res => res.json())
       .then(data => {
-        if (data.success) setCmsData(data.data);
+        if (data.success && data.data) setCmsData(data.data);
+        else setCmsData({ activeSections: {} });
       })
-      .catch(err => console.error("CMS data fetch error:", err));
+      .catch(err => {
+        console.error("CMS data fetch error:", err);
+        setCmsData({ activeSections: {} });
+      });
 
     // Detect and apply theme
     const isDark = document.documentElement.classList.contains('dark') || 

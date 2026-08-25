@@ -1,5 +1,8 @@
 import React from "react";
 
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
 interface DashboardData {
   totalTenants: number;
   activeTenants: number;
@@ -11,9 +14,11 @@ interface DashboardData {
   }>;
 }
 
+const API_BASE = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+
 async function getDashboardData(): Promise<DashboardData | null> {
   try {
-    const res = await fetch("http://localhost:3001/api/admin/dashboard", {
+    const res = await fetch(`${API_BASE}/api/admin/dashboard`, {
       cache: "no-store",
     });
     if (res.ok) {

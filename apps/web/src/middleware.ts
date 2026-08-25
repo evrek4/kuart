@@ -97,7 +97,8 @@ export async function middleware(request: NextRequest) {
   // e.g. "prestijkuafor.com" or a custom domain mapped by users
   if (!isPlatformDomain && !isLocal) {
     try {
-      const res = await fetch(`http://localhost:3001/api/storefront/resolve-domain?host=${hostname}`);
+      const apiBase = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+      const res = await fetch(`${apiBase}/api/storefront/resolve-domain?host=${hostname}`);
       if (res.ok) {
         const data = await res.json();
         if (data.success && data.slug) {
