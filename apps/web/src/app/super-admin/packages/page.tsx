@@ -215,16 +215,16 @@ export default function PackagesPage() {
   return (
     <div className="flex flex-col gap-6 w-full text-neutral-900 dark:text-[#eadef7]">
       {/* Header */}
-      <div className="flex justify-between items-center pb-6 border-b border-neutral-200 dark:border-[#a78bfa]/10">
+      <div className="flex justify-between items-center pb-6 border-b border-borderlight dark:border-dark-border">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 dark:text-white uppercase tracking-tight">ABONELİK PAKETLERİ</h1>
+          <h1 className="text-2xl font-black text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-tight">ABONELİK PAKETLERİ</h1>
           <p className="text-xs text-neutral-500 dark:text-gray-400 mt-1">Salonların satın alabileceği abonelik paketlerini, vitrin durumlarını (Aktif/Pasif) ve toplu üye taşımalarını yönetin.</p>
         </div>
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => setIsCreateOpen(true)}
-          className="px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold shadow-sm dark:shadow-lg dark:shadow-pink-500/10 hover:brightness-110 transition-all"
+          className="px-5 py-2.5 rounded-lg bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933] text-xs font-bold shadow-sm hover:opacity-90 transition-opacity"
         >
           + Yeni Paket Ekle
         </motion.button>
@@ -245,16 +245,16 @@ export default function PackagesPage() {
           {plans.map(plan => (
             <div
               key={plan.id}
-              className={`p-6 rounded-[2rem] border bg-white dark:bg-[#120822]/60 shadow-sm backdrop-blur-md flex flex-col justify-between gap-6 relative transition-colors ${
-                plan.isFree ? "border-neutral-200 dark:border-gray-800" : "border-purple-200 dark:border-[#a78bfa]/20 dark:shadow-purple-500/5"
+              className={`p-6 rounded-xl border bg-white dark:bg-[#081326] shadow-sm flex flex-col justify-between gap-6 relative transition-colors ${
+                plan.isFree ? "border-borderlight dark:border-dark-border" : "border-[#0B1933] dark:border-white"
               }`}
             >
               <div>
                 <div className="flex justify-between items-start">
-                  <h3 className="text-xl font-extrabold text-neutral-900 dark:text-white">{plan.name}</h3>
+                  <h3 className="text-xl font-extrabold text-[#0B1933] dark:text-white">{plan.name}</h3>
                   <div className="flex flex-col gap-1 items-end">
                     <span className={`px-2 py-0.5 rounded text-[8px] font-black tracking-widest uppercase ${
-                      plan.isFree ? "bg-neutral-100 dark:bg-gray-500/10 text-neutral-600 dark:text-gray-400 border border-neutral-200 dark:border-gray-500/20" : "bg-purple-500/10 text-purple-700 dark:text-purple-400 border border-purple-500/20"
+                      plan.isFree ? "bg-gray-100 dark:bg-[#0A111E] text-lightText-secondary dark:text-darkText-secondary border border-borderlight dark:border-dark-border" : "bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933]"
                     }`}>
                       {plan.isFree ? "Ücretsiz" : "Ücretli"}
                     </span>
@@ -265,17 +265,17 @@ export default function PackagesPage() {
                     </span>
                   </div>
                 </div>
-                <div className="text-2xl font-black text-purple-600 dark:text-[#a78bfa] mt-3">{plan.price} TL <span className="text-xs text-neutral-500 dark:text-gray-500 font-bold">/ ay</span></div>
+                <div className="text-2xl font-black text-[#0B1933] dark:text-white mt-3">{plan.price} TL <span className="text-xs text-lightText-secondary dark:text-darkText-secondary font-bold">/ ay</span></div>
                 
-                <ul className="space-y-3 mt-6 border-t border-neutral-100 dark:border-white/5 pt-4 text-xs font-medium text-neutral-700 dark:text-gray-300">
+                <ul className="space-y-3 mt-6 border-t border-borderlight dark:border-dark-border pt-4 text-xs font-medium text-lightText-primary dark:text-darkText-primary">
                   <li className="flex items-center gap-2">
-                    <span className="text-purple-600 dark:text-purple-400">⚡</span> Kotası: <b>{plan.storageLimitMB} MB</b>
+                    <span className="text-[#0B1933] dark:text-white">⚡</span> Kotası: <b>{plan.storageLimitMB} MB</b>
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-purple-600 dark:text-purple-400">📅</span> Max Randevu: <b>{plan.maxAppointments ?? 'Sınırsız'}</b>
+                    <span className="text-[#0B1933] dark:text-white">📅</span> Max Randevu: <b>{plan.maxAppointments ?? 'Sınırsız'}</b>
                   </li>
                   <li className="flex items-center gap-2">
-                    <span className="text-purple-600 dark:text-purple-400">👥</span> Max Personel: <b>{plan.maxStaff ?? 'Sınırsız'}</b>
+                    <span className="text-[#0B1933] dark:text-white">👥</span> Max Personel: <b>{plan.maxStaff ?? 'Sınırsız'}</b>
                   </li>
                   {MASTER_FEATURES.map(feat => {
                     const isIncluded = Array.isArray(plan.features) && plan.features.includes(feat.id);
@@ -291,24 +291,24 @@ export default function PackagesPage() {
                 </ul>
               </div>
 
-              <div className="flex flex-col gap-2 border-t border-neutral-100 dark:border-white/5 pt-4">
+              <div className="flex flex-col gap-2 border-t border-borderlight dark:border-dark-border pt-4">
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleEditClick(plan)}
-                    className="flex-1 py-2 rounded-xl bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/10 hover:bg-neutral-200 dark:hover:bg-white/10 text-xs font-bold text-neutral-700 dark:text-gray-300 transition-colors"
+                    className="flex-1 py-2 rounded-lg bg-gray-50 dark:bg-[#0A111E] border border-borderlight dark:border-dark-border hover:bg-gray-100 dark:hover:bg-dark-highlight text-xs font-bold text-lightText-primary dark:text-darkText-primary transition-colors"
                   >
                     Düzenle
                   </button>
                   <button
                     onClick={() => handleDeleteClick(plan.id)}
-                    className="px-3 py-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-xs font-bold text-red-600 dark:text-red-400 transition-colors"
+                    className="px-3 py-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 text-xs font-bold text-red-600 dark:text-red-400 transition-colors"
                   >
                     Sil
                   </button>
                 </div>
                 <button
                   onClick={() => setMigratingSourcePlan(plan)}
-                  className="w-full py-2 rounded-xl bg-purple-500/10 dark:bg-purple-600/25 border border-purple-500/30 hover:bg-purple-500/20 dark:hover:bg-purple-600/40 text-xs font-bold text-purple-700 dark:text-[#c084fc] transition-colors"
+                  className="w-full py-2 rounded-lg bg-gray-50 dark:bg-[#0A111E] border border-borderlight dark:border-dark-border hover:bg-gray-100 dark:hover:bg-dark-highlight text-xs font-bold text-lightText-primary dark:text-darkText-primary transition-colors"
                 >
                   👥 Üyeleri Başka Pakete Taşı
                 </button>
@@ -326,18 +326,18 @@ export default function PackagesPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-[2rem] border border-neutral-200 dark:border-[#a78bfa]/20 bg-white dark:bg-[#120822] p-6 shadow-2xl relative text-neutral-900 dark:text-[#eadef7] flex flex-col gap-6"
+              className="w-full max-w-lg rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] p-6 shadow-2xl relative text-lightText-primary dark:text-darkText-primary flex flex-col gap-6"
             >
               <button
                 onClick={() => setEditingPlan(null)}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-400 hover:text-neutral-900 dark:text-gray-400 dark:hover:text-white"
+                className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#0A111E] text-lightText-secondary dark:text-darkText-secondary"
               >
                 ✕
               </button>
 
-              <div className="border-b border-neutral-200 dark:border-white/5 pb-4">
-                <h3 className="font-extrabold text-lg text-neutral-900 dark:text-white uppercase tracking-wide">PAKETİ DÜZENLE</h3>
-                <p className="text-xs text-neutral-500 dark:text-gray-400 mt-0.5">{editingPlan.name} Özellikleri</p>
+              <div className="border-b border-borderlight dark:border-dark-border pb-4">
+                <h3 className="font-extrabold text-lg text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-wide">PAKETİ DÜZENLE</h3>
+                <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-0.5">{editingPlan.name} Özellikleri</p>
               </div>
 
               <form onSubmit={handleEditSave} className="flex flex-col gap-4 text-xs font-semibold">
@@ -417,16 +417,16 @@ export default function PackagesPage() {
 
                 {/* Active switch (vitrinde göster) */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="flex items-center gap-2 p-3.5 rounded-xl border border-purple-200 dark:border-[#a78bfa]/20 bg-purple-500/5 dark:bg-[#a78bfa]/5 cursor-pointer">
+                  <label className="flex items-center gap-2 p-3.5 rounded-lg border border-borderlight dark:border-dark-border bg-gray-50 dark:bg-[#0A111E] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={editIsActive}
                       onChange={(e) => setEditIsActive(e.target.checked)}
-                      className="w-4 h-4 rounded text-purple-600 bg-white dark:bg-white/5 border-neutral-300 dark:border-white/10 accent-purple-600"
+                      className="w-4 h-4 rounded text-[#0B1933] bg-white dark:bg-dark-highlight border-borderlight dark:border-dark-border accent-[#0B1933] dark:accent-white"
                     />
                     <div>
-                      <span className="font-bold block text-[11px] text-neutral-900 dark:text-white">Vitrinde Yayında</span>
-                      <span className="text-[9px] text-neutral-500 dark:text-gray-400 font-medium">Bu paket fiyatlandırma ve kayıt sayfalarında kuaförlere gösterilsin.</span>
+                      <span className="font-bold block text-[11px] text-[#0B1933] dark:text-[#F7F8FA]">Vitrinde Yayında</span>
+                      <span className="text-[9px] text-lightText-secondary dark:text-darkText-secondary font-medium">Bu paket fiyatlandırma ve kayıt sayfalarında kuaförlere gösterilsin.</span>
                     </div>
                   </label>
                 </div>
@@ -463,7 +463,7 @@ export default function PackagesPage() {
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isSaving}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-xs tracking-wider uppercase hover:brightness-110 transition-all flex items-center justify-center gap-2 mt-4 shadow-sm"
+                  className="w-full py-3.5 rounded-lg bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933] font-bold text-xs tracking-wider uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 mt-4 shadow-sm"
                 >
                   {isSaving ? (
                     <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -485,18 +485,18 @@ export default function PackagesPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-[2rem] border border-neutral-200 dark:border-[#a78bfa]/20 bg-white dark:bg-[#120822] p-6 shadow-2xl relative text-neutral-900 dark:text-[#eadef7] flex flex-col gap-6"
+              className="w-full max-w-lg rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] p-6 shadow-2xl relative text-lightText-primary dark:text-darkText-primary flex flex-col gap-6"
             >
               <button
                 onClick={() => setIsCreateOpen(false)}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-400 hover:text-neutral-900 dark:text-gray-400 dark:hover:text-white"
+                className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#0A111E] text-lightText-secondary dark:text-darkText-secondary"
               >
                 ✕
               </button>
 
-              <div className="border-b border-neutral-200 dark:border-white/5 pb-4">
-                <h3 className="font-extrabold text-lg text-neutral-900 dark:text-white uppercase tracking-wide">YENİ PAKET EKLE</h3>
-                <p className="text-xs text-neutral-500 dark:text-gray-400 mt-0.5">SaaS platformu için yeni bir ücretlendirme paketi tasarlayın.</p>
+              <div className="border-b border-borderlight dark:border-dark-border pb-4">
+                <h3 className="font-extrabold text-lg text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-wide">YENİ PAKET EKLE</h3>
+                <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-0.5">SaaS platformu için yeni bir ücretlendirme paketi tasarlayın.</p>
               </div>
 
               <form onSubmit={handleCreateSubmit} className="flex flex-col gap-4 text-xs font-semibold">
@@ -624,7 +624,7 @@ export default function PackagesPage() {
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isSaving}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-xs tracking-wider uppercase hover:brightness-110 transition-all flex items-center justify-center gap-2 mt-4 shadow-sm"
+                  className="w-full py-3.5 rounded-lg bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933] font-bold text-xs tracking-wider uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 mt-4 shadow-sm"
                 >
                   {isSaving ? (
                     <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -646,18 +646,18 @@ export default function PackagesPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md rounded-[2rem] border border-neutral-200 dark:border-[#a78bfa]/20 bg-white dark:bg-[#120822] p-6 shadow-2xl relative text-neutral-900 dark:text-[#eadef7] flex flex-col gap-6"
+              className="w-full max-w-md rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] p-6 shadow-2xl relative text-lightText-primary dark:text-darkText-primary flex flex-col gap-6"
             >
               <button
                 onClick={() => { setMigratingSourcePlan(null); setMigrateTargetPlanId(""); }}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-400 hover:text-neutral-900 dark:text-gray-400 dark:hover:text-white"
+                className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#0A111E] text-lightText-secondary dark:text-darkText-secondary"
               >
                 ✕
               </button>
 
-              <div className="border-b border-neutral-200 dark:border-white/5 pb-4">
-                <h3 className="font-extrabold text-lg text-neutral-900 dark:text-white uppercase tracking-wide">👥 TOPLU ÜYE TAŞIMA</h3>
-                <p className="text-xs text-neutral-500 dark:text-gray-400 mt-0.5">
+              <div className="border-b border-borderlight dark:border-dark-border pb-4">
+                <h3 className="font-extrabold text-lg text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-wide">👥 TOPLU ÜYE TAŞIMA</h3>
+                <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-0.5">
                   <b>{migratingSourcePlan.name}</b> paketindeki tüm salon üyelerini topluca başka bir pakete aktarın.
                 </p>
               </div>
@@ -691,7 +691,7 @@ export default function PackagesPage() {
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isMigrating || !migrateTargetPlanId}
-                  className="w-full py-3.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs tracking-wider uppercase hover:brightness-110 transition-all flex items-center justify-center gap-2 mt-2 shadow-sm"
+                  className="w-full py-3.5 rounded-lg bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933] font-bold text-xs tracking-wider uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 mt-2 shadow-sm"
                 >
                   {isMigrating ? (
                     <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

@@ -63,16 +63,13 @@ function LoginForm() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="w-full max-w-md p-8 rounded-[2rem] border border-gray-200 dark:border-[#a78bfa]/20 bg-white/80 dark:bg-[#120822]/80 backdrop-blur-xl shadow-2xl dark:shadow-none relative"
+      className="w-full max-w-md p-8 rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#0D1B32] shadow-sm relative"
     >
-      {/* Glow Border Effect */}
-      <div className="absolute inset-0 rounded-[2rem] border border-pink-500/10 pointer-events-none blur-sm" />
-
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-black tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-purple-400 to-indigo-400 uppercase">
+        <h1 className="text-3xl font-black tracking-tighter text-[#0B1933] dark:text-[#F7F8FA] uppercase">
           KUAFOR.ART
         </h1>
-        <span className="text-[10px] font-bold tracking-widest text-purple-600 dark:text-[#a78bfa] block mt-1 uppercase">
+        <span className="text-[10px] font-bold tracking-widest text-lightText-secondary dark:text-darkText-secondary block mt-1 uppercase">
           Yönetici Portalı Girişi
         </span>
       </div>
@@ -89,7 +86,7 @@ function LoginForm() {
 
       <form onSubmit={handleLogin} className="flex flex-col gap-5">
         <div className="flex flex-col gap-2">
-          <label className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">E-Posta Adresi</label>
+          <label className="text-xs uppercase font-bold text-lightText-secondary dark:text-darkText-secondary tracking-wider">E-Posta Adresi</label>
           <input
             id="login-email"
             type="email"
@@ -97,12 +94,12 @@ function LoginForm() {
             placeholder="salon@example.com"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className="bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-2xl px-4 py-3.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-pink-500/50 transition-colors"
+            className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-3.5 text-sm text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20 transition-colors"
           />
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs uppercase font-bold text-gray-500 dark:text-gray-400 tracking-wider">Şifre</label>
+          <label className="text-xs uppercase font-bold text-lightText-secondary dark:text-darkText-secondary tracking-wider">Şifre</label>
           <input
             id="login-password"
             type="password"
@@ -110,29 +107,27 @@ function LoginForm() {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-2xl px-4 py-3.5 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-pink-500/50 transition-colors"
+            className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-3.5 text-sm text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20 transition-colors"
           />
         </div>
 
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <button
           type="submit"
           id="login-submit"
           disabled={isLoading}
-          className="w-full py-4 rounded-2xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 text-white font-extrabold text-sm hover:brightness-110 transition-all duration-200 shadow-lg flex items-center justify-center gap-2 mt-4"
+          className="w-full py-3.5 rounded-lg bg-[#0B1933] text-white dark:bg-[#F7F8FA] dark:text-[#0B1933] font-bold text-sm transition-opacity hover:opacity-90 shadow-sm flex items-center justify-center gap-2 mt-4"
         >
           {isLoading ? (
-            <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+            <span className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
           ) : (
             "Sisteme Giriş Yap"
           )}
-        </motion.button>
+        </button>
       </form>
 
-      <div className="mt-8 text-center text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+      <div className="mt-8 text-center text-xs text-lightText-secondary dark:text-darkText-secondary leading-relaxed">
         Tüm kuaförler ve süper admin bu ekrandan giriş yapar.<br />
-        <span className="text-purple-600/70 dark:text-[#a78bfa]/60">Rolünüze göre otomatik yönlendirme yapılır.</span>
+        <span className="opacity-80">Rolünüze göre otomatik yönlendirme yapılır.</span>
       </div>
     </motion.div>
   );
@@ -140,15 +135,11 @@ function LoginForm() {
 
 export default function LoginPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-[#07010e] text-gray-900 dark:text-[#eadef7] font-sans flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Neo-Glow Backgrounds */}
-      <div className="absolute top-[20%] left-[20%] w-[350px] h-[350px] rounded-full bg-[#ec4899]/5 dark:bg-[#ec4899]/15 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[20%] right-[20%] w-[350px] h-[350px] rounded-full bg-[#8b5cf6]/5 dark:bg-[#8b5cf6]/15 blur-[100px] pointer-events-none" />
-
+    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#081326] text-lightText-primary dark:text-darkText-primary font-sans flex items-center justify-center p-4 relative overflow-hidden">
       <Suspense fallback={
         <div className="flex flex-col items-center justify-center gap-3">
-          <div className="w-8 h-8 border-4 border-[#a78bfa] border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs uppercase tracking-widest text-[#a78bfa]">Yükleniyor...</p>
+          <div className="w-8 h-8 border-4 border-[#0B1933] dark:border-white border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs uppercase tracking-widest">Yükleniyor...</p>
         </div>
       }>
         <LoginForm />

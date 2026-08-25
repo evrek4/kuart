@@ -162,11 +162,11 @@ export default function SuperAdminCouponsPage() {
   return (
     <div className="flex flex-col gap-8 w-full max-w-6xl mx-auto pb-10 px-4">
       {/* Title */}
-      <div className="border-b border-neutral-200 dark:border-[#a78bfa]/10 pb-4">
-        <h1 className="text-2xl font-black text-neutral-900 dark:text-white tracking-wide uppercase">
+      <div className="border-b border-borderlight dark:border-dark-border pb-4">
+        <h1 className="text-2xl font-black text-[#0B1933] dark:text-[#F7F8FA] tracking-wide uppercase">
           🎟️ Promosyon & İndirim Kuponu Yönetimi
         </h1>
-        <p className="text-xs text-neutral-500 dark:text-[#a78bfa]/60 mt-1">
+        <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-1">
           SaaS paket alımlarında kullanılacak indirim kuponlarını tanımlayın ve denetleyin.
         </p>
       </div>
@@ -185,8 +185,8 @@ export default function SuperAdminCouponsPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
         {/* Creation Form */}
-        <div className="lg:col-span-1 bg-white dark:bg-[#0c051a]/60 border border-neutral-200 dark:border-[#a78bfa]/10 rounded-3xl p-6 flex flex-col gap-6 shadow-sm dark:shadow-xl transition-colors">
-          <h3 className="font-extrabold text-sm uppercase text-neutral-900 dark:text-white tracking-wider border-b border-neutral-200 dark:border-[#a78bfa]/10 pb-2">
+        <div className="lg:col-span-1 bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-xl p-6 flex flex-col gap-6 shadow-sm transition-colors">
+          <h3 className="font-extrabold text-sm uppercase text-[#0B1933] dark:text-[#F7F8FA] tracking-wider border-b border-borderlight dark:border-dark-border pb-2">
             🎟️ Yeni Kupon Oluştur
           </h3>
 
@@ -268,7 +268,7 @@ export default function SuperAdminCouponsPage() {
             <button
               type="submit"
               disabled={submitting}
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#8b5cf6] to-[#ec4899] text-white font-extrabold text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 transition-all shadow-sm dark:shadow-lg"
+              className="w-full py-3.5 rounded-lg bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933] font-extrabold text-xs uppercase tracking-wider hover:opacity-90 active:scale-95 transition-opacity shadow-sm"
             >
               {submitting ? "Oluşturuluyor..." : "Kupon Oluştur"}
             </button>
@@ -276,21 +276,21 @@ export default function SuperAdminCouponsPage() {
         </div>
 
         {/* Coupons List Table */}
-        <div className="lg:col-span-2 bg-white dark:bg-[#0c051a]/60 border border-neutral-200 dark:border-[#a78bfa]/10 rounded-3xl p-6 flex flex-col gap-4 shadow-sm dark:shadow-xl transition-colors">
-          <h3 className="font-extrabold text-sm uppercase text-neutral-900 dark:text-white tracking-wider border-b border-neutral-200 dark:border-[#a78bfa]/10 pb-2">
+        <div className="lg:col-span-2 bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-xl p-6 flex flex-col gap-4 shadow-sm transition-colors">
+          <h3 className="font-extrabold text-sm uppercase text-[#0B1933] dark:text-[#F7F8FA] tracking-wider border-b border-borderlight dark:border-dark-border pb-2">
             🎟️ Aktif ve Tanımlı Kuponlar
           </h3>
 
           {loading ? (
             <div className="py-20 flex flex-col items-center justify-center gap-3">
-              <div className="w-6 h-6 border-2 border-purple-500 border-t-transparent rounded-full animate-spin" />
-              <p className="text-xs text-neutral-500 dark:text-[#a78bfa]/60 uppercase tracking-widest">Yükleniyor...</p>
+              <div className="w-6 h-6 border-2 border-[#0B1933] dark:border-white border-t-transparent rounded-full animate-spin" />
+              <p className="text-xs text-lightText-secondary dark:text-darkText-secondary uppercase tracking-widest">Yükleniyor...</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
-                  <tr className="border-b border-neutral-200 dark:border-[#a78bfa]/10 bg-neutral-50 dark:bg-white/[0.01] text-[10px] font-black text-neutral-500 dark:text-[#a78bfa]/80 uppercase tracking-widest">
+                  <tr className="border-b border-borderlight dark:border-dark-border bg-gray-50 dark:bg-[#0A111E] text-[10px] font-black text-lightText-secondary dark:text-darkText-secondary uppercase tracking-widest">
                     <th className="p-4">Kod</th>
                     <th className="p-4">İndirim</th>
                     <th className="p-4 text-center">Kullanım / Limit</th>
@@ -299,17 +299,17 @@ export default function SuperAdminCouponsPage() {
                     <th className="p-4 text-center">İşlem</th>
                   </tr>
                 </thead>
-                <tbody className="text-xs font-semibold text-neutral-800 dark:text-[#eadef7]/90 divide-y divide-neutral-100 dark:divide-[#a78bfa]/5">
+                <tbody className="text-xs font-semibold text-lightText-primary dark:text-darkText-primary divide-y divide-borderlight dark:divide-dark-border">
                   {coupons.map((c) => {
                     const isExpired = c.expiresAt && new Date(c.expiresAt) < new Date();
                     const isLimitReached = c.maxUses !== null && c.usedCount >= c.maxUses;
 
                     return (
-                      <tr key={c.id} className="hover:bg-neutral-50 dark:hover:bg-white/[0.01] transition-colors">
-                        <td className="p-4 font-mono font-bold text-neutral-900 dark:text-white uppercase tracking-wider">{c.code}</td>
+                      <tr key={c.id} className="hover:bg-gray-50 dark:hover:bg-[#0A111E] transition-colors">
+                        <td className="p-4 font-mono font-bold text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-wider">{c.code}</td>
                         <td className="p-4">
                           {c.discountType === "PERCENTAGE" ? (
-                            <span className="px-2 py-0.5 rounded bg-purple-500/10 border border-purple-500/20 text-purple-700 dark:text-[#a78bfa]">
+                            <span className="px-2 py-0.5 rounded bg-gray-100 dark:bg-dark-highlight border border-borderlight dark:border-dark-border text-[#0B1933] dark:text-[#F7F8FA]">
                               %{c.discountAmount} İndirim
                             </span>
                           ) : (
@@ -319,10 +319,10 @@ export default function SuperAdminCouponsPage() {
                           )}
                         </td>
                         <td className="p-4 text-center">
-                          <span className="font-bold text-neutral-900 dark:text-white">{c.usedCount}</span>
-                          <span className="text-neutral-500 dark:text-[#a78bfa]/50"> / {c.maxUses !== null ? c.maxUses : "Sınırsız"}</span>
+                          <span className="font-bold text-[#0B1933] dark:text-[#F7F8FA]">{c.usedCount}</span>
+                          <span className="text-lightText-secondary dark:text-darkText-secondary"> / {c.maxUses !== null ? c.maxUses : "Sınırsız"}</span>
                         </td>
-                        <td className="p-4 text-neutral-600 dark:text-[#a78bfa]/70">
+                        <td className="p-4 text-lightText-secondary dark:text-darkText-secondary">
                           {c.expiresAt ? new Date(c.expiresAt).toLocaleDateString("tr-TR") : "Süresiz"}
                         </td>
                         <td className="p-4 text-center">

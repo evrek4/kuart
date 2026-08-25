@@ -79,27 +79,17 @@ export default function DashboardLayout({
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 text-neutral-900 dark:text-[#F5F5F5] font-sans flex flex-col md:flex-row relative transition-colors duration-200 ease-in-out">
-      {/* Glow effect backgrounds */}
-      <div className="absolute top-[10%] right-[10%] w-[400px] h-[400px] rounded-full bg-primary/5 blur-[100px] pointer-events-none z-0" />
-      <div className="absolute bottom-[20%] left-[5%] w-[450px] h-[450px] rounded-full bg-primary/5 blur-[120px] pointer-events-none z-0" />
-
+    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#081326] text-lightText-primary dark:text-darkText-primary font-sans flex flex-col md:flex-row relative transition-colors duration-200 ease-in-out">
       {/* MASAÜSTÜ SIDEBAR (md ve üzeri ekranlarda görünür) */}
-      <aside className="hidden md:flex flex-col justify-between w-64 bg-white dark:bg-[#121212] border-r border-neutral-200 dark:border-white/5 h-screen sticky top-0 p-6 z-40 transition-colors duration-200">
+      <aside className="hidden md:flex flex-col justify-between w-64 bg-white dark:bg-[#081326] border-r border-borderlight dark:border-dark-border h-screen sticky top-0 p-6 z-40 transition-colors duration-200">
         <div className="flex flex-col gap-8">
           {/* Logo / Salon Adı — JWT'den dinamik olarak okunur */}
           {/* Logo / Salon Adı — JWT'den dinamik olarak okunur */}
-          <div className="border-b border-neutral-200 dark:border-white/5 pb-4">
-            <h1 className="text-xl font-extrabold tracking-tight text-neutral-900 dark:text-white uppercase">
+          <div className="border-b border-borderlight dark:border-dark-border pb-4">
+            <h1 className="text-xl font-extrabold tracking-tight text-[#0B1933] dark:text-[#F7F8FA] uppercase">
               {tenantName}
             </h1>
-            <span className={`px-2 py-0.5 rounded-full text-[9px] font-black tracking-widest border uppercase block w-fit mt-1 ${
-              planName === 'ELITE' 
-                ? 'bg-purple-500/10 border-purple-500/30 text-purple-500 dark:text-purple-400' 
-                : planName === 'PRO'
-                ? 'bg-primary/10 border-primary/20 text-primary'
-                : 'bg-neutral-500/10 border-neutral-500/20 text-neutral-500 dark:text-neutral-400'
-            }`}>
+            <span className="px-2 py-0.5 rounded-full text-[9px] font-black tracking-widest border border-gray-300 dark:border-gray-600 uppercase block w-fit mt-1 text-lightText-secondary dark:text-darkText-secondary">
               {planName} YÖNETİM
             </span>
 
@@ -108,7 +98,7 @@ export default function DashboardLayout({
               href={tenantSlug ? `/${tenantSlug}` : "/"}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 px-4 py-2 mt-4 text-sm font-medium border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors shadow-sm"
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 mt-4 text-sm font-medium border border-[#0B1933] dark:border-white rounded-lg bg-transparent text-[#0B1933] dark:text-[#F7F8FA] transition-opacity hover:opacity-70 shadow-sm"
             >
               <span>🌐</span>
               <span>VİTRİNİ GÖRÜNTÜLE</span>
@@ -124,18 +114,16 @@ export default function DashboardLayout({
               const isActive = pathname === item.href;
               return (
                 <Link key={item.href} href={item.href} className="w-full">
-                  <motion.div
-                    whileHover={{ x: 4 }}
-                    whileTap={{ scale: 0.98 }}
-                    className={`px-4 py-3 rounded-xl flex items-center gap-3 transition-colors text-sm font-semibold ${
+                  <div
+                    className={`px-4 py-3 rounded-r-lg flex items-center gap-3 transition-colors text-sm font-semibold ${
                       isActive
-                        ? "bg-primary/15 border border-primary/20 text-primary shadow-sm dark:shadow-gold-glow"
-                        : "text-neutral-600 dark:text-gray-400 hover:bg-neutral-100 dark:hover:bg-white/5 hover:text-neutral-900 dark:hover:text-white"
+                        ? "bg-gray-100 dark:bg-[#0D1B32] border-l-4 border-[#0B1933] dark:border-white text-[#0B1933] dark:text-[#F7F8FA]"
+                        : "text-lightText-secondary dark:text-darkText-secondary hover:bg-gray-50 dark:hover:bg-[#0A111E] hover:text-lightText-primary dark:hover:text-darkText-primary border-l-4 border-transparent"
                     }`}
                   >
                     <span>{item.icon}</span>
                     <span>{item.label}</span>
-                  </motion.div>
+                  </div>
                 </Link>
               );
             })}
@@ -145,7 +133,7 @@ export default function DashboardLayout({
         {/* Alt Bilgi + Tema Değiştirici + Çıkış Butonu */}
         <div className="flex flex-col gap-3">
           {tenantSlug && (
-            <div className="text-[9px] text-neutral-500 dark:text-gray-400 font-medium truncate">
+            <div className="text-[9px] text-lightText-secondary dark:text-darkText-secondary font-medium truncate">
               🌐 {tenantSlug}.kuafor.art
             </div>
           )}
@@ -155,32 +143,28 @@ export default function DashboardLayout({
                 document.cookie = "kuafor-token=; path=/; max-age=0; SameSite=Lax";
                 router.replace("/login");
               }}
-              className="text-xs text-neutral-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400 transition-colors font-semibold text-left"
+              className="text-xs text-lightText-secondary dark:text-darkText-secondary hover:opacity-70 transition-opacity font-semibold text-left"
             >
               ⬅ Çıkış Yap
             </button>
             <ThemeToggle />
           </div>
-          <div className="border-t border-neutral-200 dark:border-white/5 pt-3 text-center text-[10px] text-neutral-400 dark:text-gray-500 font-medium">
+          <div className="border-t border-borderlight dark:border-dark-border pt-3 text-center text-[10px] text-lightText-secondary dark:text-darkText-secondary font-medium">
             Kuafor.art Core v1.2
           </div>
         </div>
       </aside>
 
       {/* MOBİL VE TABLET LAYOUT İÇİN TOP NAVBAR */}
-      <header className="md:hidden w-full px-6 py-4 bg-white dark:bg-[#121212] border-b border-neutral-200 dark:border-white/5 flex justify-between items-center sticky top-0 z-30 transition-colors duration-200">
+      <header className="md:hidden w-full px-6 py-4 bg-white dark:bg-[#081326] border-b border-borderlight dark:border-dark-border flex justify-between items-center sticky top-0 z-30 transition-colors duration-200">
         <div>
           {/* Salon adı JWT'den dinamik — hardcoded değil */}
-          <h1 className="text-md font-extrabold text-neutral-900 dark:text-white tracking-tight uppercase">
+          <h1 className="text-md font-extrabold text-[#0B1933] dark:text-[#F7F8FA] tracking-tight uppercase">
             {tenantName}
           </h1>
-          <span className={`text-[8px] font-black tracking-widest uppercase block mt-0.5 ${
-            planName === 'ELITE'
-              ? 'text-purple-500 dark:text-purple-400'
-              : planName === 'PRO'
-              ? 'text-primary'
-              : 'text-neutral-500 dark:text-neutral-400'
-          }`}>{planName}</span>
+          <span className="text-[8px] font-black tracking-widest uppercase block mt-0.5 text-lightText-secondary dark:text-darkText-secondary">
+            {planName}
+          </span>
         </div>
         <div className="flex items-center gap-3">
           <a
@@ -209,20 +193,19 @@ export default function DashboardLayout({
       </main>
 
       {/* MOBİL BOTTOM NAVIGATION BAR (Sadece mobilde ekranın altında sabit kalır) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white/95 dark:bg-[#121212]/95 backdrop-blur-md border-t border-neutral-200 dark:border-white/5 flex justify-around items-center px-2 z-40 transition-colors duration-200">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 h-16 bg-white dark:bg-[#081326] border-t border-borderlight dark:border-dark-border flex justify-around items-center px-2 z-40 transition-colors duration-200">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
           return (
             <Link key={item.href} href={item.href} className="flex flex-col items-center justify-center flex-1 py-1">
-              <motion.div
-                whileTap={{ scale: 0.9 }}
-                className={`flex flex-col items-center justify-center gap-1 transition-colors ${
-                  isActive ? "text-primary font-bold" : "text-neutral-500 dark:text-gray-400 hover:text-neutral-900 dark:hover:text-white"
-                }`}
-              >
-                <span className="text-lg">{item.icon}</span>
-                <span className="text-[9px] font-extrabold tracking-wide uppercase">{item.label}</span>
-              </motion.div>
+                <div
+                  className={`flex flex-col items-center justify-center gap-1 transition-colors ${
+                    isActive ? "text-[#0B1933] dark:text-[#F7F8FA] font-bold" : "text-lightText-secondary dark:text-darkText-secondary"
+                  }`}
+                >
+                  <span className="text-lg">{item.icon}</span>
+                  <span className="text-[9px] font-extrabold tracking-wide uppercase">{item.label}</span>
+                </div>
             </Link>
           );
         })}

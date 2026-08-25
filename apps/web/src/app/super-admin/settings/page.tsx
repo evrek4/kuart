@@ -177,31 +177,31 @@ export default function SettingsPage() {
             initial={{ opacity: 0, y: -50, x: "-50%" }}
             animate={{ opacity: 1, y: 0, x: "-50%" }}
             exit={{ opacity: 0, y: -20, x: "-50%" }}
-            className="fixed top-6 left-1/2 z-50 px-6 py-3 rounded-full border border-purple-200 dark:border-purple-500/30 bg-white/95 dark:bg-[#120822]/90 backdrop-blur-md text-purple-700 dark:text-purple-400 font-semibold text-sm shadow-xl flex items-center gap-2"
+            className="fixed top-6 left-1/2 z-50 px-6 py-3 rounded-xl border border-borderlight dark:border-dark-border bg-white/95 dark:bg-[#081326]/90 backdrop-blur-md text-[#0B1933] dark:text-[#F7F8FA] font-semibold text-sm shadow-xl flex items-center gap-2"
           >
-            <span className="w-2 h-2 rounded-full bg-purple-500 animate-ping" />
+            <span className="w-2 h-2 rounded-full bg-[#0B1933] dark:bg-white animate-ping" />
             {notification}
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Header */}
-      <div className="pb-6 border-b border-neutral-200 dark:border-[#a78bfa]/10">
-        <h1 className="text-2xl font-black text-neutral-900 dark:text-white uppercase tracking-tight">SİSTEM ALTYAPISI</h1>
-        <p className="text-xs text-neutral-500 dark:text-gray-400 mt-1">Platform genelinde kullanılan 3. parti entegrasyon anahtarlarını yapılandırın (Kuaförler bu ayarları göremez).</p>
+      <div className="pb-6 border-b border-borderlight dark:border-dark-border">
+        <h1 className="text-2xl font-black text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-tight">SİSTEM ALTYAPISI</h1>
+        <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-1">Platform genelinde kullanılan 3. parti entegrasyon anahtarlarını yapılandırın (Kuaförler bu ayarları göremez).</p>
       </div>
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <span className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+          <span className="w-8 h-8 border-4 border-[#0B1933] dark:border-white border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
         <div className="flex flex-col gap-6 max-w-4xl">
           {/* Cloudflare R2 Card */}
-          <div className="p-8 rounded-[2rem] border border-neutral-200 dark:border-[#a78bfa]/10 bg-white dark:bg-[#120822]/60 shadow-sm dark:shadow-xl backdrop-blur-md flex flex-col gap-6 transition-colors">
+          <div className="p-8 rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] shadow-sm flex flex-col gap-6 transition-colors">
             <div>
-              <h3 className="font-extrabold text-base text-neutral-900 dark:text-white uppercase tracking-wide">☁️ Cloudflare R2 Medya Depolama & CDN</h3>
-              <p className="text-xs text-neutral-500 dark:text-gray-400 mt-1">Salon sahiplerinin galeriye yüklediği fotoğrafların saklanacağı S3 uyumlu R2 ve CDN ayarları.</p>
+              <h3 className="font-extrabold text-base text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-wide">☁️ Cloudflare R2 Medya Depolama & CDN</h3>
+              <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-1">Salon sahiplerinin galeriye yüklediği fotoğrafların saklanacağı S3 uyumlu R2 ve CDN ayarları.</p>
             </div>
 
             <form onSubmit={handleR2Submit} className="flex flex-col gap-4">
@@ -264,7 +264,7 @@ export default function SettingsPage() {
               <button
                 type="submit"
                 disabled={savingR2}
-                className="w-full py-3 rounded-xl bg-purple-600 text-white font-extrabold text-xs uppercase tracking-wider hover:brightness-110 shadow-sm dark:shadow-lg flex items-center justify-center gap-2 mt-2"
+                className="w-full py-3.5 rounded-lg bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933] font-bold text-xs uppercase tracking-wider hover:opacity-90 shadow-sm flex items-center justify-center gap-2 mt-2"
               >
                 {savingR2 ? (
                   <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -276,14 +276,14 @@ export default function SettingsPage() {
           </div>
 
           {/* SMS API Integration */}
-          <div className="p-8 rounded-[2rem] border border-neutral-200 dark:border-[#a78bfa]/10 bg-white dark:bg-[#120822]/60 shadow-sm dark:shadow-xl backdrop-blur-md flex flex-col gap-6 transition-colors">
+          <div className="p-8 rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] shadow-sm flex flex-col gap-6 transition-colors">
             <div>
-              <h3 className="font-extrabold text-base text-neutral-900 dark:text-white uppercase tracking-wide">💬 SMS & Sanal POS API Entegrasyonları</h3>
-              <p className="text-xs text-neutral-500 dark:text-gray-400 mt-1">Platform genelinde gönderilen OTP, randevu hatırlatma ve ortak Sanal POS API ayarları.</p>
+              <h3 className="font-extrabold text-base text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-wide">💬 SMS & Sanal POS API Entegrasyonları</h3>
+              <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-1">Platform genelinde gönderilen OTP, randevu hatırlatma ve ortak Sanal POS API ayarları.</p>
             </div>
 
             <form onSubmit={handlePrismaSubmit} className="flex flex-col gap-4">
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-neutral-200 dark:border-white/5 pb-6 mb-2">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-b border-borderlight dark:border-dark-border pb-6 mb-2">
                 <div className="flex flex-col gap-1.5">
                   <label className="text-[10px] uppercase font-bold text-neutral-600 dark:text-gray-400">SMS Servis Sağlayıcı</label>
                   <select
@@ -356,7 +356,7 @@ export default function SettingsPage() {
               <button
                 type="submit"
                 disabled={savingPrisma}
-                className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-extrabold text-xs uppercase tracking-wider hover:brightness-110 shadow-sm dark:shadow-lg flex items-center justify-center gap-2 mt-4"
+                className="w-full py-3.5 rounded-lg bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933] font-bold text-xs uppercase tracking-wider hover:opacity-90 shadow-sm flex items-center justify-center gap-2 mt-4"
               >
                 {savingPrisma ? (
                   <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />

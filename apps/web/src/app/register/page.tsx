@@ -182,14 +182,11 @@ function RegisterForm() {
   };
 
   return (
-    <div className="w-full max-w-lg p-8 rounded-[2.5rem] border border-gray-200 dark:border-[#a78bfa]/20 bg-white/80 dark:bg-[#120822]/80 backdrop-blur-xl shadow-2xl dark:shadow-none relative">
-      {/* Glow border background */}
-      <div className="absolute inset-0 rounded-[2.5rem] border border-pink-500/10 pointer-events-none blur-sm" />
-
+    <div className="w-full max-w-lg p-8 rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#0D1B32] shadow-sm relative">
       {/* Header */}
       <div className="text-center mb-8">
-        <h2 className="text-3xl font-black text-gray-900 dark:text-white uppercase tracking-tight">SALON KURULUMU</h2>
-        <span className="text-[10px] font-bold tracking-widest text-purple-600 dark:text-[#a78bfa] block mt-1 uppercase">
+        <h2 className="text-3xl font-black text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-tight">SALON KURULUMU</h2>
+        <span className="text-[10px] font-bold tracking-widest text-lightText-secondary dark:text-darkText-secondary block mt-1 uppercase">
           Adım {step} / 2: {step === 1 ? "Salon & Yönetici Bilgileri" : "Abonelik Paketi Seçimi"}
         </span>
       </div>
@@ -209,70 +206,68 @@ function RegisterForm() {
               type="text"
               placeholder="Prestij Hair Studio"
               {...register("name")}
-              className="bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-pink-500/50"
+              className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
             />
             {errors.name && <span className="text-red-400 text-[10px]">{errors.name.message}</span>}
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] uppercase font-bold text-gray-500 dark:text-gray-400">Yetkili Ad Soyad *</label>
+            <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Yetkili Ad Soyad *</label>
             <input
               type="text"
               placeholder="Ahmet Yılmaz"
               {...register("ownerName")}
-              className="bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-pink-500/50"
+              className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
             />
             {errors.ownerName && <span className="text-red-400 text-[10px]">{errors.ownerName.message}</span>}
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] uppercase font-bold text-gray-500 dark:text-gray-400">Telefon Numarası *</label>
+              <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Telefon Numarası *</label>
               <input
                 type="tel"
                 placeholder="0532 999 8877"
                 {...register("phone")}
-                className="bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-pink-500/50"
+                className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
               />
               {errors.phone && <span className="text-red-400 text-[10px]">{errors.phone.message}</span>}
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] uppercase font-bold text-gray-500 dark:text-gray-400">E-Posta Adresi *</label>
+              <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">E-Posta Adresi *</label>
               <input
                 type="email"
                 placeholder="ahmet@example.com"
                 {...register("email")}
-                className="bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-pink-500/50"
+                className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
               />
               {errors.email && <span className="text-red-400 text-[10px]">{errors.email.message}</span>}
             </div>
           </div>
 
           <div className="flex flex-col gap-1.5">
-            <label className="text-[11px] uppercase font-bold text-gray-500 dark:text-gray-400">Yönetici Şifresi *</label>
+            <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Yönetici Şifresi *</label>
             <input
               type="password"
               placeholder="••••••••"
               {...register("password")}
-              className="bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-gray-900 dark:text-white focus:outline-none focus:border-pink-500/50"
+              className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border rounded-lg px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
             />
             {errors.password && <span className="text-red-400 text-[10px]">{errors.password.message}</span>}
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             type="submit"
             disabled={isLoading}
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-xs tracking-wider uppercase hover:brightness-110 transition-all flex items-center justify-center gap-2 mt-4"
+            className="w-full py-3.5 rounded-lg bg-[#0B1933] text-white dark:bg-[#F7F8FA] dark:text-[#0B1933] font-bold text-xs tracking-wider uppercase transition-opacity hover:opacity-90 flex items-center justify-center gap-2 mt-4 shadow-sm"
           >
             {isLoading ? (
-              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
             ) : (
               "Kaydı Başlat & Devam Et"
             )}
-          </motion.button>
+          </button>
         </form>
       )}
 
@@ -280,7 +275,7 @@ function RegisterForm() {
       {step === 2 && (
         <form onSubmit={handleFinalizePlan} className="flex flex-col gap-5 text-xs font-semibold">
           <div className="flex flex-col gap-2">
-            <label className="text-[11px] uppercase font-bold text-gray-500 dark:text-gray-400">Paket Seçimi</label>
+            <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Paket Seçimi</label>
             <div className="flex flex-col gap-2 max-h-48 overflow-y-auto pr-1">
               {plans.map((p) => (
                 <div
@@ -289,58 +284,59 @@ function RegisterForm() {
                     setSelectedPlan(p);
                     setErrorMsg(null);
                   }}
-                  className={`p-3.5 rounded-xl border cursor-pointer transition-all flex justify-between items-center ${
+                  className={`p-3.5 rounded-lg border cursor-pointer transition-colors flex justify-between items-center ${
                     selectedPlan?.id === p.id
-                      ? "border-pink-500 bg-pink-500/5 shadow-md"
-                      : "border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-white/[0.02] hover:bg-gray-100 dark:hover:bg-white/[0.05]"
+                      ? "border-[#0B1933] bg-gray-50 dark:border-white/50 dark:bg-dark-highlight shadow-sm"
+                      : "border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] hover:bg-gray-50 dark:hover:bg-[#0A111E]"
                   }`}
                 >
                   <div className="flex items-center gap-2.5">
                     <div className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center ${
-                      selectedPlan?.id === p.id ? "border-pink-500 bg-pink-500" : "border-gray-300 dark:border-white/20"
+                      selectedPlan?.id === p.id ? "border-[#0B1933] bg-[#0B1933] dark:border-white dark:bg-white" : "border-gray-300 dark:border-white/20"
                     }`}>
-                      {selectedPlan?.id === p.id && <div className="w-1.5 h-1.5 rounded-full bg-white" />}
+                      {selectedPlan?.id === p.id && <div className="w-1.5 h-1.5 rounded-full bg-white dark:bg-[#0B1933]" />}
                     </div>
                     <div>
-                      <span className="font-bold block text-gray-900 dark:text-white text-[11px]">{p.name}</span>
-                      <span className="text-[9px] text-gray-500 dark:text-gray-400 font-medium">Kota: {p.storageLimitMB} MB</span>
+                      <span className="font-bold block text-lightText-primary dark:text-darkText-primary text-[11px]">{p.name}</span>
+                      <span className="text-[9px] text-lightText-secondary dark:text-darkText-secondary font-medium">Kota: {p.storageLimitMB} MB</span>
                     </div>
                   </div>
-                  <span className="font-black text-pink-500 dark:text-pink-400">{p.price} TL / ay</span>
+                  <span className="font-bold text-[#0B1933] dark:text-[#F7F8FA]">{p.price} TL / ay</span>
                 </div>
+              ))}
+            </div>
+          </div>
               ))}
             </div>
           </div>
 
           {/* POS Credit Card Form for Paid Plans */}
           {selectedPlan && !(selectedPlan.isFree || selectedPlan.price === 0) && (
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col gap-3.5 p-4 rounded-2xl border border-pink-500/20 bg-gray-50 dark:bg-white/[0.02]"
+            <div
+              className="flex flex-col gap-3.5 p-4 rounded-lg border border-borderlight dark:border-dark-border bg-gray-50 dark:bg-[#081326]"
             >
               <div className="text-center">
-                <span className="text-[10px] font-black uppercase text-pink-500 dark:text-pink-400 tracking-wider">💳 Sanal POS Güvenli Ödeme</span>
-                <p className="text-[9px] text-gray-500 dark:text-gray-400 mt-0.5">
-                  Aboneliğinizin başlatılması için <b className="text-gray-900 dark:text-white">{selectedPlan.price} TL</b> tahsil edilecektir.
+                <span className="text-[10px] font-black uppercase text-[#0B1933] dark:text-[#F7F8FA] tracking-wider">💳 Sanal POS Güvenli Ödeme</span>
+                <p className="text-[9px] text-lightText-secondary dark:text-darkText-secondary mt-0.5">
+                  Aboneliğinizin başlatılması için <b className="text-lightText-primary dark:text-darkText-primary">{selectedPlan.price} TL</b> tahsil edilecektir.
                 </p>
               </div>
 
               <div className="flex flex-col gap-2 mt-1">
                 <div className="flex flex-col gap-1">
-                  <label className="text-[9px] uppercase font-bold text-gray-500 dark:text-gray-400">Kart Üzerindeki İsim</label>
+                  <label className="text-[9px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Kart Üzerindeki İsim</label>
                   <input
                     type="text"
                     required
                     placeholder="Ahmet Yılmaz"
                     value={cardName}
                     onChange={(e) => setCardName(e.target.value)}
-                    className="bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-2 text-[11px] text-gray-900 dark:text-white focus:outline-none"
+                    className="bg-white dark:bg-[#0A111E] border border-borderlight dark:border-dark-border rounded-lg px-3 py-2 text-[11px] text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
                   />
                 </div>
 
                 <div className="flex flex-col gap-1">
-                  <label className="text-[9px] uppercase font-bold text-gray-500 dark:text-gray-400">Kart Numarası</label>
+                  <label className="text-[9px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Kart Numarası</label>
                   <input
                     type="text"
                     required
@@ -348,13 +344,13 @@ function RegisterForm() {
                     placeholder="4355 0000 0000 1234"
                     value={cardNumber}
                     onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, "").replace(/(.{4})/g, "$1 ").trim())}
-                    className="bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-2 text-[11px] text-gray-900 dark:text-white focus:outline-none"
+                    className="bg-white dark:bg-[#0A111E] border border-borderlight dark:border-dark-border rounded-lg px-3 py-2 text-[11px] text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="flex flex-col gap-1">
-                    <label className="text-[9px] uppercase font-bold text-gray-500 dark:text-gray-400">AA/YY</label>
+                    <label className="text-[9px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">AA/YY</label>
                     <input
                       type="text"
                       required
@@ -366,11 +362,11 @@ function RegisterForm() {
                         if (val.length > 2) val = val.slice(0, 2) + "/" + val.slice(2);
                         setCardExpiry(val);
                       }}
-                      className="bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-2 text-[11px] text-gray-900 dark:text-white focus:outline-none"
+                      className="bg-white dark:bg-[#0A111E] border border-borderlight dark:border-dark-border rounded-lg px-3 py-2 text-[11px] text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
                     />
                   </div>
                   <div className="flex flex-col gap-1">
-                    <label className="text-[9px] uppercase font-bold text-gray-500 dark:text-gray-400">CVC</label>
+                    <label className="text-[9px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">CVC</label>
                     <input
                       type="password"
                       required
@@ -378,29 +374,27 @@ function RegisterForm() {
                       placeholder="***"
                       value={cardCvv}
                       onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, ""))}
-                      className="bg-white dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-lg px-3 py-2 text-[11px] text-gray-900 dark:text-white focus:outline-none"
+                      className="bg-white dark:bg-[#0A111E] border border-borderlight dark:border-dark-border rounded-lg px-3 py-2 text-[11px] text-lightText-primary dark:text-darkText-primary focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-white/20 focus:border-[#0B1933] dark:focus:border-white/20"
                     />
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
 
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
+          <button
             type="submit"
             disabled={isLoading || !selectedPlan}
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-xs tracking-wider uppercase hover:brightness-110 transition-all flex items-center justify-center gap-2 mt-2 shadow-lg"
+            className="w-full py-3.5 rounded-lg bg-[#0B1933] text-white dark:bg-[#F7F8FA] dark:text-[#0B1933] font-bold text-xs tracking-wider uppercase transition-opacity hover:opacity-90 flex items-center justify-center gap-2 mt-2 shadow-sm"
           >
             {isLoading ? (
-              <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
             ) : (selectedPlan?.isFree || selectedPlan?.price === 0) ? (
               "Kurulumu Tamamla ve Giriş Yap"
             ) : (
               `Güvenli Şekilde ${selectedPlan?.price} TL Öde ve Tamamla`
             )}
-          </motion.button>
+          </button>
         </form>
       )}
     </div>
@@ -409,15 +403,11 @@ function RegisterForm() {
 
 export default function RegisterPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-[#07010e] text-gray-900 dark:text-[#eadef7] font-sans flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Background glow graphics */}
-      <div className="absolute top-[20%] left-[20%] w-[350px] h-[350px] rounded-full bg-[#ec4899]/5 dark:bg-[#ec4899]/15 blur-[100px] pointer-events-none" />
-      <div className="absolute bottom-[20%] right-[20%] w-[350px] h-[350px] rounded-full bg-[#8b5cf6]/5 dark:bg-[#8b5cf6]/15 blur-[100px] pointer-events-none" />
-
+    <div className="min-h-screen bg-[#FAFAFA] dark:bg-[#081326] text-lightText-primary dark:text-darkText-primary font-sans flex items-center justify-center p-4 relative overflow-hidden">
       <Suspense fallback={
         <div className="flex flex-col items-center justify-center gap-3">
-          <div className="w-8 h-8 border-4 border-pink-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-xs uppercase tracking-widest text-pink-500">Yükleniyor...</p>
+          <div className="w-8 h-8 border-4 border-[#0B1933] dark:border-white border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs uppercase tracking-widest text-[#0B1933] dark:text-white">Yükleniyor...</p>
         </div>
       }>
         <RegisterForm />

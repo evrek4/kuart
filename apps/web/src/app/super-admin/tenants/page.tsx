@@ -216,16 +216,16 @@ export default function TenantsPage() {
   return (
     <div className="flex flex-col gap-6 w-full text-neutral-900 dark:text-[#eadef7]">
       {/* Header with New Tenant Button */}
-      <div className="flex justify-between items-center pb-6 border-b border-neutral-200 dark:border-[#a78bfa]/10">
+      <div className="flex justify-between items-center pb-6 border-b border-borderlight dark:border-dark-border">
         <div>
-          <h1 className="text-2xl font-black text-neutral-900 dark:text-white uppercase tracking-tight">MAĞAZA YÖNETİMİ</h1>
-          <p className="text-xs text-neutral-500 dark:text-gray-400 mt-1">Sistemdeki tüm kuaför salonlarının limitlerini, paketlerini ve aktiflik durumlarını yönetin.</p>
+          <h1 className="text-2xl font-black text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-tight">MAĞAZA YÖNETİMİ</h1>
+          <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-1">Sistemdeki tüm kuaför salonlarının limitlerini, paketlerini ve aktiflik durumlarını yönetin.</p>
         </div>
         <motion.button
           whileHover={{ scale: 1.03 }}
           whileTap={{ scale: 0.97 }}
           onClick={() => setIsCreateOpen(true)}
-          className="px-5 py-2.5 rounded-full bg-gradient-to-r from-pink-500 to-purple-600 text-white text-xs font-bold shadow-sm dark:shadow-lg dark:shadow-pink-500/10 hover:brightness-110 transition-all"
+          className="px-5 py-2.5 rounded-lg bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933] text-xs font-bold shadow-sm hover:opacity-90 transition-opacity"
         >
           + Yeni Kuaför Ekle
         </motion.button>
@@ -233,13 +233,13 @@ export default function TenantsPage() {
 
       {isLoading ? (
         <div className="flex items-center justify-center py-20">
-          <span className="w-8 h-8 border-4 border-purple-500 border-t-transparent rounded-full animate-spin" />
+          <span className="w-8 h-8 border-4 border-[#0B1933] dark:border-white border-t-transparent rounded-full animate-spin" />
         </div>
       ) : (
-        <div className="p-6 rounded-3xl border border-neutral-200 dark:border-[#a78bfa]/10 bg-white dark:bg-[#120822]/60 shadow-sm backdrop-blur-md overflow-x-auto min-w-0 w-full">
-          <table className="w-full text-left text-sm border-collapse text-neutral-800 dark:text-[#eadef7]">
+        <div className="p-6 rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] shadow-sm overflow-x-auto min-w-0 w-full">
+          <table className="w-full text-left text-sm border-collapse text-lightText-primary dark:text-darkText-primary">
             <thead>
-              <tr className="border-b border-neutral-200 dark:border-white/5 text-neutral-500 dark:text-gray-400 text-xs uppercase tracking-wider">
+              <tr className="border-b border-borderlight dark:border-dark-border text-lightText-secondary dark:text-darkText-secondary text-xs uppercase tracking-wider">
                 <th className="py-4 px-4 font-bold">Salon Adı / URL</th>
                 <th className="py-4 px-4 font-bold">Abonelik Paketi</th>
                 <th className="py-4 px-4 font-bold">Ödeme Durumu</th>
@@ -251,13 +251,13 @@ export default function TenantsPage() {
             </thead>
             <tbody>
               {tenants.map(tenant => (
-                <tr key={tenant.id} className="border-b border-neutral-100 dark:border-white/5 hover:bg-neutral-50 dark:hover:bg-white/[0.02] transition-colors">
+                <tr key={tenant.id} className="border-b border-borderlight dark:border-dark-border hover:bg-gray-50 dark:hover:bg-[#0A111E] transition-colors">
                   <td className="py-4 px-4">
-                    <div className="font-bold text-neutral-900 dark:text-white text-sm">{tenant.name}</div>
-                    <div className="text-[11px] text-neutral-500 dark:text-gray-400 font-mono mt-0.5">kuafor.art/{tenant.slug}</div>
+                    <div className="font-bold text-[#0B1933] dark:text-[#F7F8FA] text-sm">{tenant.name}</div>
+                    <div className="text-[11px] text-lightText-secondary dark:text-darkText-secondary font-mono mt-0.5">kuafor.art/{tenant.slug}</div>
                   </td>
                   <td className="py-4 px-4">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-purple-500/10 border border-purple-500/20 text-purple-700 dark:text-purple-300">
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-gray-100 dark:bg-dark-highlight border border-borderlight dark:border-dark-border text-lightText-secondary dark:text-darkText-secondary">
                       {tenant.plan?.name || "Yükleniyor..."}
                     </span>
                   </td>
@@ -270,15 +270,15 @@ export default function TenantsPage() {
                       {tenant.billingStatus === "ACTIVE" ? "Ödendi" : tenant.billingStatus}
                     </span>
                   </td>
-                  <td className="py-4 px-4 font-semibold text-neutral-700 dark:text-gray-300">
+                  <td className="py-4 px-4 font-semibold text-lightText-primary dark:text-darkText-primary">
                     {Math.round(tenant.mediaCapacity / (1024 * 1024))} MB
                   </td>
-                  <td className="py-4 px-4 font-semibold text-neutral-600 dark:text-gray-400">
+                  <td className="py-4 px-4 font-semibold text-lightText-secondary dark:text-darkText-secondary">
                     {tenant.nextBillingDate ? new Date(tenant.nextBillingDate).toLocaleDateString('tr-TR') : "-"}
                   </td>
                   <td className="py-4 px-4">
                     <span className={`w-2 h-2 rounded-full inline-block ${tenant.isActive ? "bg-green-500" : "bg-red-500"}`} />
-                    <span className="text-xs font-semibold ml-2 text-neutral-700 dark:text-gray-300">
+                    <span className="text-xs font-semibold ml-2 text-lightText-primary dark:text-darkText-primary">
                       {tenant.isActive ? "Aktif" : "Askıda"}
                     </span>
                   </td>
@@ -286,13 +286,13 @@ export default function TenantsPage() {
                     <div className="flex gap-2 justify-end">
                       <button
                         onClick={() => handleEditClick(tenant)}
-                        className="px-3 py-1.5 rounded-xl border border-purple-200 dark:border-[#a78bfa]/20 bg-neutral-50 dark:bg-[#120822] hover:bg-purple-50 dark:hover:bg-purple-950 text-[11px] font-bold text-purple-700 dark:text-[#a78bfa] transition-colors"
+                        className="px-3 py-1.5 rounded-lg border border-borderlight dark:border-dark-border bg-gray-50 dark:bg-[#0A111E] hover:bg-gray-100 dark:hover:bg-dark-highlight text-[11px] font-bold text-lightText-primary dark:text-darkText-primary transition-colors"
                       >
                         Düzenle
                       </button>
                       <button
                         onClick={() => setGiftingTenant(tenant)}
-                        className="px-3 py-1.5 rounded-xl border border-pink-500/20 bg-pink-500/5 hover:bg-pink-500/15 text-[11px] font-bold text-pink-700 dark:text-pink-400 transition-colors flex items-center gap-1"
+                        className="px-3 py-1.5 rounded-lg border border-borderlight dark:border-dark-border bg-gray-50 dark:bg-[#0A111E] hover:bg-gray-100 dark:hover:bg-dark-highlight text-[11px] font-bold text-lightText-primary dark:text-darkText-primary transition-colors flex items-center gap-1"
                       >
                         🎁 Hediye
                       </button>
@@ -313,45 +313,45 @@ export default function TenantsPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-[2rem] border border-neutral-200 dark:border-[#a78bfa]/20 bg-white dark:bg-[#120822] p-6 shadow-2xl relative text-neutral-900 dark:text-[#eadef7] flex flex-col gap-6"
+              className="w-full max-w-lg rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] p-6 shadow-2xl relative text-lightText-primary dark:text-darkText-primary flex flex-col gap-6"
             >
               <button
                 onClick={() => setEditingTenant(null)}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-400 hover:text-neutral-900 dark:text-gray-400 dark:hover:text-white"
+                className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#0A111E] text-lightText-secondary dark:text-darkText-secondary"
               >
                 ✕
               </button>
 
-              <div className="border-b border-neutral-200 dark:border-white/5 pb-4">
-                <h3 className="font-extrabold text-lg text-neutral-900 dark:text-white uppercase tracking-wide">SALON DÜZENLE</h3>
-                <p className="text-xs text-neutral-500 dark:text-gray-400 mt-0.5">{editingTenant.name} / kuafor.art/{editingTenant.slug}</p>
+              <div className="border-b border-borderlight dark:border-dark-border pb-4">
+                <h3 className="font-extrabold text-lg text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-wide">SALON DÜZENLE</h3>
+                <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-0.5">{editingTenant.name} / kuafor.art/{editingTenant.slug}</p>
               </div>
 
               <form onSubmit={handleEditSave} className="flex flex-col gap-4">
                 {/* Status Toggle */}
-                <div className="flex justify-between items-center p-3 rounded-2xl bg-neutral-50 dark:bg-white/[0.02] border border-neutral-200 dark:border-white/5">
+                <div className="flex justify-between items-center p-3 rounded-lg bg-gray-50 dark:bg-[#0A111E] border border-borderlight dark:border-dark-border">
                   <div>
-                    <h4 className="text-xs font-bold text-neutral-900 dark:text-white">Mağaza Hesabı Durumu</h4>
-                    <p className="text-[10px] text-neutral-500 dark:text-gray-500 mt-0.5">Eğer askıya alınırsa vitrin sitesi kapanır.</p>
+                    <h4 className="text-xs font-bold text-[#0B1933] dark:text-[#F7F8FA]">Mağaza Hesabı Durumu</h4>
+                    <p className="text-[10px] text-lightText-secondary dark:text-darkText-secondary mt-0.5">Eğer askıya alınırsa vitrin sitesi kapanır.</p>
                   </div>
                   <input
                     type="checkbox"
                     checked={editIsActive}
                     onChange={(e) => setEditIsActive(e.target.checked)}
-                    className="w-5 h-5 rounded border-neutral-300 dark:border-white/10 bg-white dark:bg-white/5 text-purple-600 focus:ring-0 accent-purple-600 cursor-pointer"
+                    className="w-5 h-5 rounded border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] text-[#0B1933] focus:ring-0 accent-[#0B1933] cursor-pointer"
                   />
                 </div>
 
                 {/* Plan Assign */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Abonelik Paketi</label>
+                  <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Abonelik Paketi</label>
                   <select
                     value={editPlanId}
                     onChange={(e) => setEditPlanId(e.target.value)}
-                    className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-purple-500"
+                    className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
                   >
                     {plans.map(plan => (
-                      <option key={plan.id} value={plan.id} className="bg-white dark:bg-[#120822] text-neutral-900 dark:text-white">
+                      <option key={plan.id} value={plan.id} className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">
                         {plan.name} ({plan.price} TL/ay)
                       </option>
                     ))}
@@ -360,40 +360,40 @@ export default function TenantsPage() {
 
                 {/* Billing Status */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Fatura / Ödeme Durumu</label>
+                  <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Fatura / Ödeme Durumu</label>
                   <select
                     value={editBillingStatus}
                     onChange={(e) => setEditBillingStatus(e.target.value)}
-                    className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-purple-500"
+                    className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
                   >
-                    <option value="ACTIVE" className="bg-white dark:bg-[#120822] text-neutral-900 dark:text-white">Aktif (Ödendi)</option>
-                    <option value="UNPAID" className="bg-white dark:bg-[#120822] text-neutral-900 dark:text-white">Yenilenmedi / Ödenmedi</option>
-                    <option value="OVERDUE" className="bg-white dark:bg-[#120822] text-neutral-900 dark:text-white">Vadesi Geçmiş</option>
+                    <option value="ACTIVE" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">Aktif (Ödendi)</option>
+                    <option value="UNPAID" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">Yenilenmedi / Ödenmedi</option>
+                    <option value="OVERDUE" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">Vadesi Geçmiş</option>
                   </select>
                 </div>
 
                 {/* Storage Capacity limit */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Dosya Depolama Kotası (MB)</label>
+                  <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Dosya Depolama Kotası (MB)</label>
                   <input
                     type="number"
                     required
                     min={1}
                     value={editQuotaMB}
                     onChange={(e) => setEditQuotaMB(Number(e.target.value))}
-                    className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-purple-500"
+                    className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
                   />
                 </div>
 
                 {/* Custom Domain mapping */}
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Özel Alan Adı (Custom Domain)</label>
+                  <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Özel Alan Adı (Custom Domain)</label>
                   <input
                     type="text"
                     placeholder="örn: ahmetkuafor.com"
                     value={editCustomDomain}
                     onChange={(e) => setEditCustomDomain(e.target.value)}
-                    className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                    className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white"
                   />
                   <p className="text-[9px] text-neutral-500 dark:text-gray-500">Müşterinin doğrudan erişim sağlayacağı DNS yönlendirmeli domain adresi.</p>
                 </div>
@@ -403,7 +403,7 @@ export default function TenantsPage() {
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isSaving}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-xs tracking-wider uppercase hover:brightness-110 transition-all flex items-center justify-center gap-2 mt-4 shadow-sm"
+                  className="w-full py-3.5 rounded-lg bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933] font-bold text-xs tracking-wider uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 mt-4 shadow-sm"
                 >
                   {isSaving ? (
                     <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -425,18 +425,18 @@ export default function TenantsPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-[2rem] border border-neutral-200 dark:border-[#a78bfa]/20 bg-white dark:bg-[#120822] p-6 shadow-2xl relative text-neutral-900 dark:text-[#eadef7] flex flex-col gap-6"
+              className="w-full max-w-lg rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] p-6 shadow-2xl relative text-lightText-primary dark:text-darkText-primary flex flex-col gap-6"
             >
               <button
                 onClick={() => { setIsCreateOpen(false); setCreateError(null); setCreateSuccess(null); }}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-400 hover:text-neutral-900 dark:text-gray-400 dark:hover:text-white"
+                className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#0A111E] text-lightText-secondary dark:text-darkText-secondary"
               >
                 ✕
               </button>
 
-              <div className="border-b border-neutral-200 dark:border-white/5 pb-4">
-                <h3 className="font-extrabold text-lg text-neutral-900 dark:text-white uppercase tracking-wide">YENİ SALON EKLE</h3>
-                <p className="text-xs text-neutral-500 dark:text-gray-400 mt-0.5">Sisteme yeni bir çok-kiracılı kuaför dükkanı kaydedin.</p>
+              <div className="border-b border-borderlight dark:border-dark-border pb-4">
+                <h3 className="font-extrabold text-lg text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-wide">YENİ SALON EKLE</h3>
+                <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-0.5">Sisteme yeni bir çok-kiracılı kuaför dükkanı kaydedin.</p>
               </div>
 
               {createError && (
@@ -455,12 +455,12 @@ export default function TenantsPage() {
                   <p className="font-black text-green-700 dark:text-green-400">✅ Salon başarıyla oluşturuldu!</p>
                   <p className="text-neutral-700 dark:text-gray-300">
                     <strong>{createSuccess.name}</strong> adlı yetkili kullanıcı aşağıdaki bilgilerle
-                    <a href="/login" className="text-purple-600 dark:text-[#a78bfa] underline mx-1">/login</a>
+                    <a href="/login" className="text-[#0B1933] dark:text-[#F7F8FA] underline mx-1">/login</a>
                     adresinden giriş yapabilir:
                   </p>
                   <div className="mt-1 p-3 rounded-xl bg-neutral-100 dark:bg-white/5 border border-neutral-200 dark:border-white/5 font-mono text-[11px] flex flex-col gap-1">
-                    <span>E-Posta: <span className="text-pink-600 dark:text-pink-400">{createSuccess.email}</span></span>
-                    <span>Şifre: <span className="text-pink-600 dark:text-pink-400">{createSuccess.password}</span></span>
+                    <span>E-Posta: <span className="text-[#0B1933] dark:text-[#F7F8FA]">{createSuccess.email}</span></span>
+                    <span>Şifre: <span className="text-[#0B1933] dark:text-[#F7F8FA]">{createSuccess.password}</span></span>
                   </div>
                   <button
                     onClick={() => { setIsCreateOpen(false); setCreateSuccess(null); }}
@@ -474,7 +474,7 @@ export default function TenantsPage() {
               {!createSuccess && (
                 <form onSubmit={handleCreateSubmit} className="flex flex-col gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Salon Adı *</label>
+                    <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Salon Adı *</label>
                     <input
                       type="text"
                       required
@@ -485,50 +485,50 @@ export default function TenantsPage() {
                         // Slug otomatik üret
                         setNewSlug(e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, ""));
                       }}
-                      className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                      className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white"
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Slug (URL Kökü) *</label>
+                      <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Slug (URL Kökü) *</label>
                       <input
                         type="text"
                         required
                         placeholder="efsane"
                         value={newSlug}
                         onChange={(e) => setNewSlug(e.target.value.toLowerCase().replace(/\s+/g, "-"))}
-                        className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                        className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Alt Alan Adı (Subdomain)</label>
+                      <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Alt Alan Adı (Subdomain)</label>
                       <input
                         type="text"
                         placeholder="efsane"
                         value={newSubdomain}
                         onChange={(e) => setNewSubdomain(e.target.value.toLowerCase().replace(/\s+/g, "-"))}
-                        className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                        className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white"
                       />
                     </div>
                   </div>
 
                   {/* YENİ: Yetkili Giriş Bilgileri */}
-                  <div className="p-3.5 rounded-2xl bg-purple-500/5 dark:bg-[#a78bfa]/5 border border-purple-200 dark:border-[#a78bfa]/15 flex flex-col gap-3">
-                    <p className="text-[10px] uppercase font-black text-purple-700 dark:text-[#a78bfa] tracking-wider">🔐 Yetkili Giriş Bilgileri</p>
+                  <div className="p-3.5 rounded-lg bg-gray-50 dark:bg-[#0A111E] border border-borderlight dark:border-dark-border flex flex-col gap-3">
+                    <p className="text-[10px] uppercase font-black text-[#0B1933] dark:text-[#F7F8FA] tracking-wider">🔐 Yetkili Giriş Bilgileri</p>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Yetkili E-Posta *</label>
+                      <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Yetkili E-Posta *</label>
                       <input
                         type="email"
                         required
                         placeholder="ahmet@efsanesalon.com"
                         value={newEmail}
                         onChange={(e) => setNewEmail(e.target.value)}
-                        className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                        className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white"
                       />
                     </div>
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Geçici Şifre *</label>
+                      <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Geçici Şifre *</label>
                       <input
                         type="text"
                         required
@@ -536,21 +536,21 @@ export default function TenantsPage() {
                         placeholder="GeciciSifre123"
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
-                        className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500 font-mono"
+                        className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white font-mono"
                       />
                       <p className="text-[9px] text-neutral-500 dark:text-gray-500">Salon yöneticisi giriş yaptıktan sonra şifresini değiştirmelidir.</p>
                     </div>
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Abonelik Paketi</label>
+                    <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Abonelik Paketi</label>
                     <select
                       value={newPlanId}
                       onChange={(e) => setNewPlanId(e.target.value)}
-                      className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-purple-500"
+                      className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
                     >
                       {plans.map(plan => (
-                        <option key={plan.id} value={plan.id} className="bg-white dark:bg-[#120822] text-neutral-900 dark:text-white">
+                        <option key={plan.id} value={plan.id} className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">
                           {plan.name} ({plan.price} TL/ay)
                         </option>
                       ))}
@@ -558,13 +558,13 @@ export default function TenantsPage() {
                   </div>
 
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Özel Alan Adı</label>
+                    <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Özel Alan Adı</label>
                     <input
                       type="text"
                       placeholder="örn: efsanesalon.com"
                       value={newCustomDomain}
                       onChange={(e) => setNewCustomDomain(e.target.value)}
-                      className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500"
+                      className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white"
                     />
                   </div>
 
@@ -573,7 +573,7 @@ export default function TenantsPage() {
                     whileTap={{ scale: 0.98 }}
                     type="submit"
                     disabled={isSaving}
-                    className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-xs tracking-wider uppercase hover:brightness-110 transition-all flex items-center justify-center gap-2 mt-4 shadow-sm"
+                    className="w-full py-3.5 rounded-lg bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933] font-bold text-xs tracking-wider uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 mt-4 shadow-sm"
                   >
                     {isSaving ? (
                       <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -596,54 +596,54 @@ export default function TenantsPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-md rounded-[2rem] border border-neutral-200 dark:border-[#a78bfa]/20 bg-white dark:bg-[#120822] p-6 shadow-2xl relative text-neutral-900 dark:text-[#eadef7] flex flex-col gap-6"
+              className="w-full max-w-md rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] p-6 shadow-2xl relative text-lightText-primary dark:text-darkText-primary flex flex-col gap-6"
             >
               <button
                 onClick={() => { setGiftingTenant(null); setGiftAmount(1); setGiftNote(""); }}
-                className="absolute top-4 right-4 p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-white/5 text-neutral-400 hover:text-neutral-900 dark:text-gray-400 dark:hover:text-white"
+                className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#0A111E] text-lightText-secondary dark:text-darkText-secondary"
               >
                 ✕
               </button>
 
-              <div className="border-b border-neutral-200 dark:border-white/5 pb-4">
-                <h3 className="font-extrabold text-lg text-neutral-900 dark:text-white uppercase tracking-wide">🎁 PAKET SÜRESİ HEDİYE ET</h3>
-                <p className="text-xs text-neutral-500 dark:text-gray-400 mt-0.5">{giftingTenant.name} salonuna kullanım süresi hediye edin.</p>
+              <div className="border-b border-borderlight dark:border-dark-border pb-4">
+                <h3 className="font-extrabold text-lg text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-wide">🎁 PAKET SÜRESİ HEDİYE ET</h3>
+                <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-0.5">{giftingTenant.name} salonuna kullanım süresi hediye edin.</p>
               </div>
 
               <form onSubmit={handleGiftSubmit} className="flex flex-col gap-4 text-xs font-semibold">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Süre Türü</label>
+                    <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Süre Türü</label>
                     <select
                       value={giftDurationType}
                       onChange={(e) => setGiftDurationType(e.target.value as 'DAY' | 'MONTH')}
-                      className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-purple-500"
+                      className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
                     >
-                      <option value="DAY" className="bg-white dark:bg-[#120822] text-neutral-900 dark:text-white">Gün</option>
-                      <option value="MONTH" className="bg-white dark:bg-[#120822] text-neutral-900 dark:text-white">Ay</option>
+                      <option value="DAY" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">Gün</option>
+                      <option value="MONTH" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">Ay</option>
                     </select>
                   </div>
                   <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Miktar</label>
+                    <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Miktar</label>
                     <input
                       type="number"
                       required
                       min={1}
                       value={giftAmount}
                       onChange={(e) => setGiftAmount(Number(e.target.value))}
-                      className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white focus:outline-none focus:border-purple-500"
+                      className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
                     />
                   </div>
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] uppercase font-bold text-neutral-600 dark:text-gray-400">Özel Not (Opsiyonel)</label>
+                  <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Özel Not (Opsiyonel)</label>
                   <textarea
                     rows={3}
                     placeholder="Kampanya katılım hediyesi veya telafi..."
                     value={giftNote}
                     onChange={(e) => setGiftNote(e.target.value)}
-                    className="bg-white dark:bg-white/5 border border-neutral-300 dark:border-white/10 rounded-xl px-4 py-2.5 text-xs text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-purple-500 resize-none"
+                    className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white resize-none"
                   />
                 </div>
 
@@ -652,7 +652,7 @@ export default function TenantsPage() {
                   whileTap={{ scale: 0.98 }}
                   type="submit"
                   disabled={isGifting}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold text-xs tracking-wider uppercase hover:brightness-110 transition-all flex items-center justify-center gap-2 mt-2 shadow-sm dark:shadow-lg"
+                  className="w-full py-3.5 rounded-lg bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933] font-bold text-xs tracking-wider uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 mt-2 shadow-sm"
                 >
                   {isGifting ? (
                     <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

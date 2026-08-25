@@ -133,10 +133,10 @@ export default function LandingCmsPage() {
       )}
 
       <div className="max-w-4xl mx-auto space-y-8">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-200 dark:border-gray-800 pb-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-borderlight dark:border-dark-border pb-6">
           <div>
-            <h1 className="text-3xl font-black tracking-tight text-neutral-900 dark:text-white">Landing Page Yönetimi (Süper Admin)</h1>
-            <p className="text-neutral-500 dark:text-gray-400 mt-2 text-sm">Tasarım, SEO ve Seksiyon görünürlüklerini yönetin.</p>
+            <h1 className="text-3xl font-black tracking-tight text-[#0B1933] dark:text-[#F7F8FA]">Landing Page Yönetimi (Süper Admin)</h1>
+            <p className="text-lightText-secondary dark:text-darkText-secondary mt-2 text-sm">Tasarım, SEO ve Seksiyon görünürlüklerini yönetin.</p>
           </div>
           <div className="flex flex-wrap gap-3 items-center">
             <span className={`px-3 py-1 rounded-full text-xs font-bold ${
@@ -144,10 +144,10 @@ export default function LandingCmsPage() {
             }`}>
               {draft.isPublished ? 'Yayında' : 'Yayınlanmamış Taslak'}
             </span>
-            <button onClick={handleSave} className="bg-neutral-100 dark:bg-gray-800 hover:bg-neutral-200 dark:hover:bg-gray-700 text-neutral-800 dark:text-white border border-neutral-200 dark:border-gray-700 px-4 py-2 rounded-xl text-sm font-bold transition">
+            <button onClick={handleSave} className="bg-gray-50 dark:bg-[#0A111E] hover:bg-gray-100 dark:hover:bg-[#152033] text-lightText-primary dark:text-darkText-primary border border-borderlight dark:border-dark-border px-4 py-2 rounded-lg text-sm font-bold transition-colors">
               Taslağı Kaydet
             </button>
-            <button onClick={handlePublish} className="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-sm transition">
+            <button onClick={handlePublish} className="bg-[#0B1933] dark:bg-white hover:opacity-90 text-white dark:text-[#0B1933] px-4 py-2 rounded-lg text-sm font-bold shadow-sm transition-opacity">
               Canlıya Yayınla
             </button>
           </div>
@@ -156,76 +156,76 @@ export default function LandingCmsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Left Column: Form Fields */}
           <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-800/50 border border-neutral-200 dark:border-gray-700/50 p-6 rounded-2xl space-y-4 shadow-sm">
-              <h2 className="text-lg font-bold text-indigo-600 dark:text-indigo-400">Giriş Alanı (Hero)</h2>
+            <div className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border p-6 rounded-xl space-y-4 shadow-sm">
+              <h2 className="text-lg font-bold text-[#0B1933] dark:text-[#F7F8FA]">Giriş Alanı (Hero)</h2>
               <div>
-                <label className="block text-xs font-bold text-neutral-600 dark:text-gray-400 mb-1">Hero Başlığı</label>
+                <label className="block text-xs font-bold text-lightText-secondary dark:text-darkText-secondary mb-1">Hero Başlığı</label>
                 <input 
                   type="text"
                   value={draft.heroTitle || ''}
                   onChange={(e) => setDraft({ ...draft, heroTitle: e.target.value })}
-                  className="w-full bg-neutral-50 dark:bg-gray-900 border border-neutral-300 dark:border-gray-700 rounded-xl p-3 text-sm text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-lg p-3 text-sm text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:focus:border-white"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-neutral-600 dark:text-gray-400 mb-1">Hero Açıklaması</label>
+                <label className="block text-xs font-bold text-lightText-secondary dark:text-darkText-secondary mb-1">Hero Açıklaması</label>
                 <textarea 
                   value={draft.heroDescription || ''}
                   onChange={(e) => setDraft({ ...draft, heroDescription: e.target.value })}
-                  className="w-full bg-neutral-50 dark:bg-gray-900 border border-neutral-300 dark:border-gray-700 rounded-xl p-3 text-sm text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 h-24 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-lg p-3 text-sm text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 h-24 focus:outline-none focus:border-[#0B1933] dark:focus:border-white"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-neutral-600 dark:text-gray-400 mb-1">Buton Metni (CTA)</label>
+                  <label className="block text-xs font-bold text-lightText-secondary dark:text-darkText-secondary mb-1">Buton Metni (CTA)</label>
                   <input 
                     type="text"
                     value={draft.ctaText || ''}
                     onChange={(e) => setDraft({ ...draft, ctaText: e.target.value })}
-                    className="w-full bg-neutral-50 dark:bg-gray-900 border border-neutral-300 dark:border-gray-700 rounded-xl p-3 text-sm text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-lg p-3 text-sm text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:focus:border-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-neutral-600 dark:text-gray-400 mb-1">Buton Yönlendirmesi</label>
+                  <label className="block text-xs font-bold text-lightText-secondary dark:text-darkText-secondary mb-1">Buton Yönlendirmesi</label>
                   <input 
                     type="text"
                     value={draft.ctaLink || ''}
                     onChange={(e) => setDraft({ ...draft, ctaLink: e.target.value })}
-                    className="w-full bg-neutral-50 dark:bg-gray-900 border border-neutral-300 dark:border-gray-700 rounded-xl p-3 text-sm text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-lg p-3 text-sm text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:focus:border-white"
                   />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800/50 border border-neutral-200 dark:border-gray-700/50 p-6 rounded-2xl space-y-4 shadow-sm">
-              <h2 className="text-lg font-bold text-pink-600 dark:text-pink-400">Markalama</h2>
+            <div className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border p-6 rounded-xl space-y-4 shadow-sm">
+              <h2 className="text-lg font-bold text-[#0B1933] dark:text-[#F7F8FA]">Markalama</h2>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-bold text-neutral-600 dark:text-gray-400 mb-1">Aydınlık Logo URL</label>
+                  <label className="block text-xs font-bold text-lightText-secondary dark:text-darkText-secondary mb-1">Aydınlık Logo URL</label>
                   <input 
                     type="text"
                     value={draft.logoLight || ''}
                     onChange={(e) => setDraft({ ...draft, logoLight: e.target.value })}
-                    className="w-full bg-neutral-50 dark:bg-gray-900 border border-neutral-300 dark:border-gray-700 rounded-xl p-3 text-sm text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-lg p-3 text-sm text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:focus:border-white"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-neutral-600 dark:text-gray-400 mb-1">Karanlık Logo URL</label>
+                  <label className="block text-xs font-bold text-lightText-secondary dark:text-darkText-secondary mb-1">Karanlık Logo URL</label>
                   <input 
                     type="text"
                     value={draft.logoDark || ''}
                     onChange={(e) => setDraft({ ...draft, logoDark: e.target.value })}
-                    className="w-full bg-neutral-50 dark:bg-gray-900 border border-neutral-300 dark:border-gray-700 rounded-xl p-3 text-sm text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500"
+                    className="w-full bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-lg p-3 text-sm text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:focus:border-white"
                   />
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-bold text-neutral-600 dark:text-gray-400 mb-1">Favicon URL</label>
+                <label className="block text-xs font-bold text-lightText-secondary dark:text-darkText-secondary mb-1">Favicon URL</label>
                 <input 
                   type="text"
                   value={draft.favicon || ''}
                   onChange={(e) => setDraft({ ...draft, favicon: e.target.value })}
-                  className="w-full bg-neutral-50 dark:bg-gray-900 border border-neutral-300 dark:border-gray-700 rounded-xl p-3 text-sm text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-lg p-3 text-sm text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:focus:border-white"
                 />
               </div>
             </div>
@@ -233,40 +233,40 @@ export default function LandingCmsPage() {
 
           {/* Right Column: Sections & SEO */}
           <div className="space-y-6">
-            <div className="bg-white dark:bg-gray-800/50 border border-neutral-200 dark:border-gray-700/50 p-6 rounded-2xl space-y-4 shadow-sm">
-              <h2 className="text-lg font-bold text-emerald-600 dark:text-emerald-400">Aktif Sayfa Bölümleri</h2>
+            <div className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border p-6 rounded-xl space-y-4 shadow-sm">
+              <h2 className="text-lg font-bold text-[#0B1933] dark:text-[#F7F8FA]">Aktif Sayfa Bölümleri</h2>
               <div className="space-y-3">
                 {SECTIONS.map((sec) => (
-                  <label key={sec.id} className="flex items-center justify-between p-3 bg-neutral-50 dark:bg-gray-900 border border-neutral-100 dark:border-transparent rounded-xl cursor-pointer hover:bg-neutral-100 dark:hover:bg-gray-900/80">
-                    <span className="text-sm font-medium text-neutral-800 dark:text-white">{sec.name}</span>
+                  <label key={sec.id} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-[#0A111E] border border-borderlight dark:border-dark-border rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-[#152033] transition-colors">
+                    <span className="text-sm font-medium text-lightText-primary dark:text-darkText-primary">{sec.name}</span>
                     <input 
                       type="checkbox"
                       checked={!!draft.activeSections[sec.id]}
                       onChange={() => toggleSection(sec.id)}
-                      className="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 bg-white dark:bg-gray-800 border-neutral-300 dark:border-gray-700 accent-indigo-600"
+                      className="w-4 h-4 rounded text-[#0B1933] dark:text-white focus:ring-0 bg-white dark:bg-white/5 border-borderlight dark:border-dark-border accent-[#0B1933] dark:accent-white"
                     />
                   </label>
                 ))}
               </div>
             </div>
 
-            <div className="bg-white dark:bg-gray-800/50 border border-neutral-200 dark:border-gray-700/50 p-6 rounded-2xl space-y-4 shadow-sm">
-              <h2 className="text-lg font-bold text-amber-600 dark:text-amber-400">SEO & Metadata</h2>
+            <div className="bg-white dark:bg-[#081326] border border-borderlight dark:border-dark-border p-6 rounded-xl space-y-4 shadow-sm">
+              <h2 className="text-lg font-bold text-[#0B1933] dark:text-[#F7F8FA]">SEO & Metadata</h2>
               <div>
-                <label className="block text-xs font-bold text-neutral-600 dark:text-gray-400 mb-1">SEO Sayfa Başlığı</label>
+                <label className="block text-xs font-bold text-lightText-secondary dark:text-darkText-secondary mb-1">SEO Sayfa Başlığı</label>
                 <input 
                   type="text"
                   value={draft.seoTitle || ''}
                   onChange={(e) => setDraft({ ...draft, seoTitle: e.target.value })}
-                  className="w-full bg-neutral-50 dark:bg-gray-900 border border-neutral-300 dark:border-gray-700 rounded-xl p-3 text-sm text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-lg p-3 text-sm text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:focus:border-white"
                 />
               </div>
               <div>
-                <label className="block text-xs font-bold text-neutral-600 dark:text-gray-400 mb-1">SEO Sayfa Açıklaması</label>
+                <label className="block text-xs font-bold text-lightText-secondary dark:text-darkText-secondary mb-1">SEO Sayfa Açıklaması</label>
                 <textarea 
                   value={draft.seoDescription || ''}
                   onChange={(e) => setDraft({ ...draft, seoDescription: e.target.value })}
-                  className="w-full bg-neutral-50 dark:bg-gray-900 border border-neutral-300 dark:border-gray-700 rounded-xl p-3 text-sm text-neutral-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 h-20 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-lg p-3 text-sm text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 h-20 focus:outline-none focus:border-[#0B1933] dark:focus:border-white"
                 />
               </div>
             </div>
