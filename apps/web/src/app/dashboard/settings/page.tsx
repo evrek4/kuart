@@ -89,7 +89,7 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
   // JWT'den tenant bilgisini oku
   useEffect(() => {

@@ -36,7 +36,7 @@ export default function StaffPage() {
   const [avatar, setAvatar] = useState("");
   const [commissionRate, setCommissionRate] = useState("0");
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
   useEffect(() => {
     const info = getCurrentTenantInfo();

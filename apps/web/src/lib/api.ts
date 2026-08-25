@@ -5,7 +5,7 @@
  * maps any hardcoded 'localhost' API references to the browser's hostname.
  */
 export function getApiUrl(): string {
-  const envUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  const envUrl = process.env.NEXT_PUBLIC_API_URL ?? "";
 
   if (typeof window !== 'undefined' && window.location) {
     const currentHost = window.location.hostname;

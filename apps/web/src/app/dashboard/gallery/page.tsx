@@ -36,7 +36,7 @@ export default function GalleryPage() {
   // Broken image states
   const [brokenImages, setBrokenImages] = useState<Record<string, boolean>>({});
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
   const placeholderImg = "https://images.unsplash.com/photo-1594744803329-e58b31de215f?q=80&w=300&auto=format&fit=crop";
 
   // JWT'den tenant bilgisi al

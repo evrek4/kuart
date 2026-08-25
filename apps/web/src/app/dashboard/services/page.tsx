@@ -34,7 +34,7 @@ export default function ServicesCRUDPage() {
   const [duration, setDuration] = useState(30);
   const [price, setPrice] = useState("");
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
   // JWT'den tenant bilgisi al
   useEffect(() => {

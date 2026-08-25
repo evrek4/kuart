@@ -26,7 +26,7 @@ export default function LandingCmsPage() {
   const [toast, setToast] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/admin/landing/draft')
+    fetch('/api/admin/landing/draft')
       .then((res) => res.json())
       .then((data) => {
         if (data.success && data.data) {
@@ -73,7 +73,7 @@ export default function LandingCmsPage() {
 
   const handleSave = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/admin/landing/draft', {
+      const res = await fetch('/api/admin/landing/draft', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(draft),
@@ -93,7 +93,7 @@ export default function LandingCmsPage() {
 
   const handlePublish = async () => {
     try {
-      const res = await fetch('http://localhost:3001/api/admin/landing/publish', {
+      const res = await fetch('/api/admin/landing/publish', {
         method: 'POST',
       });
       const data = await res.json();

@@ -27,7 +27,7 @@ export default function PricingPage() {
   useEffect(() => {
     async function fetchPlans() {
       try {
-        const res = await fetch("http://localhost:3001/api/admin/plans");
+        const res = await fetch("/api/admin/plans");
         if (res.ok) {
           const json = await res.json();
           if (json.success) {

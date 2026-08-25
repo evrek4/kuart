@@ -40,7 +40,7 @@ export default function SettingsPage() {
   const [posApiKey, setPosApiKey] = useState("");
   const [posSecretKey, setPosSecretKey] = useState("");
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
   // Load Cloudflare R2 settings
   useEffect(() => {

@@ -60,7 +60,7 @@ export default function TenantsPage() {
 
   const fetchTenants = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/admin/tenants");
+      const res = await fetch("/api/admin/tenants");
       if (res.ok) {
         const json = await res.json();
         if (json.success) setTenants(json.data);
@@ -72,7 +72,7 @@ export default function TenantsPage() {
 
   const fetchPlans = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/admin/plans");
+      const res = await fetch("/api/admin/plans");
       if (res.ok) {
         const json = await res.json();
         if (json.success) {
@@ -106,7 +106,7 @@ export default function TenantsPage() {
     setIsSaving(true);
 
     try {
-      const res = await fetch(`http://localhost:3001/api/admin/tenants/${editingTenant.id}`, {
+      const res = await fetch(`/api/admin/tenants/${editingTenant.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -139,7 +139,7 @@ export default function TenantsPage() {
     setIsSaving(true);
 
     try {
-      const res = await fetch("http://localhost:3001/api/admin/tenants", {
+      const res = await fetch("/api/admin/tenants", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -185,7 +185,7 @@ export default function TenantsPage() {
     setIsGifting(true);
 
     try {
-      const res = await fetch(`http://localhost:3001/api/admin/tenants/${giftingTenant.id}/gift`, {
+      const res = await fetch(`/api/admin/tenants/${giftingTenant.id}/gift`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

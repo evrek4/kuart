@@ -14,7 +14,7 @@ import FinalCTA from '@/components/landing/FinalCTA';
 import Footer from '@/components/landing/Footer';
 
 // Super Admin CMS API Endpoint
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
 const CMS_API_URL = `${API_BASE}/api/public/landing`;
 
 export default function LandingPage() {

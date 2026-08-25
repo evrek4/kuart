@@ -32,6 +32,18 @@ const nextConfig = {
       },
     ],
   },
+  // ─── API PROXY REWRITES ──────────────────────────────────────
+  // Tarayıcıdan gelen /api/* isteklerini sunucu tarafında
+  // localhost:3001'e yönlendirir. Bu sayede NEXT_PUBLIC_API_URL
+  // boş bırakılabilir ve fetch('/api/...') formatı çalışır.
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://localhost:3001/api/:path*',
+      },
+    ];
+  },
 };
 
 export default nextConfig;

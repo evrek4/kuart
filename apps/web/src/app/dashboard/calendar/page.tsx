@@ -114,7 +114,7 @@ export default function CalendarPage() {
   const [isPhoneAutoFilled, setIsPhoneAutoFilled] = useState(false);
   const [selectedServiceId, setSelectedServiceId] = useState("");
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
   // ── Auth ────────────────────────────────────────────────────────────────────
   useEffect(() => {

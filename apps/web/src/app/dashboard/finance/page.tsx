@@ -44,7 +44,7 @@ export default function FinancePage() {
   const [startDate, setStartDate] = useState(() => getInitialDates().start);
   const [endDate, setEndDate] = useState(() => getInitialDates().end);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
   useEffect(() => {
     const info = getCurrentTenantInfo();

@@ -53,7 +53,7 @@ export default function PackagesPage() {
 
   const fetchPlans = async () => {
     try {
-      const res = await fetch("http://localhost:3001/api/admin/plans");
+      const res = await fetch("/api/admin/plans");
       if (res.ok) {
         const json = await res.json();
         if (json.success) setPlans(json.data);
@@ -88,7 +88,7 @@ export default function PackagesPage() {
     setErrorMsg(null);
 
     try {
-      const res = await fetch(`http://localhost:3001/api/admin/plans/${editingPlan.id}`, {
+      const res = await fetch(`/api/admin/plans/${editingPlan.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -123,7 +123,7 @@ export default function PackagesPage() {
     setErrorMsg(null);
 
     try {
-      const res = await fetch("http://localhost:3001/api/admin/plans", {
+      const res = await fetch("/api/admin/plans", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -166,7 +166,7 @@ export default function PackagesPage() {
     setErrorMsg(null);
 
     try {
-      const res = await fetch(`http://localhost:3001/api/admin/plans/${planId}`, {
+      const res = await fetch(`/api/admin/plans/${planId}`, {
         method: "DELETE"
       });
 
@@ -188,7 +188,7 @@ export default function PackagesPage() {
     setErrorMsg(null);
 
     try {
-      const res = await fetch("http://localhost:3001/api/admin/plans/migrate", {
+      const res = await fetch("/api/admin/plans/migrate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

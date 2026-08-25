@@ -14,7 +14,7 @@ interface DashboardData {
   }>;
 }
 
-const API_BASE = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_BASE = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL ?? "";
 
 async function getDashboardData(): Promise<DashboardData | null> {
   try {
@@ -141,7 +141,7 @@ export default async function SuperAdminDashboard() {
 
           <div className="flex flex-col gap-3">
             {/* Direct Trigger to run billingCheck */}
-            <form action="http://localhost:3001/api/admin/billing-check" method="POST" target="_blank" className="w-full">
+            <form action="/api/admin/billing-check" method="POST" target="_blank" className="w-full">
               <button
                 type="submit"
                 className="w-full py-3.5 rounded-lg border border-borderlight dark:border-dark-border bg-gray-100 dark:bg-[#0A111E] hover:bg-gray-200 dark:hover:bg-dark-highlight text-[#0B1933] dark:text-[#F7F8FA] font-bold text-xs tracking-wider uppercase transition-colors text-center block"

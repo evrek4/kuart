@@ -25,7 +25,7 @@ export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/public/landing')
+    fetch('/api/public/landing')
       .then((res) => res.json())
       .then((json) => {
         if (json.success && json.data) {

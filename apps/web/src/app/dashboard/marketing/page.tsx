@@ -73,7 +73,7 @@ export default function MarketingPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
   const getToken = () =>
     document.cookie.split("; ").find((r) => r.startsWith("kuafor-token="))?.split("=")[1];

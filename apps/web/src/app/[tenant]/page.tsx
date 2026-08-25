@@ -40,7 +40,7 @@ export interface SalonData {
   gallery: string[];
 }
 
-const API_BASE = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 async function getStorefrontData(tenantParam: string): Promise<any | null> {
   if (!tenantParam) return null;

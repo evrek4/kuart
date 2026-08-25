@@ -8,7 +8,7 @@ import * as z from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/landing/Navbar";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 
 const registerSchema = z.object({
   name: z.string().min(3, "Salon adı en az 3 karakter olmalıdır."),

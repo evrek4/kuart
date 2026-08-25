@@ -39,7 +39,7 @@ export default function CustomersPage() {
   const [dismissedCandidates, setDismissedCandidates] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
   // ─── JWT'den tenant bilgisini oku ─────────────────────────────────────────
   useEffect(() => {

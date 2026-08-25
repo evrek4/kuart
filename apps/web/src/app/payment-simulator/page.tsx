@@ -23,7 +23,7 @@ function PaymentSimulatorContent() {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState<string | null>(null);
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
   const formatCardNumber = (val: string) => {
     return val.replace(/\D/g, "").substring(0, 16).replace(/(.{4})/g, "$1 ").trim();

@@ -29,7 +29,7 @@ export default function SuperAdminCouponsPage() {
   const [maxUses, setMaxUses] = useState("");
   const [expiresAt, setExpiresAt] = useState("");
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
   const getToken = () =>
     document.cookie.split("; ").find((r) => r.startsWith("kuafor-token="))?.split("=")[1];
