@@ -31,3 +31,6 @@ yarn-error.log*
 
 # temp / logs
 *.log
+*.zip
+env
+

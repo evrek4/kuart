@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces --if-present && node -e \"require('fs').cpSync('apps/web/.next', '.next', { recursive: true })\"",
+    "build": "npm run build --workspaces --if-present && node -e \"const fs = require('fs'); fs.cpSync('apps/web/.next', '.next', { recursive: true }); if (fs.existsSync('apps/web/.next/standalone')) { fs.cpSync('apps/web/.next/standalone', '.next/standalone', { recursive: true }); if (fs.existsSync('apps/web/.next/standalone/node_modules')) { fs.cpSync('apps/web/.next/standalone/node_modules', 'node_modules', { recursive: true }); fs.cpSync('apps/web/.next/standalone/node_modules', '.next/node_modules', { recursive: true }); } }\"",
     "dev": "concurrently \"npm run dev --workspace=@kuafor-art/api\" \"npm run dev --workspace=@kuafor-art/web\"",
     "db:generate": "npm run db:generate --workspace=packages/database",
     "db:push": "npm run db:push --workspace=packages/database",
