@@ -145,6 +145,7 @@ let servicesList = [
 let customersList = [];
 let appointmentsList = [];
 let landingConfigs = [];
+let mediaList = [];
 class MockPrisma {
     constructor() {
         this.user = {
@@ -719,7 +720,57 @@ class MockPrisma {
             findMany: async (args) => []
         };
         this.media = {
-            aggregate: async () => ({ _sum: { fileSize: 0 } })
+            findMany: async (args) => {
+                if (!args || !args.where)
+                    return mediaList;
+                const { tenantId } = args.where;
+                let result = mediaList.filter((m) => !tenantId || m.tenantId === tenantId);
+                if (args.orderBy?.createdAt === 'desc') {
+                    result.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+                }
+                return result;
+            },
+            findFirst: async (args) => {
+                if (!args || !args.where)
+                    return mediaList[0] || null;
+                const { id, tenantId } = args.where;
+                return mediaList.find((m) => {
+                    if (id && m.id !== id)
+                        return false;
+                    if (tenantId && m.tenantId !== tenantId)
+                        return false;
+                    return true;
+                }) || null;
+            },
+            create: async (args) => {
+                const newMedia = {
+                    id: `media-${Math.random().toString(36).substr(2, 9)}`,
+                    tenantId: args.data.tenantId,
+                    url: args.data.url,
+                    fileName: args.data.fileName || 'Fotoğraf',
+                    fileSize: args.data.fileSize ? BigInt(args.data.fileSize) : BigInt(0),
+                    fileType: args.data.fileType || 'image/jpeg',
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+                mediaList.push(newMedia);
+                return newMedia;
+            },
+            delete: async (args) => {
+                const index = mediaList.findIndex((m) => m.id === args.where.id);
+                if (index !== -1) {
+                    const deleted = mediaList[index];
+                    mediaList.splice(index, 1);
+                    return deleted;
+                }
+                return null;
+            },
+            aggregate: async (args) => {
+                const tenantId = args?.where?.tenantId;
+                const filtered = mediaList.filter((m) => !tenantId || m.tenantId === tenantId);
+                const totalSize = filtered.reduce((acc, item) => acc + Number(item.fileSize || 0), 0);
+                return { _sum: { fileSize: BigInt(totalSize) } };
+            }
         };
         this.landingPageConfig = {
             findFirst: async (args) => {
