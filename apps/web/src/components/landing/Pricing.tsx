@@ -1,135 +1,145 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
-
-import { MASTER_FEATURES } from '@/lib/constants/features';
+import { Check, Zap, Sparkles, ShieldCheck } from 'lucide-react';
 
 export default function Pricing() {
-  const [plans, setPlans] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [billing, setBilling] = useState<'MONTHLY' | 'YEARLY'>('MONTHLY');
-
-  useEffect(() => {
-    fetch('http://localhost:3001/api/admin/plans')
-      .then(res => res.json())
-      .then(data => {
-        if (data.success) {
-          setPlans(data.data);
-        }
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
-  }, []);
-
-  if (loading) return null;
-
   return (
-    <section className="py-32 bg-white dark:bg-[#09090b]">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-4 text-gray-900 dark:text-white">Size Uygun Planı Seçin</h2>
-          <p className="text-lg text-gray-500 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
-            Küçük salonlardan zincir işletmelere kadar her ihtiyaca uygun esnek fiyatlandırma.
+    <section id="pricing" className="py-24 bg-white dark:bg-[#070D18] border-t border-[#E6E7EA] dark:border-white/10">
+      <div className="max-w-7xl mx-auto px-6 space-y-16">
+        {/* Header */}
+        <div className="text-center max-w-3xl mx-auto space-y-4">
+          <span className="text-xs font-bold tracking-widest text-gold uppercase">
+            ŞEFFAF VESADE FİYATLANDIRMA
+          </span>
+          <h2 className="font-serif text-3xl md:text-5xl font-bold text-navy-900 dark:text-white">
+            Gizli Ücret Yok. Sürpriz Yok. <br />
+            <span className="italic text-gold font-normal">İhtiyacınıza Uygun Planı Seçin.</span>
+          </h2>
+          <p className="text-base text-navy-800/70 dark:text-gray-400">
+            Salonunuzun büyüklüğüne göre ölçeklenen planlar. İstediğiniz zaman iptal edebilir veya paketinizi değiştirebilirsiniz.
           </p>
-          
-          <div className="inline-flex bg-gray-100 dark:bg-white/5 p-1 rounded-xl">
-            <button 
-              onClick={() => setBilling('MONTHLY')}
-              className={`px-6 py-2 rounded-lg font-bold text-sm transition-colors ${billing === 'MONTHLY' ? 'bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
-            >
-              Aylık
-            </button>
-            <button 
-              onClick={() => setBilling('YEARLY')}
-              className={`px-6 py-2 rounded-lg font-bold text-sm transition-colors ${billing === 'YEARLY' ? 'bg-white dark:bg-gray-800 shadow-sm text-gray-900 dark:text-white' : 'text-gray-500 dark:text-gray-400'}`}
-            >
-              Yıllık (%20 İndirim)
-            </button>
-          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {plans.map((plan, idx) => {
-            const isPopular = plan.name === 'PRO';
-            const price = billing === 'MONTHLY' ? plan.price : (plan.price * 0.8).toFixed(0);
+        {/* Pricing Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
+          {/* Plan 1: Başlangıç (Ücretsiz) */}
+          <div className="p-8 md:p-10 rounded-3xl bg-warmbg dark:bg-navy-900 border border-borderlight dark:border-white/10 shadow-lg flex flex-col justify-between space-y-8">
+            <div className="space-y-6">
+              <div>
+                <span className="text-xs font-bold text-navy-800/70 dark:text-gray-400 uppercase tracking-wider block">
+                  BİREYSEL KUAFÖRLER İÇİN
+                </span>
+                <h3 className="mt-1 font-serif text-2xl font-bold text-navy-900 dark:text-white">
+                  Başlangıç Paketi
+                </h3>
+                <p className="mt-2 text-xs text-navy-800/75 dark:text-gray-400">
+                  Yeni başlayan salonlar ve bağımsız kuaförler için temel dijital altyapı.
+                </p>
+              </div>
 
-            return (
-              <motion.div 
-                key={plan.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: idx * 0.1 }}
-                className={`relative p-8 rounded-3xl border ${isPopular ? 'bg-gray-900 text-white border-gray-800 shadow-2xl scale-105' : 'bg-white dark:bg-[#111] border-gray-200 dark:border-white/5 text-gray-900 dark:text-white shadow-md dark:shadow-none'}`}
-              >
-                {isPopular && (
-                  <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <span className="bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full">EN POPÜLER</span>
-                  </div>
-                )}
-                
-                <h3 className="text-xl font-bold mb-2">{plan.name}</h3>
-                <div className="flex items-baseline gap-1 mb-6">
-                  <span className="text-4xl font-black">₺{price}</span>
-                  <span className="text-sm opacity-60">/ ay</span>
+              <div className="flex items-baseline gap-1">
+                <span className="font-serif text-4xl font-extrabold text-navy-900 dark:text-white">₺0</span>
+                <span className="text-xs text-gray-500 font-medium">/ sonsuza kadar ücretsiz</span>
+              </div>
+
+              <div className="space-y-3 text-xs text-navy-900 dark:text-gray-200 font-medium pt-4 border-t border-gray-200/80 dark:border-white/5">
+                <div className="flex items-center gap-3">
+                  <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Sınırsız Randevu Kabulü</span>
                 </div>
+                <div className="flex items-center gap-3">
+                  <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Kişisel Salon Web Sayfası (`adiniz.kuafor.art`)</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Müşteri Rehberi & İletişim Bilgileri</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>Temel Kasa & Gelir Takibi</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>1 Personel Hesabı</span>
+                </div>
+              </div>
+            </div>
 
-                <ul className="space-y-4 mb-8">
-                  {plan.maxAppointments && (
-                    <li className="flex items-center gap-3 text-sm font-bold text-gray-900 dark:text-white">
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${isPopular ? 'bg-indigo-500/20 text-indigo-300' : 'bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400'}`}>
-                        📅
-                      </div>
-                      <span>Max {plan.maxAppointments} Randevu/Ay</span>
-                    </li>
-                  )}
-                  {plan.maxStaff && (
-                    <li className="flex items-center gap-3 text-sm font-bold text-gray-900 dark:text-white">
-                      <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${isPopular ? 'bg-indigo-500/20 text-indigo-300' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'}`}>
-                        👥
-                      </div>
-                      <span>Max {plan.maxStaff} Personel</span>
-                    </li>
-                  )}
-                  {MASTER_FEATURES
-                    .filter(feat => Array.isArray(plan.features) && plan.features.includes(feat.id))
-                    .map(feat => (
-                      <li key={feat.id} className="flex items-center gap-3 text-sm font-medium">
-                        <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs ${isPopular ? 'bg-indigo-500/20 text-indigo-300' : 'bg-emerald-100 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400'}`}>
-                          ✓
-                        </div>
-                        <span>{feat.label}</span>
-                      </li>
-                    ))}
-                </ul>
+            <Link
+              href="/register"
+              className="w-full text-center py-4 rounded-2xl border-2 border-navy-900 dark:border-white/20 text-navy-900 dark:text-white font-bold hover:bg-navy-900 hover:text-white dark:hover:bg-white dark:hover:text-navy-950 transition-all text-sm"
+            >
+              Ücretsiz Başla →
+            </Link>
+          </div>
 
+          {/* Plan 2: Profesyonel Salon (Öne Çıkarılan Plan) */}
+          <div className="p-8 md:p-10 rounded-3xl bg-navy-900 text-white dark:bg-navy-900 border-2 border-gold shadow-2xl flex flex-col justify-between space-y-8 relative overflow-hidden">
+            {/* Top Recommended Ribbon Badge */}
+            <div className="absolute top-5 right-5 px-3.5 py-1 rounded-full bg-gold text-navy-950 text-[10px] font-extrabold tracking-wider uppercase shadow-md flex items-center gap-1">
+              <Sparkles className="w-3 h-3" />
+              <span>EN ÇOK TERCİH EDİLEN</span>
+            </div>
 
-                <a href={`/register?plan=${plan.id}`} className="block w-full">
-                  <button className={`w-full py-3 rounded-xl font-bold transition-transform hover:scale-105 ${isPopular ? 'bg-indigo-600 text-white' : 'bg-gray-100 dark:bg-white/10 text-gray-900 dark:text-white'}`}>
-                    {plan.isFree ? 'Ücretsiz Başla' : 'Planı Seç'}
-                  </button>
-                </a>
-              </motion.div>
+            <div className="space-y-6">
+              <div>
+                <span className="text-xs font-bold text-gold uppercase tracking-wider block">
+                  BÜYÜYEN SALONLAR & EKİPLER İÇİN
+                </span>
+                <h3 className="mt-1 font-serif text-2xl font-bold text-white">
+                  Profesyonel Salon Paket
+                </h3>
+                <p className="mt-2 text-xs text-gray-300">
+                  Birden fazla personeli olan, WhatsApp entegrasyonu ve gelişmiş ciro raporları isteyen salonlar.
+                </p>
+              </div>
 
+              <div className="flex items-baseline gap-1">
+                <span className="font-serif text-4xl font-extrabold text-gold">₺499</span>
+                <span className="text-xs text-gray-300 font-medium">/ ay</span>
+              </div>
 
-            );
-          })}
-        </div>
+              <div className="space-y-3 text-xs text-gray-200 font-medium pt-4 border-t border-white/10">
+                <div className="flex items-center gap-3">
+                  <Check className="w-4 h-4 text-gold shrink-0" />
+                  <span className="font-bold text-white">Başlangıç paketindeki tüm özellikler</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="w-4 h-4 text-gold shrink-0" />
+                  <span>Otomatik WhatsApp & SMS Randevu Hatırlatma</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="w-4 h-4 text-gold shrink-0" />
+                  <span>Sınırsız Personel & Prim Hesaplama</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="w-4 h-4 text-gold shrink-0" />
+                  <span>Gelişmiş Ciro, Hizmet & Kasa Raporları</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="w-4 h-4 text-gold shrink-0" />
+                  <span>Müşteri Sadakat & VIP Not Kartları</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Check className="w-4 h-4 text-gold shrink-0" />
+                  <span>Öncelikli Müşteri Destek Hattı</span>
+                </div>
+              </div>
+            </div>
 
-        {/* Promo Code Tooltip Info */}
-        <div className="mt-16 text-center group relative inline-block mx-auto w-full">
-          <p className="text-sm font-medium text-gray-500 dark:text-gray-400 cursor-help flex items-center justify-center gap-2">
-            <span className="w-5 h-5 rounded-full bg-gray-200 dark:bg-gray-800 flex items-center justify-center text-xs">i</span>
-            Kupon kodunuz mu var?
-          </p>
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-64 bg-gray-900 text-white text-xs p-3 rounded-lg shadow-xl pointer-events-none">
-            "LANSMAN50" gibi indirim kuponlarınızı ödeme adımında uygulayabilir, anında indirimin keyfini çıkarabilirsiniz!
-            <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900" />
+            <Link
+              href="/register"
+              className="w-full text-center py-4 rounded-2xl bg-gold hover:bg-gold-400 text-navy-950 font-bold shadow-xl transition-all text-sm"
+            >
+              14 Gün Ücretsiz Deneyin →
+            </Link>
           </div>
         </div>
       </div>
     </section>
   );
 }
-

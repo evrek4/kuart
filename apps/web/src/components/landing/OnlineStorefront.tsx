@@ -1,94 +1,140 @@
 'use client';
 
-import React, { useRef } from 'react';
-import { motion, useScroll, useTransform } from 'framer-motion';
+import React from 'react';
+import Link from 'next/link';
+import { motion } from 'framer-motion';
+import { Globe, ArrowRight, CheckCircle2, Scissors, Star, MapPin, Phone } from 'lucide-react';
 
 export default function OnlineStorefront() {
-  const containerRef = useRef(null);
-  const { scrollYProgress } = useScroll({
-    target: containerRef,
-    offset: ["start end", "end start"]
-  });
-
-  const y = useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const opacity = useTransform(scrollYProgress, [0, 0.3, 0.7, 1], [0, 1, 1, 0]);
-
   return (
-    <section ref={containerRef} className="py-32 bg-gray-50 dark:bg-[#0a0a0a] overflow-hidden">
-      <div className="max-w-6xl mx-auto px-6 text-center">
-        <h2 className="text-4xl md:text-5xl font-extrabold tracking-tight mb-6 text-gray-900 dark:text-white">Online Vitrininiz</h2>
-        <p className="text-lg text-gray-500 dark:text-gray-400 mb-16 max-w-2xl mx-auto">
-          Müşterileriniz 7/24 online randevu alabilsin. Kurulum gerektirmeyen, size özel, SEO uyumlu modern bir web sitesi.
-        </p>
+    <section id="website" className="py-24 bg-white dark:bg-[#070D18] border-t border-[#E6E7EA] dark:border-white/10">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+          {/* Left Text Explanation */}
+          <div className="lg:col-span-5 space-y-6">
+            <span className="text-xs font-bold tracking-widest text-gold uppercase">
+              PRESTİJLİ DİJİTAL KİMLİK
+            </span>
 
-        <motion.div 
-          style={{ y, opacity }}
-          className="relative max-w-4xl mx-auto"
-        >
-          {/* Browser Window Mockup */}
-          <div className="rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-black shadow-2xl overflow-hidden">
-            {/* Browser Header */}
-            <div className="h-12 bg-gray-100 dark:bg-[#111] border-b border-gray-200 dark:border-white/5 flex items-center px-4 gap-4">
-              <div className="flex gap-2">
-                <div className="w-3 h-3 rounded-full bg-red-400" />
-                <div className="w-3 h-3 rounded-full bg-amber-400" />
-                <div className="w-3 h-3 rounded-full bg-emerald-400" />
+            <h2 className="font-serif text-3xl md:text-5xl font-bold text-navy-900 dark:text-white leading-tight">
+              Instagram Profiliniz Var. <br />
+              <span className="italic text-gold font-normal">Peki Kendi Salon Web Siteniz?</span>
+            </h2>
+
+            <p className="text-navy-800/75 dark:text-gray-300 text-base leading-relaxed">
+              Müşterilerinize sadece bir sosyal medya hesabı değil, kendi alan adınızla (`adiniz.kuafor.art`) yayın yapan 7/24 randevu kabul eden profesyonel bir web sitesi sunun.
+            </p>
+
+            <div className="space-y-3.5 pt-2">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-gold shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold text-navy-900 dark:text-white text-sm block">Özelleştirilebilir Salon Sayfası</span>
+                  <span className="text-xs text-navy-800/70 dark:text-gray-400">Salon fotoğraflarınız, çalışma saatleriniz ve konumunuz tek sayfada.</span>
+                </div>
               </div>
-              <div className="flex-1 flex justify-center">
-                <div className="bg-white dark:bg-black border border-gray-200 dark:border-white/10 rounded-md px-4 py-1 text-sm text-gray-500 flex items-center gap-2">
-                  <span className="text-xs">🔒</span>
-                  <span className="font-medium text-gray-900 dark:text-gray-300">kuafor.art/merve</span>
+
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-gold shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold text-navy-900 dark:text-white text-sm block">Hizmet Ve Fiyat Listesi</span>
+                  <span className="text-xs text-navy-800/70 dark:text-gray-400">Müşterileriniz salona gelmeden önce sunduğunuz hizmetleri ve güncel fiyatları inceler.</span>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="w-5 h-5 text-gold shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold text-navy-900 dark:text-white text-sm block">Google'da Bulunabilirlik</span>
+                  <span className="text-xs text-navy-800/70 dark:text-gray-400">Bölgenizdeki potansiyel müşterilerin sizi internette bulmasını sağlayın.</span>
                 </div>
               </div>
             </div>
 
-            {/* Browser Content (Salon Site Preview) */}
-            <div className="relative h-[400px] bg-white dark:bg-[#09090b] text-left">
-              {/* Fake cursor */}
-              <motion.div 
-                animate={{ 
-                  x: [0, 100, 250, 250], 
-                  y: [0, 50, -20, -20] 
-                }}
-                transition={{ repeat: Infinity, duration: 4, ease: "easeInOut" }}
-                className="absolute z-50 pointer-events-none"
-                style={{ top: '200px', left: '100px' }}
+            <div className="pt-4">
+              <Link
+                href="/register"
+                className="inline-flex items-center gap-2 px-7 py-3.5 bg-navy-900 text-white dark:bg-gold dark:text-navy-950 font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all"
               >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M5.5 3.21V20.8C5.5 21.45 6.27 21.79 6.75 21.36L11.44 17.15H17.5C18.05 17.15 18.5 16.7 18.5 16.15V4.21C18.5 3.66 18.05 3.21 17.5 3.21H5.5Z" fill="white" stroke="black" strokeWidth="1.5" />
-                </svg>
-              </motion.div>
+                <span>Web Sayfanızı Oluşturun</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
 
-              <div className="p-8 h-full flex flex-col justify-between">
-                <div className="flex justify-between items-center">
-                  <h1 className="text-2xl font-black text-gray-900 dark:text-white">Merve Hair Studio</h1>
-                  <nav className="hidden md:flex gap-6 text-sm font-bold text-gray-500 dark:text-gray-400">
-                    <span>Hizmetler</span>
-                    <span>Ekibimiz</span>
-                    <span>İletişim</span>
-                  </nav>
+          {/* Right Browser Mockup Display */}
+          <div className="lg:col-span-7">
+            <div className="rounded-3xl border border-borderlight dark:border-white/10 bg-warmbg dark:bg-[#111A2E] shadow-2xl p-6 md:p-8 space-y-6">
+              {/* Browser Address Bar Header */}
+              <div className="flex items-center justify-between p-3 rounded-xl bg-white dark:bg-navy-950 border border-gray-200 dark:border-white/10 shadow-sm">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-400" />
+                  <div className="w-3 h-3 rounded-full bg-amber-400" />
+                  <div className="w-3 h-3 rounded-full bg-emerald-400" />
                 </div>
-                
-                <div className="max-w-md">
-                  <h2 className="text-4xl font-extrabold mb-4 text-gray-900 dark:text-white">Saçınıza Hak Ettiği Değeri Verin.</h2>
-                  <p className="text-gray-600 dark:text-gray-400 mb-8 font-medium">Profesyonel kesim, renklendirme ve bakım hizmetleriyle kendinizi şımartın.</p>
-                  
-                  {/* Fake Button that the cursor "clicks" */}
-                  <motion.button 
-                    animate={{ scale: [1, 1, 0.95, 1], backgroundColor: ["#4f46e5", "#4f46e5", "#4338ca", "#4f46e5"] }}
-                    transition={{ repeat: Infinity, duration: 4, times: [0, 0.7, 0.8, 1] }}
-                    className="px-8 py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg"
-                  >
-                    Hemen Randevu Al
-                  </motion.button>
+                <div className="flex items-center gap-2 text-xs font-mono text-navy-900 dark:text-gold font-bold">
+                  <Globe className="w-3.5 h-3.5" />
+                  <span>https://artisan.kuafor.art</span>
+                </div>
+                <span className="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">
+                  Canlı
+                </span>
+              </div>
+
+              {/* Mockup Storefront UI */}
+              <div className="p-6 rounded-2xl bg-white dark:bg-navy-900 border border-gray-200/80 dark:border-white/5 space-y-5">
+                <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/5 pb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-11 h-11 rounded-xl bg-navy-900 text-white dark:bg-gold dark:text-navy-950 flex items-center justify-center font-bold">
+                      <Scissors className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h4 className="font-serif text-lg font-bold text-navy-900 dark:text-white">Artisan Coiffure</h4>
+                      <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+                        <span className="flex items-center text-amber-500 font-bold">
+                          <Star className="w-3.5 h-3.5 fill-amber-400 mr-1" /> 4.9 (128 Değerlendirme)
+                        </span>
+                        <span>• Nişantaşı, İstanbul</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button className="px-4 py-2 bg-navy-900 text-white dark:bg-gold dark:text-navy-950 font-bold text-xs rounded-xl shadow">
+                    Randevu Al
+                  </button>
+                </div>
+
+                {/* Service Cards */}
+                <div className="space-y-2">
+                  <div className="text-xs font-bold text-navy-900 dark:text-white uppercase tracking-wider">Popüler Hizmetler</div>
+
+                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-navy-950/40 border border-gray-200/50 dark:border-white/5 flex items-center justify-between text-xs">
+                    <div>
+                      <span className="font-bold text-navy-900 dark:text-white block">Kadın Saç Kesimi & Fön</span>
+                      <span className="text-gray-400 text-[11px]">45 Dakika</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-bold text-navy-900 dark:text-gold block">₺650</span>
+                      <span className="text-[10px] text-emerald-600 font-semibold">Online Randevuya Açık</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-gray-50 dark:bg-navy-950/40 border border-gray-200/50 dark:border-white/5 flex items-center justify-between text-xs">
+                    <div>
+                      <span className="font-bold text-navy-900 dark:text-white block">Organik Keratin Bakım</span>
+                      <span className="text-gray-400 text-[11px]">90 Dakika</span>
+                    </div>
+                    <div className="text-right">
+                      <span className="font-bold text-navy-900 dark:text-gold block">₺1.850</span>
+                      <span className="text-[10px] text-emerald-600 font-semibold">Online Randevuya Açık</span>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </motion.div>
-
+        </div>
       </div>
     </section>
   );
 }
-

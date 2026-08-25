@@ -7,27 +7,41 @@ const config = {
   darkMode: "class",
   theme: {
     extend: {
+      fontFamily: {
+        serif: ['"Playfair Display"', 'Georgia', 'serif'],
+        sans: ['"Plus Jakarta Sans"', 'Inter', 'sans-serif'],
+      },
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
-        primary: {
-          DEFAULT: "#D4AF37", // Premium Gold
-          foreground: "#0B0B0B",
-          50: "#FAF7EC",
-          100: "#F3EED2",
-          200: "#E7DC9F",
-          300: "#DBCA6C",
-          400: "#CFB839",
-          500: "#D4AF37",
-          600: "#A88B27",
-          700: "#7C671D",
-          800: "#514313",
-          900: "#2B240A",
+        navy: {
+          DEFAULT: "#0B1B36",
+          950: "#050D1A",
+          900: "#0B1B36",
+          800: "#172A49",
+          700: "#23395B",
+          600: "#2E496D",
+          500: "#3D5B84",
+          100: "#EAEFF5",
+          50: "#F2F5F9",
         },
+        gold: {
+          DEFAULT: "#C9A84E",
+          50: "#FDFBEE",
+          100: "#FBF5D5",
+          200: "#F6EAAC",
+          300: "#EFD97F",
+          400: "#D6BB68",
+          500: "#C9A84E",
+          600: "#B5933A",
+          700: "#8C6E26",
+        },
+        warmbg: "#F8F8F6",
+        borderlight: "#E6E7EA",
         dark: {
-          DEFAULT: "#0B0B0B",
+          DEFAULT: "#0A111E",
           card: "rgba(255, 255, 255, 0.03)",
-          border: "rgba(255, 255, 255, 0.06)",
+          border: "rgba(255, 255, 255, 0.08)",
         }
       },
       backgroundImage: {
@@ -39,12 +53,11 @@ const config = {
         xs: "2px",
       },
       boxShadow: {
-        "gold-glow": "0 0 15px rgba(212, 175, 55, 0.12)",
-        "gold-glow-hover": "0 0 25px rgba(212, 175, 55, 0.3)",
+        "gold-glow": "0 0 15px rgba(201, 168, 78, 0.15)",
+        "gold-glow-hover": "0 0 25px rgba(201, 168, 78, 0.3)",
+        "premium": "0 20px 40px -15px rgba(11, 27, 54, 0.07)",
+        "premium-dark": "0 20px 40px -15px rgba(0, 0, 0, 0.5)",
       },
-      dropShadow: {
-        "gold": "0 0 10px rgba(212, 175, 55, 0.25)",
-      }
     },
   },
   plugins: [],
