@@ -13,12 +13,24 @@ import Pricing from '@/components/landing/Pricing';
 import FinalCTA from '@/components/landing/FinalCTA';
 import Footer from '@/components/landing/Footer';
 
-// Super Admin CMS API Endpoint
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? '';
-const CMS_API_URL = `${API_BASE}/api/public/landing`;
+const DEFAULT_CMS_DATA = {
+  heroTitle: "Apple Kalitesinde Salon Yönetimi",
+  heroDescription: "Randevulardan kasaya kadar tüm operasyonunuz için tek sistem.",
+  ctaText: "Ücretsiz Dene",
+  ctaLink: "/register",
+  activeSections: {
+    hero: true,
+    timeline: true,
+    chat: true,
+    loyalty: true,
+    finance: true,
+    storefront: true,
+    pricing: true
+  }
+};
 
 export default function LandingPage() {
-  const [cmsData, setCmsData] = useState<any>(null);
+  const [cmsData, setCmsData] = useState<any>(DEFAULT_CMS_DATA);
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, {
     stiffness: 100,
@@ -27,31 +39,18 @@ export default function LandingPage() {
   });
 
   useEffect(() => {
-    // Fetch published CMS data
-    fetch(CMS_API_URL)
+    const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+    fetch(`${apiBase}/api/public/landing`)
       .then(res => res.json())
       .then(data => {
-        if (data.success && data.data) setCmsData(data.data);
-        else setCmsData({ activeSections: {} });
+        if (data && data.success && data.data) {
+          setCmsData(data.data);
+        }
       })
       .catch(err => {
-        console.error("CMS data fetch error:", err);
-        setCmsData({ activeSections: {} });
+        console.warn("CMS API load fallback:", err);
       });
   }, []);
-
-  if (!cmsData) {
-    // Elegant loading state
-    return (
-      <div className="min-h-screen bg-[#F8F8F6] dark:bg-[#0A111E] flex items-center justify-center">
-        <motion.div
-          animate={{ scale: [1, 1.15, 1], opacity: [0.6, 1, 0.6] }}
-          transition={{ duration: 1.2, repeat: Infinity }}
-          className="w-12 h-12 rounded-full border-2 border-navy-900 dark:border-gold border-t-transparent"
-        />
-      </div>
-    );
-  }
 
   const { activeSections = {} } = cmsData;
 
@@ -101,4 +100,3 @@ export default function LandingPage() {
     </div>
   );
 }
-
