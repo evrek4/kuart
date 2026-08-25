@@ -2,10 +2,11 @@
   "name": "@kuafor-art/database",
   "version": "1.0.0",
   "private": true,
-  "main": "index.ts",
+  "main": "index.js",
   "scripts": {
     "db:push": "prisma db push",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "build": "tsc index.ts --target ES2020 --module commonjs --declaration --skipLibCheck --outDir ."
   },
   "devDependencies": {
     "prisma": "^5.22.0"
@@ -14,5 +15,6 @@
     "@prisma/client": "^5.22.0",
     "dotenv": "^16.6.1",
     "pg": "^8.23.0"
-  }
+  },
+  "types": "index.d.ts"
 }
