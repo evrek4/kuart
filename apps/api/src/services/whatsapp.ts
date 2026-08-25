@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 const WHATSAPP_ACCESS_TOKEN = process.env.WHATSAPP_ACCESS_TOKEN;
 const WHATSAPP_PHONE_NUMBER_ID = process.env.WHATSAPP_PHONE_NUMBER_ID;
 const WHATSAPP_VERSION = process.env.WHATSAPP_VERSION || 'v20.0';
@@ -16,25 +14,31 @@ export async function sendWhatsAppTextMessage(to: string, text: string) {
   }
 
   try {
-    const response = await axios.post(
+    const response = await fetch(
       `https://graph.facebook.com/${WHATSAPP_VERSION}/${WHATSAPP_PHONE_NUMBER_ID}/messages`,
       {
-        messaging_product: 'whatsapp',
-        to,
-        type: 'text',
-        text: { body: text },
-      },
-      {
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          to,
+          type: 'text',
+          text: { body: text },
+        }),
       }
     );
-    console.log('WhatsApp message sent successfully:', response.data);
+    const data = await response.json();
+    if (!response.ok) {
+      console.error('Error sending WhatsApp message:', data);
+      return false;
+    }
+    console.log('WhatsApp message sent successfully:', data);
     return true;
   } catch (error: any) {
-    console.error('Error sending WhatsApp message:', error.response?.data || error.message);
+    console.error('Error sending WhatsApp message:', error?.message || error);
     return false;
   }
 }
@@ -58,29 +62,35 @@ export async function sendWhatsAppTemplateMessage(
   }
 
   try {
-    const response = await axios.post(
+    const response = await fetch(
       `https://graph.facebook.com/${WHATSAPP_VERSION}/${WHATSAPP_PHONE_NUMBER_ID}/messages`,
       {
-        messaging_product: 'whatsapp',
-        to,
-        type: 'template',
-        template: {
-          name: templateName,
-          language: { code: languageCode },
-          components,
-        },
-      },
-      {
+        method: 'POST',
         headers: {
           Authorization: `Bearer ${WHATSAPP_ACCESS_TOKEN}`,
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({
+          messaging_product: 'whatsapp',
+          to,
+          type: 'template',
+          template: {
+            name: templateName,
+            language: { code: languageCode },
+            components,
+          },
+        }),
       }
     );
-    console.log(`WhatsApp template ${templateName} sent successfully:`, response.data);
+    const data = await response.json();
+    if (!response.ok) {
+      console.error(`Error sending WhatsApp template ${templateName}:`, data);
+      return false;
+    }
+    console.log(`WhatsApp template ${templateName} sent successfully:`, data);
     return true;
   } catch (error: any) {
-    console.error(`Error sending WhatsApp template ${templateName}:`, error.response?.data || error.message);
+    console.error(`Error sending WhatsApp template ${templateName}:`, error?.message || error);
     return false;
   }
 }
