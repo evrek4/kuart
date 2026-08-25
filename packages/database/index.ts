@@ -16,7 +16,7 @@ let users = [
     email: "ahmet@melekkuafor.com",
     passwordHash: "$2b$10$2gy5udFIspC8YgUHultSeuQDGkN1PYKGMEbVF27V4SCJ2JXY1gOKK", // password123
     isActive: true,
-    role: "SALON_OWNER",
+    role: "TENANT",
     name: "Ahmet Usta",
     phone: "0532 999 8811",
     tenantId: "tenant-456"
@@ -154,6 +154,7 @@ let appointmentsList: any[] = [];
 
 let landingConfigs: any[] = [];
 let mediaList: any[] = [];
+let passwordResetTokens: any[] = [];
 
 
 class MockPrisma {
@@ -196,7 +197,8 @@ class MockPrisma {
         passwordHash: args.data.passwordHash,
         name: args.data.name,
         phone: args.data.phone || null,
-        role: args.data.role || "SALON_OWNER",
+        address: args.data.address || null,
+        role: args.data.role || "TENANT",
         tenantId: args.data.tenantId || null,
         isActive: args.data.isActive !== undefined ? args.data.isActive : true,
         createdAt: new Date(),
@@ -782,6 +784,40 @@ class MockPrisma {
       };
       marketingLogs.push(newLog);
       return newLog;
+    }
+  };
+
+  passwordResetToken = {
+    findUnique: async (args?: any) => {
+      if (!args || !args.where) return null;
+      return passwordResetTokens.find((t: any) => t.token === args.where.token) || null;
+    },
+    create: async (args: any) => {
+      const newToken = {
+        id: `token-${Math.random().toString(36).substr(2, 9)}`,
+        token: args.data.token,
+        userId: args.data.userId,
+        expiresAt: args.data.expiresAt,
+        createdAt: new Date()
+      };
+      passwordResetTokens.push(newToken);
+      return newToken;
+    },
+    delete: async (args: any) => {
+      const index = passwordResetTokens.findIndex((t: any) => t.id === args.where.id);
+      if (index !== -1) {
+        const deleted = passwordResetTokens[index];
+        passwordResetTokens.splice(index, 1);
+        return deleted;
+      }
+      return null;
+    },
+    deleteMany: async (args: any) => {
+      if (!args || !args.where) return { count: 0 };
+      const { userId } = args.where;
+      const initialLength = passwordResetTokens.length;
+      passwordResetTokens = passwordResetTokens.filter((t: any) => t.userId !== userId);
+      return { count: initialLength - passwordResetTokens.length };
     }
   };
 

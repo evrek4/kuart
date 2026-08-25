@@ -8,7 +8,7 @@ export async function sendPreferredNotification(tenantId: string, message: strin
       include: {
         settings: true,
         users: {
-          where: { role: 'SALON_OWNER', isActive: true },
+          where: { role: 'TENANT', isActive: true },
           take: 1
         }
       }

@@ -148,7 +148,7 @@ async function main() {
       email: 'ahmet@melekkuafor.com',
       passwordHash: passwordHash,
       name: 'Ahmet Yılmaz',
-      role: 'SALON_STAFF',
+      role: 'STAFF',
       phone: '0532 999 8811',
       isActive: true,
     },
@@ -164,7 +164,7 @@ async function main() {
       email: 'ayse@melekkuafor.com',
       passwordHash: passwordHash,
       name: 'Ayşe Demir',
-      role: 'SALON_STAFF',
+      role: 'STAFF',
       phone: '0532 999 8822',
       isActive: true,
     },
@@ -212,7 +212,7 @@ async function main() {
   // 5.8. Mevcut tüm kiracılar için eksik Staff kayıtlarını tamamla (Self-healing)
   const allTenants = await prisma.tenant.findMany({
     include: {
-      users: { where: { role: 'SALON_OWNER' } },
+      users: { where: { role: 'TENANT' } },
       staff: true
     }
   });

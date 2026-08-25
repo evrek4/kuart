@@ -19,7 +19,7 @@ let users = [
         email: "ahmet@melekkuafor.com",
         passwordHash: "$2b$10$2gy5udFIspC8YgUHultSeuQDGkN1PYKGMEbVF27V4SCJ2JXY1gOKK", // password123
         isActive: true,
-        role: "SALON_OWNER",
+        role: "TENANT",
         name: "Ahmet Usta",
         phone: "0532 999 8811",
         tenantId: "tenant-456"
@@ -146,6 +146,7 @@ let customersList = [];
 let appointmentsList = [];
 let landingConfigs = [];
 let mediaList = [];
+let passwordResetTokens = [];
 class MockPrisma {
     constructor() {
         this.user = {
@@ -196,7 +197,8 @@ class MockPrisma {
                     passwordHash: args.data.passwordHash,
                     name: args.data.name,
                     phone: args.data.phone || null,
-                    role: args.data.role || "SALON_OWNER",
+                    address: args.data.address || null,
+                    role: args.data.role || "TENANT",
                     tenantId: args.data.tenantId || null,
                     isActive: args.data.isActive !== undefined ? args.data.isActive : true,
                     createdAt: new Date(),
@@ -838,6 +840,41 @@ class MockPrisma {
                 };
                 marketingLogs.push(newLog);
                 return newLog;
+            }
+        };
+        this.passwordResetToken = {
+            findUnique: async (args) => {
+                if (!args || !args.where)
+                    return null;
+                return passwordResetTokens.find((t) => t.token === args.where.token) || null;
+            },
+            create: async (args) => {
+                const newToken = {
+                    id: `token-${Math.random().toString(36).substr(2, 9)}`,
+                    token: args.data.token,
+                    userId: args.data.userId,
+                    expiresAt: args.data.expiresAt,
+                    createdAt: new Date()
+                };
+                passwordResetTokens.push(newToken);
+                return newToken;
+            },
+            delete: async (args) => {
+                const index = passwordResetTokens.findIndex((t) => t.id === args.where.id);
+                if (index !== -1) {
+                    const deleted = passwordResetTokens[index];
+                    passwordResetTokens.splice(index, 1);
+                    return deleted;
+                }
+                return null;
+            },
+            deleteMany: async (args) => {
+                if (!args || !args.where)
+                    return { count: 0 };
+                const { userId } = args.where;
+                const initialLength = passwordResetTokens.length;
+                passwordResetTokens = passwordResetTokens.filter((t) => t.userId !== userId);
+                return { count: initialLength - passwordResetTokens.length };
             }
         };
         this.$transaction = async (fn) => {

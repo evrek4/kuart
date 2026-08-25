@@ -433,7 +433,7 @@ app.post('/api/storefront/register', async (req: any, res: any) => {
           passwordHash: hashedPassword,
           name: ownerName,
           phone,
-          role: 'SALON_OWNER',
+          role: 'TENANT',
           isActive: true
         }
       });

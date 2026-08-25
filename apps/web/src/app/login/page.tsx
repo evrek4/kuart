@@ -45,10 +45,10 @@ function LoginForm() {
       document.cookie = `kuafor-token=${token}; path=/; max-age=604800; SameSite=Lax`; // 7 gün
 
       // Rol bazlı yönlendirme
-      if (role === "SUPER_ADMIN") {
+      if (role === "SUPER_ADMIN" || role === "SUB_ADMIN" || role === "MARKETING") {
         router.push(callbackUrl && callbackUrl.startsWith("/super-admin") ? callbackUrl : "/super-admin");
       } else {
-        // SALON_OWNER veya SALON_STAFF → dashboard'a
+        // TENANT veya STAFF → dashboard'a
         router.push(callbackUrl && callbackUrl.startsWith("/dashboard") ? callbackUrl : "/dashboard");
       }
 
@@ -100,7 +100,10 @@ function LoginForm() {
         </div>
 
         <div className="flex flex-col gap-2">
-          <label className="text-xs uppercase font-bold text-[#0B1933] dark:text-gray-200 tracking-wider">Şifre</label>
+          <div className="flex justify-between items-center">
+            <label className="text-xs uppercase font-bold text-[#0B1933] dark:text-gray-200 tracking-wider">Şifre</label>
+            <a href="/forgot-password" className="text-[10px] font-semibold text-primary hover:underline">Şifremi Unuttum</a>
+          </div>
           <input
             id="login-password"
             type="password"
