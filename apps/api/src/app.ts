@@ -19,6 +19,7 @@ import couponsRouter from './routes/coupons';
 import tenantCouponsRouter from './routes/tenant-coupons';
 import publicLandingRouter from './routes/publicLanding';
 import webhooksRouter from './routes/webhooks';
+import uploadRouter from './routes/upload';
 import { getTenantPrisma, prisma } from '@kuafor-art/database';
 import { ApiResponse } from '@kuafor-art/shared-types';
 import { slugify } from './utils/slugify';
@@ -83,6 +84,7 @@ app.use('/api/appointments', appointmentsRouter); // Public (storefront) + admin
 app.use('/api/customers', requireAuth, requireTenantAdmin, customersRouter);
 app.use('/api/services', requireAuth, requireTenantAdmin, servicesRouter);
 app.use('/api/gallery', requireAuth, requireTenantAdmin, galleryRouter);
+app.use('/api/upload', requireAuth, requireTenantAdmin, uploadRouter);
 app.use('/api/staff', requireAuth, requireTenantAdmin, staffRouter);
 app.use('/api/tenant-coupons', tenantCouponsRouter);
 app.use('/api/payments', paymentsRouter);
