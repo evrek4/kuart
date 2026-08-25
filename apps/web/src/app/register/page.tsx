@@ -306,10 +306,6 @@ function RegisterForm() {
               ))}
             </div>
           </div>
-              ))}
-            </div>
-          </div>
-
           {/* POS Credit Card Form for Paid Plans */}
           {selectedPlan && !(selectedPlan.isFree || selectedPlan.price === 0) && (
             <div
