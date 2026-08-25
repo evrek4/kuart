@@ -4,7 +4,13 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X, Sun, Moon, Scissors } from 'lucide-react';
 
-export default function Navbar() {
+// cmsData is optional — Navbar works both with and without it
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface NavbarProps {
+  cmsData?: any;
+}
+
+export default function Navbar({ cmsData }: NavbarProps = {}) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
@@ -15,12 +21,21 @@ export default function Navbar() {
     };
     window.addEventListener('scroll', handleScroll);
 
-    const isDark = document.documentElement.classList.contains('dark') ||
-                   localStorage.getItem('theme') === 'dark' ||
-                   (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-    setTheme(isDark ? 'dark' : 'light');
+    // Read current theme from html class
+    const readTheme = () => {
+      const isDark = document.documentElement.classList.contains('dark');
+      setTheme(isDark ? 'dark' : 'light');
+    };
+    readTheme();
 
-    return () => window.removeEventListener('scroll', handleScroll);
+    // Observe html class changes (e.g. next-themes toggling)
+    const observer = new MutationObserver(readTheme);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      observer.disconnect();
+    };
   }, []);
 
   const toggleTheme = () => {
@@ -44,7 +59,7 @@ export default function Navbar() {
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
-        {/* Brand Logo - Minimalist */}
+        {/* Brand Logo */}
         <Link href="/" className="flex items-center gap-2 group">
           <Scissors className="w-5 h-5 text-lightText-primary dark:text-darkText-primary" />
           <span className="font-serif text-xl font-bold text-lightText-primary dark:text-darkText-primary flex items-center gap-0.5">
@@ -52,25 +67,25 @@ export default function Navbar() {
           </span>
         </Link>
 
-        {/* Desktop Nav Links - Wide Spacing */}
+        {/* Desktop Nav Links */}
         <nav className="hidden md:flex items-center gap-10 text-[15px] font-medium text-lightText-secondary dark:text-darkText-secondary">
-          <a href="#features" className="hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">
+          <a href="/#features" className="hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">
             Hizmetler
           </a>
-          <a href="#how-it-works" className="hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">
+          <a href="/#how-it-works" className="hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">
             Nasıl Çalışır
           </a>
-          <a href="#pricing" className="hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">
+          <a href="/#pricing" className="hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">
             Fiyatlandırma
           </a>
-          <a href="#contact" className="hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">
+          <a href="/#contact" className="hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">
             İletişim
           </a>
         </nav>
 
-        {/* Actions */}
+        {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-5">
-          {/* Theme Toggle Button */}
+          {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
             className="text-lightText-muted dark:text-darkText-muted hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors"
@@ -81,20 +96,20 @@ export default function Navbar() {
 
           <Link
             href="/login"
-            className="px-4 py-2 text-[15px] font-semibold bg-transparent text-[#0B1933] hover:bg-gray-100 dark:text-[#F7F8FA] dark:hover:bg-white/10 rounded-lg transition-colors"
+            className="px-4 py-2 text-[15px] font-semibold text-[#0B1933] dark:text-[#F7F8FA] hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg transition-colors"
           >
             Giriş Yap
           </Link>
 
           <Link
             href="/register"
-            className="px-5 py-2.5 text-[14px] font-bold rounded-lg transition-all hover:opacity-90 bg-[#0B1933] text-white dark:bg-[#F7F8FA] dark:text-[#0B1933]"
+            className="px-5 py-2.5 text-[14px] font-bold rounded-lg bg-[#0B1933] text-white dark:bg-[#F7F8FA] dark:text-[#0B1933] hover:opacity-90 transition-opacity"
           >
             Ücretsiz Başla
           </Link>
         </div>
 
-        {/* Mobile Menu Toggle Button */}
+        {/* Mobile Menu Toggle */}
         <div className="flex md:hidden items-center gap-4">
           <button
             onClick={toggleTheme}
@@ -118,24 +133,24 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white dark:bg-dark-DEFAULT border-b border-borderlight dark:border-dark-border px-6 py-6 shadow-sm">
           <nav className="flex flex-col space-y-4 font-medium text-lightText-secondary dark:text-darkText-secondary">
-            <a href="#features" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-borderlight dark:border-dark-border">Hizmetler</a>
-            <a href="#how-it-works" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-borderlight dark:border-dark-border">Nasıl Çalışır</a>
-            <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-borderlight dark:border-dark-border">Fiyatlandırma</a>
-            <a href="#contact" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-borderlight dark:border-dark-border">İletişim</a>
+            <a href="/#features" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-borderlight dark:border-dark-border">Hizmetler</a>
+            <a href="/#how-it-works" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-borderlight dark:border-dark-border">Nasıl Çalışır</a>
+            <a href="/#pricing" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-borderlight dark:border-dark-border">Fiyatlandırma</a>
+            <a href="/#contact" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-borderlight dark:border-dark-border">İletişim</a>
           </nav>
 
           <div className="pt-6 flex flex-col gap-3">
             <Link
               href="/login"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center py-3 rounded-lg border border-[#0B1933] bg-transparent text-[#0B1933] hover:bg-gray-100 dark:border-white/20 dark:text-[#F7F8FA] dark:hover:bg-white/10 font-semibold"
+              className="w-full text-center py-3 rounded-lg border border-[#0B1933] dark:border-white/20 text-[#0B1933] dark:text-[#F7F8FA] hover:bg-gray-100 dark:hover:bg-white/10 font-semibold"
             >
               Giriş Yap
             </Link>
             <Link
               href="/register"
               onClick={() => setMobileMenuOpen(false)}
-              className="w-full text-center py-3 rounded-lg bg-[#0B1933] text-white hover:opacity-90 dark:bg-[#F7F8FA] dark:text-[#0B1933] font-bold"
+              className="w-full text-center py-3 rounded-lg bg-[#0B1933] text-white dark:bg-[#F7F8FA] dark:text-[#0B1933] hover:opacity-90 font-bold"
             >
               Ücretsiz Başla
             </Link>
