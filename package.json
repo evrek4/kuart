@@ -1,35 +1,35 @@
-﻿{
-    "name":  "kuafor-art",
-    "version":  "1.0.0",
-    "private":  true,
-    "workspaces":  [
-                       "apps/*",
-                       "packages/*"
-                   ],
-    "scripts":  {
-                    "build":  "npm run build --workspaces --if-present",
-                    "dev":  "concurrently \"npm run dev --workspace=@kuafor-art/api\" \"npm run dev --workspace=@kuafor-art/web\"",
-                    "db:generate":  "npm run db:generate --workspace=packages/database",
-                    "db:push":  "npm run db:push --workspace=packages/database",
-                    "tunnel:api":  "npx localtunnel --port 3001",
-                    "tunnel:web":  "npx localtunnel --port 3000",
-                    "test:webhooks":  "npm run test:webhooks --workspace=@kuafor-art/api",
-                    "start:web":  "next start apps/web -p 3000",
-                    "start:api":  "node -r dotenv/config apps/api/dist/app.js dotenv_config_path=apps/api/.env"
-                },
-    "devDependencies":  {
-                            "@types/node":  "^26.2.0",
-                            "@types/react":  "^19.2.18",
-                            "@types/react-dom":  "^19.2.4",
-                            "concurrently":  "^10.0.5",
-                            "typescript":  "^5.2.2"
-                        },
-    "dependencies":  {
-                         "@swc/helpers":  "^0.5.2",
-                         "caniuse-lite":  "^1.0.30001809",
-                         "glob":  "^13.0.6",
-                         "lodash":  "^4.18.1",
-                         "ms":  "^2.1.3",
-                         "next":  "^14.1.0"
-                     }
+{
+  "name": "kuafor-art",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "dev": "concurrently \"npm run dev --workspace=@kuafor-art/api\" \"npm run dev --workspace=@kuafor-art/web\"",
+    "db:generate": "npm run db:generate --workspace=packages/database",
+    "db:push": "npm run db:push --workspace=packages/database",
+    "tunnel:api": "npx localtunnel --port 3001",
+    "tunnel:web": "npx localtunnel --port 3000",
+    "test:webhooks": "npm run test:webhooks --workspace=@kuafor-art/api",
+    "start:web": "next start apps/web -p 3000",
+    "start:api": "node -r dotenv/config apps/api/dist/app.js dotenv_config_path=apps/api/.env"
+  },
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "concurrently": "^10.0.5",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@swc/helpers": "^0.5.2",
+    "caniuse-lite": "^1.0.30001809",
+    "glob": "^13.0.6",
+    "lodash": "^4.18.1",
+    "ms": "^2.1.3",
+    "next": "^14.1.0"
+  }
 }
