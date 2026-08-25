@@ -755,10 +755,10 @@ export default function BookingModal({
                 {step === 4 && !isPaymentStep && (
                   <form onSubmit={handleVerifyOtpAndBook} className="flex flex-col gap-5 text-center">
                     <h4 className="font-bold text-sm text-gray-900 dark:text-white uppercase tracking-wider">
-                      SMS Doğrulama
+                      WhatsApp / SMS Doğrulama
                     </h4>
                     <p className="text-gray-600 dark:text-gray-400 text-xs leading-relaxed max-w-sm mx-auto">
-                      <b>{clientPhone}</b> numaralı telefona gönderilen 6 haneli doğrulama kodunu aşağıdaki alana giriniz.
+                      <b>{clientPhone}</b> numaralı WhatsApp / telefonunuza gönderilen 6 haneli doğrulama kodunu aşağıdaki alana giriniz.
                     </p>
 
                     <div className="flex flex-col gap-1.5 text-left max-w-xs mx-auto w-full">

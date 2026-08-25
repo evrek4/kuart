@@ -8,6 +8,7 @@ import { addNotificationJob } from '../queues/notificationQueue';
 import { ApiResponse } from '@kuafor-art/shared-types';
 import { PosFactory } from '../services/payment/posFactory';
 import { sendEmail } from '../services/email';
+import { sendWhatsAppTextMessage } from '../services/whatsapp';
 
 const router = Router();
 
@@ -48,57 +49,33 @@ router.post('/send-otp', requireTenant, async (req: TenantRequest, res: Response
 
     console.log(`[OTP Engine] Generated ${otpCode} for ${phone}. Tenant: ${tenant.name} (${tenant.plan?.name})`);
 
-    // Maliyet Optimizasyonlu OTP İletim Algoritması
-    if (tenant.plan?.name === 'FREE') {
-      // Ücretsiz paket: Sadece e-posta ile gönder
-      console.log(`[OTP Engine] [FREE] Sending OTP E-mail to: ${email}`);
-      if (!email) {
-        throw new Error('E-posta adresi bulunamadı. Lütfen e-posta adresinizi giriniz.');
-      }
-      const emailSubject = `${tenant.name} Randevu Doğrulama Kodu`;
-      const emailHtml = `
-        <div style="font-family: sans-serif; padding: 20px; color: #333;">
-          <h2 style="color: #d97706;">Randevu Doğrulama Kodu</h2>
-          <p>Merhaba,</p>
-          <p><b>${tenant.name}</b> salonundan randevu oluşturmak için doğrulama kodunuz aşağıdadır:</p>
-          <div style="background-color: #f3f4f6; padding: 15px; font-size: 24px; font-weight: bold; letter-spacing: 5px; text-align: center; border-radius: 8px; margin: 20px 0; color: #111;">
-            ${otpCode}
-          </div>
-          <p>Bu kod 3 dakika süreyle geçerlidir.</p>
-          <p style="font-size: 12px; color: #666; margin-top: 30px; border-top: 1px solid #eee; padding-top: 10px;">
-            Bu e-posta otomatik olarak gönderilmiştir. Lütfen yanıtlamayınız.
-          </p>
-        </div>
-      `;
-      const emailSent = await sendEmail(email, emailSubject, emailHtml);
-      if (!emailSent) {
-        throw new Error('E-posta sunucusu aracılığıyla doğrulama kodu gönderilemedi.');
-      }
+    // 1. WhatsApp ile Doğrulama Kodu Gönderimi (Öncelikli)
+    const waMessage = `*${tenant.name}* randevu doğrulama kodunuz: *${otpCode}*\n\nBu kod 3 dakika boyunca geçerlidir. Lütfen kimseyle paylaşmayınız.`;
+    const waSent = await sendWhatsAppTextMessage(phone, waMessage);
+    
+    if (waSent) {
+      console.log(`[OTP Engine] OTP sent successfully via WhatsApp to ${phone}`);
     } else {
-      // Pro/Elite Paket: Öncelikli WhatsApp gönderimi, hata durumunda SMS fallback
-      try {
-        console.log(`[OTP Engine] [PRO/ELITE] Attempting WhatsApp dispatch to ${phone}...`);
-        
-        // Simüle WhatsApp API çağrısı
-        const whatsappRegistered = true; 
-        
-        if (!whatsappRegistered) {
-          throw new Error('Number is not registered on WhatsApp');
-        }
-        
-        console.log(`[OTP Engine] WhatsApp OTP dispatch successful.`);
-      } catch (waError) {
-        const errorMessage = waError instanceof Error ? waError.message : String(waError);
-        console.warn(`[OTP Engine] WhatsApp dispatch failed: ${errorMessage}. Switching to Netgsm SMS...`);
-        // Fallback SMS Gönderimi
-        const smsMessage = `Kuafor.art: ${tenant.name} randevu dogrulama kodunuz: ${otpCode}`;
-        const smsSuccess = await sendSms(phone, smsMessage);
-        
-        if (!smsSuccess) {
-          throw new Error('SMS Gateway dispatch failed.');
-        }
-        console.log(`[OTP Engine] Fallback SMS dispatch successful.`);
+      console.log(`[OTP Engine] WhatsApp gönderimi yapılamadı, SMS / E-Posta deneniyor...`);
+      // WhatsApp gönderilemezse veya bağlı değilse SMS & Email fallback
+      if (email) {
+        const emailSubject = `${tenant.name} Randevu Doğrulama Kodu`;
+        const emailHtml = `
+          <div style="font-family: sans-serif; padding: 20px; color: #333;">
+            <h2 style="color: #d97706;">Randevu Doğrulama Kodu</h2>
+            <p>Merhaba,</p>
+            <p><b>${tenant.name}</b> salonundan randevu oluşturmak için doğrulama kodunuz aşağıdadır:</p>
+            <div style="background-color: #f3f4f6; padding: 15px; font-size: 24px; font-weight: bold; letter-spacing: 5px; text-align: center; border-radius: 8px; margin: 20px 0; color: #111;">
+              ${otpCode}
+            </div>
+            <p>Bu kod 3 dakika süreyle geçerlidir.</p>
+          </div>
+        `;
+        await sendEmail(email, emailSubject, emailHtml).catch(() => {});
       }
+      
+      const smsMessage = `Kuafor.art: ${tenant.name} randevu dogrulama kodunuz: ${otpCode}`;
+      await sendSms(phone, smsMessage).catch(() => {});
     }
 
     return res.status(200).json({

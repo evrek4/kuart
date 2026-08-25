@@ -34,4 +34,7 @@ yarn-error.log*
 *.zip
 env
 under_construction_site/
+# whatsapp-web.js session & cache
+.wwebjs_auth/
+.wwebjs_cache/
 

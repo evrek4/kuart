@@ -38,6 +38,7 @@ import { addNotificationJob } from './queues/notificationQueue';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { requireAuth, requireTenantAdmin, requireSuperAdmin, JWT_SECRET } from './middlewares/auth';
+import { initializeWhatsAppClient } from './services/whatsapp';
 
 const app = express();
 app.use(cors({ origin: true, credentials: true }));
@@ -648,6 +649,8 @@ const PORT = process.env.PORT || 3001;
 if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
   app.listen(Number(PORT), '0.0.0.0', () => {
     console.log(`Kuafor.art API Server running on http://0.0.0.0:${PORT}`);
+    // Sadece yerel/sunucu ortamında WhatsApp'ı başlat (Vercel serverless desteklemez)
+    initializeWhatsAppClient();
   });
 }
 
