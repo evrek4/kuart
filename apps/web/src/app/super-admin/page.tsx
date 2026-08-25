@@ -14,7 +14,7 @@ interface DashboardData {
   }>;
 }
 
-const API_BASE = process.env.API_URL || process.env.NEXT_PUBLIC_API_URL ?? "";
+const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "";
 
 async function getDashboardData(): Promise<DashboardData | null> {
   try {
