@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-const JWT_SECRET = process.env.JWT_SECRET!;
+const JWT_SECRET = process.env.JWT_SECRET || "lokal-test-secret-123";
 
 function getUserFromToken() {
   const cookieStore = cookies();

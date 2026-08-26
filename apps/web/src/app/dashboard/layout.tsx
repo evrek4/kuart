@@ -22,7 +22,17 @@ export default function DashboardLayout({
     const info = getCurrentTenantInfo();
 
     // Token yoksa veya tenant bilgisi yoksa login'e yönlendir
-    if (!info || !info.tenantId) {
+    if (!info) {
+      router.replace("/login?callbackUrl=/dashboard");
+      return;
+    }
+
+    if (info.role === "SUPER_ADMIN") {
+      router.replace("/super-admin");
+      return;
+    }
+
+    if (!info.tenantId) {
       router.replace("/login?callbackUrl=/dashboard");
       return;
     }

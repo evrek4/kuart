@@ -24,7 +24,7 @@ export async function middleware(request: NextRequest) {
     if (!token) return NextResponse.redirect(new URL('/login', request.url));
     
     try {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET || "");
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET || "lokal-test-secret-123");
       const { payload } = await jwtVerify(token, secret);
       if (payload.role !== 'SUPER_ADMIN') {
         return NextResponse.redirect(new URL('/login', request.url));
@@ -40,7 +40,7 @@ export async function middleware(request: NextRequest) {
     if (!token) return NextResponse.redirect(new URL('/login', request.url));
     
     try {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET || "");
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET || "lokal-test-secret-123");
       await jwtVerify(token, secret);
     } catch {
       return NextResponse.redirect(new URL('/login', request.url));

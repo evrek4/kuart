@@ -44,15 +44,12 @@ function LoginForm() {
       document.cookie = `tenant-id=; path=/; max-age=0; SameSite=Lax`;
       document.cookie = `kuafor-token=${token}; path=/; max-age=604800; SameSite=Lax`; // 7 gün
 
-      // Rol bazlı yönlendirme
-      if (role === "SUPER_ADMIN" || role === "SUB_ADMIN" || role === "MARKETING") {
-        router.push(callbackUrl && callbackUrl.startsWith("/super-admin") ? callbackUrl : "/super-admin");
-      } else {
-        // TENANT veya STAFF → dashboard'a
-        router.push(callbackUrl && callbackUrl.startsWith("/dashboard") ? callbackUrl : "/dashboard");
-      }
+      // Rol bazlı yönlendirme (hard navigation cookie senkronizasyonu için)
+      const targetUrl = (role === "SUPER_ADMIN" || role === "SUB_ADMIN" || role === "MARKETING")
+        ? (callbackUrl && callbackUrl.startsWith("/super-admin") ? callbackUrl : "/super-admin")
+        : (callbackUrl && callbackUrl.startsWith("/dashboard") ? callbackUrl : "/dashboard");
 
-      router.refresh();
+      window.location.href = targetUrl;
     } catch (err) {
       setError("Sunucuya bağlanılamadı. Lütfen daha sonra tekrar deneyin.");
       setIsLoading(false);
