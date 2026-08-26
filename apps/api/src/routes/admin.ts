@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { deleteTenantStorage } from '../services/storageService';
 import { prisma } from '@kuafor-art/database';
 import bcrypt from 'bcrypt';
 import { slugify } from '../utils/slugify';
@@ -344,7 +345,17 @@ router.delete('/tenants/:id', async (req, res) => {
       return res.status(404).json({ success: false, error: { message: 'Salon bulunamadı.' } });
     }
 
-    // Cascade deletion handles associated User, Customer, Appointment, Service, TenantSettings, etc.
+    // ADIM 1: Fiziksel dosyaları asenkron sil (R2 CDN + yerel disk)
+    // Non-blocking: Hata olsa bile DB silme işlemini engellemez
+    deleteTenantStorage(id).catch((gcErr) => {
+      console.error('[DeleteTenant] Garbage collection hatasi (non-blocking):', gcErr?.message || gcErr);
+    });
+
+    // ADIM 2: Prisma Cascade ile DB kayıtlarını sil
+    // onDelete: Cascade → User, Customer, Appointment, Staff, Service,
+    //                      Media, Payment, PaymentHistory, TenantSettings,
+    //                      FinanceRecord, TenantCoupon, LoyaltyCard,
+    //                      MarketingLog, ReviewRequest hepsi silinir
     await prisma.tenant.delete({ where: { id } });
 
     res.json({
