@@ -19,6 +19,7 @@ import couponsRouter from './routes/coupons';
 import tenantCouponsRouter from './routes/tenant-coupons';
 import publicLandingRouter from './routes/publicLanding';
 import webhooksRouter from './routes/webhooks';
+import { captureRawBody } from './middlewares/webhookSignature';
 import uploadRouter from './routes/upload';
 import { getTenantPrisma, prisma } from '@kuafor-art/database';
 import { ApiResponse } from '@kuafor-art/shared-types';
@@ -55,7 +56,10 @@ app.get(['/', '/health', '/api/health'], (_req, res) => {
 });
 
 // Webhook rotalarını kiracı domain kontrolünden muaf tutmak için en üste ekliyoruz
-app.use('/api/webhooks', webhooksRouter);
+// captureRawBody: Imza dogrulama icin ham body'yi yakaliyoruz (express.json() oncesinde)
+app.use('/api/webhooks', captureRawBody, webhooksRouter);
+// Iyzico/PayTR callback route'u da ayni sekilde ham body yakalama gerektirir
+app.use('/api/payments', captureRawBody);
 
 // BigInt JSON serialize desteği — Prisma BigInt alanları (mediaCapacity vb.) JSON'a dönüştürülür
 (BigInt.prototype as any).toJSON = function () {
