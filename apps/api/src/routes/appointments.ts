@@ -1041,7 +1041,8 @@ router.post('/:id/checkout', requireAuth, requireTenant, async (req: TenantReque
     // 2. Personel varsa prim hesaplamasını yap
     if (appointment.staffId && appointment.staff) {
       const commissionRate = appointment.staff.commissionRate || 0;
-      commissionEarned = calculatedPaidAmount * (commissionRate / 100);
+      // IEEE 754 floating-point korumasi: 2 ondalik haneye yuvarla
+      commissionEarned = Math.round(calculatedPaidAmount * (commissionRate / 100) * 100) / 100;
     }
 
     // 3. Randevuyu güncelle
