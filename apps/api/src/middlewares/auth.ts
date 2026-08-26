@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
-export const JWT_SECRET = process.env.JWT_SECRET || 'lokal-test-secret-123';
+export const JWT_SECRET = process.env.JWT_SECRET || 'mock_secret_key_12345';
 
 export interface AuthRequest extends Request {
   user?: {
@@ -20,42 +20,43 @@ export interface AuthRequest extends Request {
 }
 
 export function requireAuth(req: any, res: Response, next: NextFunction) {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader?.split(' ')[1] || req.headers.cookie?.split('; ').find((row: string) => row.startsWith('kuafor-token='))?.split('=')[1];
-  
-  if (!token) {
-    return res.status(401).json({ success: false, error: { code: 'UNAUTHORIZED', message: 'Token bulunamadı.' } });
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, error: { code: 'UNAUTHORIZED', message: 'Yetkilendirme hatası: Token bulunamadı.' } });
   }
 
+  const token = authHeader.split(' ')[1];
   try {
-    req.user = jwt.verify(token, JWT_SECRET);
+    const payload = jwt.verify(token, JWT_SECRET) as any;
+    req.user = payload;
     next();
   } catch (error) {
-    return res.status(401).json({ success: false, error: { code: 'INVALID_TOKEN', message: 'Geçersiz veya süresi dolmuş token.' } });
+    return res.status(401).json({ success: false, error: { code: 'UNAUTHORIZED', message: 'Yetkilendirme hatası: Geçersiz token.' } });
   }
 }
 
 export function requireTenantAdmin(req: any, res: Response, next: NextFunction) {
-  if (!req.user) {
-    return res.status(401).json({ success: false, error: { code: 'UNAUTHORIZED' } });
-  }
-
-  if (!['TENANT', 'SUPER_ADMIN', 'SUB_ADMIN'].includes(req.user.role)) {
-    return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Yetkisiz rol.' } });
-  }
-
-  if (req.user.role !== 'SUPER_ADMIN') {
-    if (req.user.tenantId !== req.tenant?.id) {
-      return res.status(403).json({ success: false, error: { code: 'TENANT_MISMATCH', message: 'Farklı bir salona erişim yetkiniz yok.' } });
+  requireAuth(req, res, () => {
+    if (!req.user || (req.user.role !== 'TENANT_ADMIN' && req.user.role !== 'SUPER_ADMIN')) {
+      return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Erişim reddedildi: Bu işlem için TENANT_ADMIN yetkisi gereklidir.' } });
     }
-  }
-
-  next();
+    
+    // Strict Tenant Isolation
+    if (!req.tenant) {
+      req.tenant = { id: req.user.tenantId } as any;
+    } else {
+      req.tenant.id = req.user.tenantId;
+    }
+    
+    next();
+  });
 }
 
 export function requireSuperAdmin(req: any, res: Response, next: NextFunction) {
-  if (!req.user || req.user.role !== 'SUPER_ADMIN') {
-    return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Sadece süper adminler erişebilir.' } });
-  }
-  next();
+  requireAuth(req, res, () => {
+    if (!req.user || req.user.role !== 'SUPER_ADMIN') {
+      return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Erişim reddedildi: Bu işlem için SUPER_ADMIN yetkisi gereklidir.' } });
+    }
+    next();
+  });
 }

@@ -26,7 +26,30 @@ router.post('/send-otp', requireTenant, async (req: TenantRequest, res: Response
   }
 
   try {
+    
     const tenantId = req.tenant!.id;
+
+    // --- RATE LIMITING START ---
+    const clientIp = req.ip || req.socket?.remoteAddress || 'unknown';
+    const rlKeyIp = `rl:otp:${tenantId}:ip:${clientIp}`;
+    const rlKeyPhone = `rl:otp:${tenantId}:phone:${phone}`;
+    
+    const [ipCount, phoneCount] = await Promise.all([
+      redisConnection.incr(rlKeyIp),
+      redisConnection.incr(rlKeyPhone)
+    ]);
+    
+    if (ipCount === 1) await redisConnection.expire(rlKeyIp, 180);
+    if (phoneCount === 1) await redisConnection.expire(rlKeyPhone, 180);
+    
+    if (ipCount > 3 || phoneCount > 3) {
+      return res.status(429).json({
+        success: false,
+        error: { code: 'TOO_MANY_REQUESTS', message: 'Çok fazla istek attınız, lütfen bekleyin.' }
+      } as any);
+    }
+    // --- RATE LIMITING END ---
+
 
     // 6 Haneli geçici doğrulama kodu üretimi
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();

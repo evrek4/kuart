@@ -89,6 +89,24 @@ export const redisConnection: any = new Proxy({} as any, {
     if (prop === 'connect') return () => Promise.resolve();
     if (prop === 'on') return () => {};
     if (prop === 'disconnect') return () => {};
+
+    if (prop === 'quit') return () => Promise.resolve();
+    
+    if (prop === 'incr') {
+      return (key: string) => {
+        let val = parseInt(inMemoryStore.get(key) || '0', 10);
+        val += 1;
+        inMemoryStore.set(key, val.toString());
+        return Promise.resolve(val);
+      };
+    }
+    
+    if (prop === 'expire') {
+      return (key: string, ttl: number) => {
+        return Promise.resolve(1);
+      };
+    }
+
     
     if (prop === 'set') {
       return (key: string, value: string) => {
