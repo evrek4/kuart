@@ -10,6 +10,13 @@ interface SubscriptionPlan {
   storageLimitMB: number;
 }
 
+interface TenantOwner {
+  id: string;
+  name: string;
+  email: string;
+  phone: string | null;
+}
+
 interface Tenant {
   id: string;
   name: string;
@@ -22,6 +29,7 @@ interface Tenant {
   billingStatus: string;
   nextBillingDate: string | null;
   plan?: SubscriptionPlan;
+  owner?: TenantOwner | null;
 }
 
 export default function TenantsPage() {
@@ -31,12 +39,26 @@ export default function TenantsPage() {
 
   // Edit Modal States
   const [editingTenant, setEditingTenant] = useState<Tenant | null>(null);
+  const [editName, setEditName] = useState("");
+  const [editSlug, setEditSlug] = useState("");
+  const [editSubdomain, setEditSubdomain] = useState("");
+  const [editCustomDomain, setEditCustomDomain] = useState("");
   const [editIsActive, setEditIsActive] = useState(true);
   const [editQuotaMB, setEditQuotaMB] = useState(100);
   const [editPlanId, setEditPlanId] = useState("");
-  const [editCustomDomain, setEditCustomDomain] = useState("");
   const [editBillingStatus, setEditBillingStatus] = useState("ACTIVE");
+
+  // Owner Edit Fields
+  const [editOwnerName, setEditOwnerName] = useState("");
+  const [editEmail, setEditEmail] = useState("");
+  const [editPhone, setEditPhone] = useState("");
+  const [editPassword, setEditPassword] = useState("");
+
   const [isSaving, setIsSaving] = useState(false);
+
+  // Delete Modal States
+  const [deletingTenant, setDeletingTenant] = useState<Tenant | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Create Tenant States
   const [isCreateOpen, setIsCreateOpen] = useState(false);
@@ -48,6 +70,7 @@ export default function TenantsPage() {
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [newOwnerName, setNewOwnerName] = useState("");
+  const [newPhone, setNewPhone] = useState("");
   const [createError, setCreateError] = useState<string | null>(null);
   const [createSuccess, setCreateSuccess] = useState<{ name: string; email: string; password: string } | null>(null);
 
@@ -93,11 +116,18 @@ export default function TenantsPage() {
 
   const handleEditClick = (tenant: Tenant) => {
     setEditingTenant(tenant);
+    setEditName(tenant.name);
+    setEditSlug(tenant.slug);
+    setEditSubdomain(tenant.subdomain || "");
+    setEditCustomDomain(tenant.customDomain || "");
     setEditIsActive(tenant.isActive);
     setEditQuotaMB(Math.round(tenant.mediaCapacity / (1024 * 1024)));
     setEditPlanId(tenant.planId);
-    setEditCustomDomain(tenant.customDomain || "");
     setEditBillingStatus(tenant.billingStatus);
+    setEditOwnerName(tenant.owner?.name || tenant.name);
+    setEditEmail(tenant.owner?.email || "");
+    setEditPhone(tenant.owner?.phone || "");
+    setEditPassword("");
   };
 
   const handleEditSave = async (e: React.FormEvent) => {
@@ -110,11 +140,18 @@ export default function TenantsPage() {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          name: editName,
+          slug: editSlug,
+          subdomain: editSubdomain || undefined,
+          customDomain: editCustomDomain || undefined,
           isActive: editIsActive,
           mediaCapacity: editQuotaMB * 1024 * 1024,
           planId: editPlanId,
-          customDomain: editCustomDomain,
-          billingStatus: editBillingStatus
+          billingStatus: editBillingStatus,
+          ownerName: editOwnerName,
+          email: editEmail,
+          phone: editPhone,
+          password: editPassword || undefined
         }),
       });
 
@@ -123,12 +160,44 @@ export default function TenantsPage() {
         if (json.success) {
           setTenants(tenants.map(t => t.id === editingTenant.id ? { ...t, ...json.data } : t));
           setEditingTenant(null);
+        } else {
+          alert(json.error?.message || "Güncelleme başarısız.");
         }
+      } else {
+        const json = await res.json();
+        alert(json.error?.message || "Sunucu hatası: Güncelleme yapılamadı.");
       }
     } catch (err) {
       console.error("Failed to save tenant edits:", err);
+      alert("Bağlantı hatası: Düzenleme kaydedilemedi.");
     } finally {
       setIsSaving(false);
+    }
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingTenant) return;
+    setIsDeleting(true);
+
+    try {
+      const res = await fetch(`/api/admin/tenants/${deletingTenant.id}`, {
+        method: "DELETE"
+      });
+
+      const json = await res.json();
+      if (res.ok && json.success) {
+        setTenants(tenants.filter(t => t.id !== deletingTenant.id));
+        setDeletingTenant(null);
+        if (editingTenant?.id === deletingTenant.id) {
+          setEditingTenant(null);
+        }
+      } else {
+        alert(json.error?.message || "Silme işlemi gerçekleştirilemedi.");
+      }
+    } catch (err) {
+      alert("Bağlantı hatası: Salon silinemedi.");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -149,13 +218,15 @@ export default function TenantsPage() {
           customDomain: newCustomDomain || undefined,
           planId: newPlanId,
           email: newEmail,
-          password: newPassword
+          password: newPassword,
+          ownerName: newOwnerName || newName,
+          phone: newPhone
         }),
       });
 
       const json = await res.json();
       if (res.ok && json.success) {
-        setTenants([...tenants, json.data]);
+        setTenants([json.data, ...tenants]);
         // Başarı bilgisi — giriş credentials'ını göster
         setCreateSuccess({ name: newOwnerName || newName, email: newEmail, password: newPassword });
         // Formu sıfırla
@@ -166,6 +237,7 @@ export default function TenantsPage() {
         setNewEmail("");
         setNewPassword("");
         setNewOwnerName("");
+        setNewPhone("");
         if (plans.length > 0) {
           setNewPlanId(plans[0].id);
         }
@@ -219,7 +291,7 @@ export default function TenantsPage() {
       <div className="flex justify-between items-center pb-6 border-b border-borderlight dark:border-dark-border">
         <div>
           <h1 className="text-2xl font-black text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-tight">MAĞAZA YÖNETİMİ</h1>
-          <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-1">Sistemdeki tüm kuaför salonlarının limitlerini, paketlerini ve aktiflik durumlarını yönetin.</p>
+          <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-1">Sistemdeki tüm kuaför salonlarının limitlerini, kullanıcılarını ve aktiflik durumlarını yönetin.</p>
         </div>
         <motion.button
           whileHover={{ scale: 1.03 }}
@@ -241,65 +313,87 @@ export default function TenantsPage() {
             <thead>
               <tr className="border-b border-borderlight dark:border-dark-border text-lightText-secondary dark:text-darkText-secondary text-xs uppercase tracking-wider">
                 <th className="py-4 px-4 font-bold">Salon Adı / URL</th>
+                <th className="py-4 px-4 font-bold">Salon Sahibi (User)</th>
                 <th className="py-4 px-4 font-bold">Abonelik Paketi</th>
                 <th className="py-4 px-4 font-bold">Ödeme Durumu</th>
-                <th className="py-4 px-4 font-bold">Depolama Kotası</th>
-                <th className="py-4 px-4 font-bold">Son Ödeme Tarihi</th>
+                <th className="py-4 px-4 font-bold">Kota</th>
                 <th className="py-4 px-4 font-bold">Durum</th>
                 <th className="py-4 px-4 font-bold text-right">İşlemler</th>
               </tr>
             </thead>
             <tbody>
-              {tenants.map(tenant => (
-                <tr key={tenant.id} className="border-b border-borderlight dark:border-dark-border hover:bg-gray-50 dark:hover:bg-[#0A111E] transition-colors">
-                  <td className="py-4 px-4">
-                    <div className="font-bold text-[#0B1933] dark:text-[#F7F8FA] text-sm">{tenant.name}</div>
-                    <div className="text-[11px] text-lightText-secondary dark:text-darkText-secondary font-mono mt-0.5">kuafor.art/{tenant.slug}</div>
-                  </td>
-                  <td className="py-4 px-4">
-                    <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-gray-100 dark:bg-dark-highlight border border-borderlight dark:border-dark-border text-lightText-secondary dark:text-darkText-secondary">
-                      {tenant.plan?.name || "Yükleniyor..."}
-                    </span>
-                  </td>
-                  <td className="py-4 px-4">
-                    <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${
-                      tenant.billingStatus === "ACTIVE" 
-                        ? "bg-green-500/10 border border-green-500/20 text-green-700 dark:text-green-400"
-                        : "bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400"
-                    }`}>
-                      {tenant.billingStatus === "ACTIVE" ? "Ödendi" : tenant.billingStatus}
-                    </span>
-                  </td>
-                  <td className="py-4 px-4 font-semibold text-lightText-primary dark:text-darkText-primary">
-                    {Math.round(tenant.mediaCapacity / (1024 * 1024))} MB
-                  </td>
-                  <td className="py-4 px-4 font-semibold text-lightText-secondary dark:text-darkText-secondary">
-                    {tenant.nextBillingDate ? new Date(tenant.nextBillingDate).toLocaleDateString('tr-TR') : "-"}
-                  </td>
-                  <td className="py-4 px-4">
-                    <span className={`w-2 h-2 rounded-full inline-block ${tenant.isActive ? "bg-green-500" : "bg-red-500"}`} />
-                    <span className="text-xs font-semibold ml-2 text-lightText-primary dark:text-darkText-primary">
-                      {tenant.isActive ? "Aktif" : "Askıda"}
-                    </span>
-                  </td>
-                  <td className="py-4 px-4 text-right">
-                    <div className="flex gap-2 justify-end">
-                      <button
-                        onClick={() => handleEditClick(tenant)}
-                        className="px-3 py-1.5 rounded-lg border border-borderlight dark:border-dark-border bg-gray-50 dark:bg-[#0A111E] hover:bg-gray-100 dark:hover:bg-dark-highlight text-[11px] font-bold text-lightText-primary dark:text-darkText-primary transition-colors"
-                      >
-                        Düzenle
-                      </button>
-                      <button
-                        onClick={() => setGiftingTenant(tenant)}
-                        className="px-3 py-1.5 rounded-lg border border-borderlight dark:border-dark-border bg-gray-50 dark:bg-[#0A111E] hover:bg-gray-100 dark:hover:bg-dark-highlight text-[11px] font-bold text-lightText-primary dark:text-darkText-primary transition-colors flex items-center gap-1"
-                      >
-                        🎁 Hediye
-                      </button>
-                    </div>
+              {tenants.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="py-12 text-center text-xs text-lightText-secondary dark:text-darkText-secondary">
+                    Henüz kayıtlı bir kuaför salonu bulunamadı. "+ Yeni Kuaför Ekle" butonuna basarak ekleyebilirsiniz.
                   </td>
                 </tr>
-              ))}
+              ) : (
+                tenants.map(tenant => (
+                  <tr key={tenant.id} className="border-b border-borderlight dark:border-dark-border hover:bg-gray-50 dark:hover:bg-[#0A111E] transition-colors">
+                    <td className="py-4 px-4">
+                      <div className="font-bold text-[#0B1933] dark:text-[#F7F8FA] text-sm">{tenant.name}</div>
+                      <div className="text-[11px] text-lightText-secondary dark:text-darkText-secondary font-mono mt-0.5">kuafor.art/{tenant.slug}</div>
+                    </td>
+                    <td className="py-4 px-4">
+                      {tenant.owner ? (
+                        <div>
+                          <div className="font-bold text-xs text-[#0B1933] dark:text-[#F7F8FA]">{tenant.owner.name}</div>
+                          <div className="text-[10px] text-lightText-secondary dark:text-darkText-secondary truncate max-w-[150px]">{tenant.owner.email}</div>
+                          {tenant.owner.phone && <div className="text-[9px] text-gray-400">{tenant.owner.phone}</div>}
+                        </div>
+                      ) : (
+                        <span className="text-xs italic text-gray-400">Kullanıcı Atanmamış</span>
+                      )}
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className="px-2.5 py-1 rounded-full text-[10px] font-black bg-gray-100 dark:bg-dark-highlight border border-borderlight dark:border-dark-border text-lightText-secondary dark:text-darkText-secondary">
+                        {tenant.plan?.name || "FREE"}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${
+                        tenant.billingStatus === "ACTIVE" 
+                          ? "bg-green-500/10 border border-green-500/20 text-green-700 dark:text-green-400"
+                          : "bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400"
+                      }`}>
+                        {tenant.billingStatus === "ACTIVE" ? "Ödendi" : tenant.billingStatus}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4 font-semibold text-lightText-primary dark:text-darkText-primary text-xs">
+                      {Math.round(tenant.mediaCapacity / (1024 * 1024))} MB
+                    </td>
+                    <td className="py-4 px-4">
+                      <span className={`w-2 h-2 rounded-full inline-block ${tenant.isActive ? "bg-green-500" : "bg-red-500"}`} />
+                      <span className="text-xs font-semibold ml-2 text-lightText-primary dark:text-darkText-primary">
+                        {tenant.isActive ? "Aktif" : "Askıda"}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4 text-right">
+                      <div className="flex gap-1.5 justify-end">
+                        <button
+                          onClick={() => handleEditClick(tenant)}
+                          className="px-2.5 py-1.5 rounded-lg border border-borderlight dark:border-dark-border bg-gray-50 dark:bg-[#0A111E] hover:bg-gray-100 dark:hover:bg-dark-highlight text-[11px] font-bold text-lightText-primary dark:text-darkText-primary transition-colors"
+                        >
+                          Düzenle
+                        </button>
+                        <button
+                          onClick={() => setGiftingTenant(tenant)}
+                          className="px-2.5 py-1.5 rounded-lg border border-borderlight dark:border-dark-border bg-gray-50 dark:bg-[#0A111E] hover:bg-gray-100 dark:hover:bg-dark-highlight text-[11px] font-bold text-lightText-primary dark:text-darkText-primary transition-colors flex items-center gap-1"
+                        >
+                          🎁 Hediye
+                        </button>
+                        <button
+                          onClick={() => setDeletingTenant(tenant)}
+                          className="px-2.5 py-1.5 rounded-lg border border-red-500/20 bg-red-500/10 hover:bg-red-500/20 text-[11px] font-bold text-red-600 dark:text-red-400 transition-colors flex items-center gap-1"
+                        >
+                          🗑️ Sil
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
         </div>
@@ -313,7 +407,7 @@ export default function TenantsPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] p-6 shadow-2xl relative text-lightText-primary dark:text-darkText-primary flex flex-col gap-6"
+              className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] p-6 shadow-2xl relative text-lightText-primary dark:text-darkText-primary flex flex-col gap-6"
             >
               <button
                 onClick={() => setEditingTenant(null)}
@@ -323,7 +417,7 @@ export default function TenantsPage() {
               </button>
 
               <div className="border-b border-borderlight dark:border-dark-border pb-4">
-                <h3 className="font-extrabold text-lg text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-wide">SALON DÜZENLE</h3>
+                <h3 className="font-extrabold text-lg text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-wide">SALON VE KULLANICI DÜZENLE</h3>
                 <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-0.5">{editingTenant.name} / kuafor.art/{editingTenant.slug}</p>
               </div>
 
@@ -342,34 +436,108 @@ export default function TenantsPage() {
                   />
                 </div>
 
-                {/* Plan Assign */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Abonelik Paketi</label>
-                  <select
-                    value={editPlanId}
-                    onChange={(e) => setEditPlanId(e.target.value)}
-                    className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
-                  >
-                    {plans.map(plan => (
-                      <option key={plan.id} value={plan.id} className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">
-                        {plan.name} ({plan.price} TL/ay)
-                      </option>
-                    ))}
-                  </select>
+                {/* Salon Bilgileri */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Salon Adı</label>
+                    <input
+                      type="text"
+                      required
+                      value={editName}
+                      onChange={(e) => setEditName(e.target.value)}
+                      className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-3.5 py-2 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">URL Slug</label>
+                    <input
+                      type="text"
+                      required
+                      value={editSlug}
+                      onChange={(e) => setEditSlug(e.target.value)}
+                      className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-3.5 py-2 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
+                    />
+                  </div>
                 </div>
 
-                {/* Billing Status */}
-                <div className="flex flex-col gap-1.5">
-                  <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Fatura / Ödeme Durumu</label>
-                  <select
-                    value={editBillingStatus}
-                    onChange={(e) => setEditBillingStatus(e.target.value)}
-                    className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
-                  >
-                    <option value="ACTIVE" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">Aktif (Ödendi)</option>
-                    <option value="UNPAID" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">Yenilenmedi / Ödenmedi</option>
-                    <option value="OVERDUE" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">Vadesi Geçmiş</option>
-                  </select>
+                {/* YENİ: Salon Sahibi (User) Bilgileri Düzenleme */}
+                <div className="p-3.5 rounded-lg bg-gray-50 dark:bg-[#0A111E] border border-borderlight dark:border-dark-border flex flex-col gap-3">
+                  <p className="text-[10px] uppercase font-black text-[#0B1933] dark:text-[#F7F8FA] tracking-wider">👤 Salon Sahibi Giriş Bilgileri</p>
+                  
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Sahip Adı Soyadı</label>
+                    <input
+                      type="text"
+                      required
+                      value={editOwnerName}
+                      onChange={(e) => setEditOwnerName(e.target.value)}
+                      className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-3.5 py-2 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Giriş E-Postası *</label>
+                      <input
+                        type="email"
+                        required
+                        value={editEmail}
+                        onChange={(e) => setEditEmail(e.target.value)}
+                        className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-3.5 py-2 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1.5">
+                      <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Telefon</label>
+                      <input
+                        type="text"
+                        placeholder="05xxxxxxxxx"
+                        value={editPhone}
+                        onChange={(e) => setEditPhone(e.target.value)}
+                        className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-3.5 py-2 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
+                      />
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Yeni Şifre (Opsiyonel)</label>
+                    <input
+                      type="password"
+                      placeholder="Boş bırakırsanız mevcut şifre değişmez"
+                      value={editPassword}
+                      onChange={(e) => setEditPassword(e.target.value)}
+                      className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-3.5 py-2 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
+                    />
+                  </div>
+                </div>
+
+                {/* Plan Assign & Billing Status */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Abonelik Paketi</label>
+                    <select
+                      value={editPlanId}
+                      onChange={(e) => setEditPlanId(e.target.value)}
+                      className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-3.5 py-2 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
+                    >
+                      {plans.map(plan => (
+                        <option key={plan.id} value={plan.id} className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">
+                          {plan.name} ({plan.price} TL/ay)
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Ödeme Durumu</label>
+                    <select
+                      value={editBillingStatus}
+                      onChange={(e) => setEditBillingStatus(e.target.value)}
+                      className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-3.5 py-2 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
+                    >
+                      <option value="ACTIVE" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">Aktif (Ödendi)</option>
+                      <option value="UNPAID" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">Yenilenmedi / Ödenmedi</option>
+                      <option value="OVERDUE" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">Vadesi Geçmiş</option>
+                    </select>
+                  </div>
                 </div>
 
                 {/* Storage Capacity limit */}
@@ -381,7 +549,7 @@ export default function TenantsPage() {
                     min={1}
                     value={editQuotaMB}
                     onChange={(e) => setEditQuotaMB(Number(e.target.value))}
-                    className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
+                    className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-3.5 py-2 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-[#0B1933] dark:border-white"
                   />
                 </div>
 
@@ -393,25 +561,84 @@ export default function TenantsPage() {
                     placeholder="örn: ahmetkuafor.com"
                     value={editCustomDomain}
                     onChange={(e) => setEditCustomDomain(e.target.value)}
-                    className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white"
+                    className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-3.5 py-2 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white"
                   />
-                  <p className="text-[9px] text-neutral-500 dark:text-gray-500">Müşterinin doğrudan erişim sağlayacağı DNS yönlendirmeli domain adresi.</p>
                 </div>
 
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  type="submit"
-                  disabled={isSaving}
-                  className="w-full py-3.5 rounded-lg bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933] font-bold text-xs tracking-wider uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 mt-4 shadow-sm"
+                <div className="flex flex-col gap-2.5 mt-2">
+                  <motion.button
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    type="submit"
+                    disabled={isSaving}
+                    className="w-full py-3 rounded-lg bg-[#0B1933] dark:bg-white text-white dark:text-[#0B1933] font-bold text-xs tracking-wider uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 shadow-sm"
+                  >
+                    {isSaving ? (
+                      <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      "Ayarları ve Kullanıcıyı Kaydet"
+                    )}
+                  </motion.button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setDeletingTenant(editingTenant);
+                    }}
+                    className="w-full py-2.5 rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-xs font-bold text-red-600 dark:text-red-400 transition-colors flex items-center justify-center gap-1.5"
+                  >
+                    🗑️ Bu Kuaför Salonunu Kalıcı Olarak Sil
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* DELETE CONFIRMATION MODAL */}
+      <AnimatePresence>
+        {deletingTenant && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md rounded-xl border border-red-500/30 bg-white dark:bg-[#081326] p-6 shadow-2xl relative text-lightText-primary dark:text-darkText-primary flex flex-col gap-5"
+            >
+              <div className="flex items-center gap-3 text-red-600 dark:text-red-400 border-b border-borderlight dark:border-dark-border pb-4">
+                <span className="text-2xl">⚠️</span>
+                <div>
+                  <h3 className="font-extrabold text-base uppercase tracking-wide">KUAFÖR SALONUNU SİL</h3>
+                  <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-0.5">{deletingTenant.name}</p>
+                </div>
+              </div>
+
+              <p className="text-xs leading-relaxed text-lightText-secondary dark:text-darkText-secondary">
+                <strong className="text-lightText-primary dark:text-darkText-primary">{deletingTenant.name}</strong> salonunu silmek üzeresiniz.
+                Bu işlem salona ait tüm <span className="text-red-600 dark:text-red-400 font-bold">kullanıcıları, müşterileri, randevuları, kasa kayıtlarını ve medya dosyalarını</span> kalıcı olarak yok eder. Bu işlem geri alınamaz!
+              </p>
+
+              <div className="flex gap-3 mt-2">
+                <button
+                  onClick={() => setDeletingTenant(null)}
+                  disabled={isDeleting}
+                  className="flex-1 py-3 rounded-lg border border-borderlight dark:border-dark-border hover:bg-gray-100 dark:hover:bg-[#0A111E] text-xs font-bold text-lightText-primary dark:text-darkText-primary transition-colors"
                 >
-                  {isSaving ? (
+                  Vazgeç / İptal
+                </button>
+                <button
+                  onClick={handleDeleteConfirm}
+                  disabled={isDeleting}
+                  className="flex-1 py-3 rounded-lg bg-red-600 hover:bg-red-700 text-white text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-sm"
+                >
+                  {isDeleting ? (
                     <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   ) : (
-                    "Ayarları Kaydet"
+                    "Evet, Kalıcı Olarak Sil"
                   )}
-                </motion.button>
-              </form>
+                </button>
+              </div>
             </motion.div>
           </div>
         )}
@@ -425,7 +652,7 @@ export default function TenantsPage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="w-full max-w-lg rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] p-6 shadow-2xl relative text-lightText-primary dark:text-darkText-primary flex flex-col gap-6"
+              className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] p-6 shadow-2xl relative text-lightText-primary dark:text-darkText-primary flex flex-col gap-6"
             >
               <button
                 onClick={() => { setIsCreateOpen(false); setCreateError(null); setCreateSuccess(null); }}
@@ -482,7 +709,6 @@ export default function TenantsPage() {
                       value={newName}
                       onChange={(e) => {
                         setNewName(e.target.value);
-                        // Slug otomatik üret
                         setNewSlug(e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, ""));
                       }}
                       className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white"
@@ -516,17 +742,42 @@ export default function TenantsPage() {
                   {/* YENİ: Yetkili Giriş Bilgileri */}
                   <div className="p-3.5 rounded-lg bg-gray-50 dark:bg-[#0A111E] border border-borderlight dark:border-dark-border flex flex-col gap-3">
                     <p className="text-[10px] uppercase font-black text-[#0B1933] dark:text-[#F7F8FA] tracking-wider">🔐 Yetkili Giriş Bilgileri</p>
+                    
                     <div className="flex flex-col gap-1.5">
-                      <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Yetkili E-Posta *</label>
+                      <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Sahip Adı Soyadı</label>
                       <input
-                        type="email"
-                        required
-                        placeholder="ahmet@efsanesalon.com"
-                        value={newEmail}
-                        onChange={(e) => setNewEmail(e.target.value)}
+                        type="text"
+                        placeholder="Ahmet Yılmaz"
+                        value={newOwnerName}
+                        onChange={(e) => setNewOwnerName(e.target.value)}
                         className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white"
                       />
                     </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Yetkili E-Posta *</label>
+                        <input
+                          type="email"
+                          required
+                          placeholder="ahmet@efsanesalon.com"
+                          value={newEmail}
+                          onChange={(e) => setNewEmail(e.target.value)}
+                          className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white"
+                        />
+                      </div>
+                      <div className="flex flex-col gap-1.5">
+                        <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Telefon Numarası</label>
+                        <input
+                          type="text"
+                          placeholder="05xxxxxxxxx"
+                          value={newPhone}
+                          onChange={(e) => setNewPhone(e.target.value)}
+                          className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0B1933] dark:border-white"
+                        />
+                      </div>
+                    </div>
+
                     <div className="flex flex-col gap-1.5">
                       <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Geçici Şifre *</label>
                       <input

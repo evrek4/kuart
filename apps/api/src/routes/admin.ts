@@ -1,5 +1,8 @@
 import { Router } from 'express';
 import { prisma } from '@kuafor-art/database';
+import bcrypt from 'bcrypt';
+import { slugify } from '../utils/slugify';
+
 const router = Router();
 
 // In-Memory Database
@@ -126,88 +129,270 @@ router.get('/dashboard', (req, res) => {
 });
 
 // Tenants Endpoints
-router.get('/tenants', (req, res) => {
-  const tenantsWithPlans = tenants.map(t => ({
-    ...t,
-    plan: plans.find(p => p.id === t.planId)
-  }));
-  res.json({ success: true, data: tenantsWithPlans });
-});
-
-router.post('/tenants', (req, res) => {
-  const { name, slug, subdomain, customDomain, planId } = req.body;
-  const newTenant = {
-    id: `tenant-${Math.random().toString(36).substr(2, 9)}`,
-    name,
-    slug: slug || name.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-    subdomain: subdomain || null,
-    customDomain: customDomain || null,
-    planId: planId || plans[0].id,
-    mediaCapacity: 1024 * 1024 * 100, // 100MB default
-    isActive: true,
-    billingStatus: 'ACTIVE',
-    nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-  };
-  tenants.push(newTenant);
-  systemLogs.unshift({ message: `Yeni salon eklendi: ${name}`, timestamp: new Date().toISOString() });
-  
-  res.json({
-    success: true,
-    data: {
-      ...newTenant,
-      plan: plans.find(p => p.id === newTenant.planId)
-    }
-  });
-});
-
-router.put('/tenants/:id', (req, res) => {
-  const { id } = req.params;
-  const { isActive, mediaCapacity, planId, customDomain, billingStatus } = req.body;
-  const index = tenants.findIndex(t => t.id === id);
-  if (index !== -1) {
-    tenants[index] = {
-      ...tenants[index],
-      isActive: isActive !== undefined ? isActive : tenants[index].isActive,
-      mediaCapacity: mediaCapacity !== undefined ? mediaCapacity : tenants[index].mediaCapacity,
-      planId: planId !== undefined ? planId : tenants[index].planId,
-      customDomain: customDomain !== undefined ? customDomain : tenants[index].customDomain,
-      billingStatus: billingStatus !== undefined ? billingStatus : tenants[index].billingStatus
-    };
-    systemLogs.unshift({ message: `Salon güncellendi: ${tenants[index].name}`, timestamp: new Date().toISOString() });
-    res.json({
-      success: true,
-      data: {
-        ...tenants[index],
-        plan: plans.find(p => p.id === tenants[index].planId)
-      }
+router.get('/tenants', async (req, res) => {
+  try {
+    const tenants = await prisma.tenant.findMany({
+      include: {
+        plan: true,
+        users: {
+          where: { role: 'TENANT' },
+          select: { id: true, name: true, email: true, phone: true }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
     });
-  } else {
-    res.status(404).json({ success: false, error: { message: 'Tenant not found' } });
+
+    const formatted = tenants.map((t: any) => ({
+      ...t,
+      mediaCapacity: Number(t.mediaCapacity),
+      owner: t.users[0] || null
+    }));
+
+    res.json({ success: true, data: formatted });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: { message: error.message } });
   }
 });
 
-router.post('/tenants/:id/gift', (req, res) => {
-  const { id } = req.params;
-  const { durationType, amount, note } = req.body;
-  const index = tenants.findIndex(t => t.id === id);
-  if (index !== -1) {
-    const nextDate = new Date(tenants[index].nextBillingDate || Date.now());
-    if (durationType === 'MONTH') {
-      nextDate.setMonth(nextDate.getMonth() + amount);
-    } else {
-      nextDate.setDate(nextDate.getDate() + amount);
+router.post('/tenants', async (req, res) => {
+  try {
+    const { name, slug, subdomain, customDomain, planId, email, password, ownerName, phone } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ success: false, error: { message: 'Salon adı, e-posta ve şifre zorunludur.' } });
     }
-    tenants[index].nextBillingDate = nextDate.toISOString();
-    systemLogs.unshift({ message: `Salon (${tenants[index].name}) için ${amount} ${durationType === 'MONTH' ? 'ay' : 'gün'} hediye süre eklendi.`, timestamp: new Date().toISOString() });
+
+    // E-posta benzersizlik kontrolü
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ success: false, error: { message: 'Bu e-posta adresiyle kayıtlı bir kullanıcı zaten mevcut.' } });
+    }
+
+    const cleanSlug = slug ? slugify(slug) : slugify(name);
+    const existingSlug = await prisma.tenant.findUnique({ where: { slug: cleanSlug } });
+    if (existingSlug) {
+      return res.status(400).json({ success: false, error: { message: 'Bu slug/URL adresi zaten kullanımda.' } });
+    }
+
+    // Plan bul veya ilk aktif planı seç
+    let targetPlanId = planId;
+    if (!targetPlanId) {
+      const defaultPlan = await prisma.subscriptionPlan.findFirst({ where: { isActive: true } });
+      if (defaultPlan) {
+        targetPlanId = defaultPlan.id;
+      } else {
+        return res.status(400).json({ success: false, error: { message: 'Sistemde tanımlı abonelik paketi bulunamadı.' } });
+      }
+    }
+
+    const passwordHash = await bcrypt.hash(password, 10);
+
+    const result = await prisma.$transaction(async (tx: any) => {
+      const newTenant = await tx.tenant.create({
+        data: {
+          name,
+          slug: cleanSlug,
+          subdomain: subdomain ? slugify(subdomain) : null,
+          customDomain: customDomain || null,
+          planId: targetPlanId,
+          mediaCapacity: 1024 * 1024 * 100, // 100MB default
+          isActive: true,
+          billingStatus: 'ACTIVE',
+          nextBillingDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+        },
+        include: { plan: true }
+      });
+
+      const ownerUser = await tx.user.create({
+        data: {
+          tenantId: newTenant.id,
+          name: ownerName || name,
+          email,
+          passwordHash,
+          phone: phone || null,
+          role: 'TENANT',
+          isActive: true
+        }
+      });
+
+      await tx.tenantSettings.create({
+        data: {
+          tenantId: newTenant.id
+        }
+      });
+
+      return { tenant: newTenant, user: ownerUser };
+    });
+
     res.json({
       success: true,
       data: {
-        ...tenants[index],
-        plan: plans.find(p => p.id === tenants[index].planId)
+        ...result.tenant,
+        mediaCapacity: Number(result.tenant.mediaCapacity),
+        owner: {
+          id: result.user.id,
+          name: result.user.name,
+          email: result.user.email,
+          phone: result.user.phone
+        }
       }
     });
-  } else {
-    res.status(404).json({ success: false, error: { message: 'Tenant not found' } });
+  } catch (error: any) {
+    console.error('[CreateTenant] Error:', error);
+    res.status(500).json({ success: false, error: { message: error.message || 'Salon oluşturulurken hata meydana geldi.' } });
+  }
+});
+
+router.put('/tenants/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const {
+      name, slug, subdomain, customDomain, planId, isActive, mediaCapacity, billingStatus,
+      ownerName, email, phone, password
+    } = req.body;
+
+    const existingTenant = await prisma.tenant.findUnique({
+      where: { id },
+      include: { users: { where: { role: 'TENANT' } } }
+    });
+
+    if (!existingTenant) {
+      return res.status(404).json({ success: false, error: { message: 'Salon bulunamadı.' } });
+    }
+
+    const tenantUpdateData: any = {};
+    if (name !== undefined) tenantUpdateData.name = name;
+    if (slug !== undefined) tenantUpdateData.slug = slugify(slug);
+    if (subdomain !== undefined) tenantUpdateData.subdomain = subdomain ? slugify(subdomain) : null;
+    if (customDomain !== undefined) tenantUpdateData.customDomain = customDomain || null;
+    if (planId !== undefined) tenantUpdateData.planId = planId;
+    if (isActive !== undefined) tenantUpdateData.isActive = Boolean(isActive);
+    if (mediaCapacity !== undefined) tenantUpdateData.mediaCapacity = BigInt(mediaCapacity);
+    if (billingStatus !== undefined) tenantUpdateData.billingStatus = billingStatus;
+
+    const updatedTenant = await prisma.tenant.update({
+      where: { id },
+      data: tenantUpdateData,
+      include: { plan: true }
+    });
+
+    const primaryUser = existingTenant.users[0];
+    let updatedOwner = null;
+
+    if (primaryUser) {
+      const userUpdateData: any = {};
+      if (ownerName !== undefined) userUpdateData.name = ownerName;
+      if (email !== undefined) userUpdateData.email = email;
+      if (phone !== undefined) userUpdateData.phone = phone;
+      if (password && password.trim() !== '') {
+        userUpdateData.passwordHash = await bcrypt.hash(password.trim(), 10);
+      }
+
+      if (Object.keys(userUpdateData).length > 0) {
+        updatedOwner = await prisma.user.update({
+          where: { id: primaryUser.id },
+          data: userUpdateData,
+          select: { id: true, name: true, email: true, phone: true }
+        });
+      } else {
+        updatedOwner = {
+          id: primaryUser.id,
+          name: primaryUser.name,
+          email: primaryUser.email,
+          phone: primaryUser.phone
+        };
+      }
+    } else if (email) {
+      const passwordHash = password && password.trim() !== '' 
+        ? await bcrypt.hash(password.trim(), 10) 
+        : await bcrypt.hash('GeciciSifre123', 10);
+
+      updatedOwner = await prisma.user.create({
+        data: {
+          tenantId: id,
+          name: ownerName || updatedTenant.name,
+          email,
+          passwordHash,
+          phone: phone || null,
+          role: 'TENANT',
+          isActive: true
+        },
+        select: { id: true, name: true, email: true, phone: true }
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        ...updatedTenant,
+        mediaCapacity: Number(updatedTenant.mediaCapacity),
+        owner: updatedOwner
+      }
+    });
+  } catch (error: any) {
+    console.error('[UpdateTenant] Error:', error);
+    res.status(500).json({ success: false, error: { message: error.message || 'Salon güncellenirken hata meydana geldi.' } });
+  }
+});
+
+router.delete('/tenants/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const existing = await prisma.tenant.findUnique({ where: { id } });
+    if (!existing) {
+      return res.status(404).json({ success: false, error: { message: 'Salon bulunamadı.' } });
+    }
+
+    // Cascade deletion handles associated User, Customer, Appointment, Service, TenantSettings, etc.
+    await prisma.tenant.delete({ where: { id } });
+
+    res.json({
+      success: true,
+      message: `${existing.name} salonu ve bağlı tüm veriler kalıcı olarak silindi.`
+    });
+  } catch (error: any) {
+    console.error('[DeleteTenant] Error:', error);
+    res.status(500).json({ success: false, error: { message: error.message || 'Salon silinirken hata oluştu.' } });
+  }
+});
+
+router.post('/tenants/:id/gift', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { durationType, amount } = req.body;
+
+    const tenant = await prisma.tenant.findUnique({ where: { id } });
+    if (!tenant) {
+      return res.status(404).json({ success: false, error: { message: 'Salon bulunamadı.' } });
+    }
+
+    const nextDate = new Date(tenant.nextBillingDate || Date.now());
+    if (durationType === 'MONTH') {
+      nextDate.setMonth(nextDate.getMonth() + Number(amount));
+    } else {
+      nextDate.setDate(nextDate.getDate() + Number(amount));
+    }
+
+    const updated = await prisma.tenant.update({
+      where: { id },
+      data: { nextBillingDate: nextDate },
+      include: {
+        plan: true,
+        users: { where: { role: 'TENANT' }, select: { id: true, name: true, email: true, phone: true } }
+      }
+    });
+
+    res.json({
+      success: true,
+      data: {
+        ...updated,
+        mediaCapacity: Number(updated.mediaCapacity),
+        owner: updated.users[0] || null
+      }
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: { message: error.message } });
   }
 });
 
