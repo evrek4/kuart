@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
-const JWT_SECRET = process.env.JWT_SECRET || "lokal-test-secret-123";
+const JWT_SECRET = process.env.JWT_SECRET!;
 
 function getUserFromToken() {
   const cookieStore = cookies();
@@ -26,7 +26,9 @@ export async function getUsers() {
 
   // Sadece tüm kullanıcıları listeleyeceğiz, tenant bilgilerine gerek duymadan Mock üzerinden.
   // Gerçek projede select ile belirli alanlar alınır
-  const allUsers = await prisma.user.findMany();
+  const allUsers = await prisma.user.findMany({
+    select: { id: true, name: true, email: true, role: true, isActive: true, createdAt: true }
+  });
   
   const formatted = allUsers.map((u: any) => ({
     id: u.id,
@@ -53,6 +55,11 @@ export async function createUserAction(formData: FormData) {
 
   if (!name || !email || !role || !password) {
     return { success: false, error: "Tüm alanlar zorunludur." };
+  }
+
+  const ALLOWED_ROLES = ['SUB_ADMIN', 'MARKETING', 'TENANT'];
+  if (!ALLOWED_ROLES.includes(role)) {
+    return { success: false, error: "Geçersiz veya yetkisiz rol." };
   }
 
   try {
