@@ -10,6 +10,8 @@ import { PosFactory } from '../services/payment/posFactory';
 import { sendEmail } from '../services/email';
 import { sendWhatsAppTextMessage } from '../services/whatsapp';
 
+import { withAppointmentLock } from '../lib/appointmentLock';
+
 const router = Router();
 
 // ==========================================
@@ -1125,3 +1127,4 @@ export default router;
 // - GET / (duplicate of L152-224)
 // Bu tanımlar 'export default router' sonrasında yer aldığından Express'e hiç eklenmiyordu.
 // Güvenlik ve bakım açısından temizlendi.
+
