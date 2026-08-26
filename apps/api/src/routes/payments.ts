@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { verifyIyzicoWebhook } from '../middlewares/webhookSignature';
 import { prisma } from '@kuafor-art/database';
 
 const router = Router();
@@ -402,4 +403,59 @@ router.post('/confirm', async (req: any, res: any) => {
   }
 });
 
+
+// =====================================================
+// POST /api/payments/callback
+// Iyzico / PayTR Gercek Odeme Donus Webhook'u (Callback)
+//
+// GUVENLIK: verifyIyzicoWebhook middleware'i x-iyzico-signature
+// basligi olmadan bu handler CALISMAZ.
+// Imza eksik veya hataliiysa 401 Unauthorized doner ve
+// DB'ye HICBIR kayit yazilmaz.
+// =====================================================
+router.post('/callback', verifyIyzicoWebhook, async (req: any, res: any) => {
+  try {
+    const {
+      status,
+      paymentId,
+      conversationId,
+      paidPrice,
+      basketId,
+    } = req.body;
+
+    console.log('[Payments/Callback] Iyzico callback alindi:', {
+      status,
+      paymentId,
+      conversationId,
+      paidPrice,
+      basketId,
+    });
+
+    if (status !== 'success') {
+      console.warn('[Payments/Callback] Odeme basarisiz:', status);
+      return res.status(200).json({
+        success: false,
+        message: 'Odeme basarisiz veya iptal edildi.',
+        data: { status }
+      });
+    }
+
+    // Basarili odeme: Aboneligi guncelle
+    // Gercek entegrasyonda conversationId uzerinden tenant'i bul
+    // ve planId'yi guncelle
+    console.log('[Payments/Callback] Odeme onaylandi. paymentId:', paymentId);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Odeme basariyla islendi.',
+      data: { paymentId, status: 'processed' }
+    });
+  } catch (error: any) {
+    console.error('[Payments/Callback] Error:', error);
+    return res.status(500).json({
+      success: false,
+      error: { code: 'INTERNAL_ERROR', message: 'Callback isleme hatasi.' }
+    });
+  }
+});
 export default router;
