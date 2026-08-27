@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { getCurrentTenantInfo } from "@/lib/auth";
+import { revalidateStorefront } from "@/app/revalidate-actions";
 
 interface WorkingDay {
   isOpen: boolean;
@@ -240,12 +242,22 @@ export default function SettingsPage() {
       const json = await response.json();
       if (response.ok && json.success) {
         triggerNotification("Salon ayarları başarıyla kaydedildi.");
+        toast.success("Salon ayarları başarıyla kaydedildi!", {
+          description: "Vitrin sayfanız güncelleniyor...",
+          duration: 4000,
+        });
+        // [PHASE 5] Vitrin cache'ini temizle — eski veri gösterilmesin
+        await revalidateStorefront(tenantSlug);
       } else {
-        triggerNotification(json.error?.message || "Ayarlar kaydedilirken hata oluştu.");
+        const errMsg = json.error?.message || "Ayarlar kaydedilirken hata oluştu.";
+        triggerNotification(errMsg);
+        toast.error(errMsg, { duration: 5000 });
       }
     } catch (err) {
       console.error("Failed to save settings:", err);
-      triggerNotification("Bağlantı hatası: Ayarlar kaydedilemedi.");
+      const errMsg = "Bağlantı hatası: Ayarlar kaydedilemedi.";
+      triggerNotification(errMsg);
+      toast.error(errMsg, { duration: 5000 });
     } finally {
       setSaving(false);
     }

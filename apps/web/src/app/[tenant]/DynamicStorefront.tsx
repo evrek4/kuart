@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import SimpleMinimalistTheme from '../../components/storefront/simple/SimpleMinimalistTheme';
 import SimpleModernDarkTheme from '../../components/storefront/simple/SimpleModernDarkTheme';
 import SimpleLuxuryCompactTheme from '../../components/storefront/simple/SimpleLuxuryCompactTheme';
@@ -10,7 +10,18 @@ import PortalPremiumTheme from '../../components/storefront/portal/PortalPremium
 import { ThemeToggle } from '../../components/ThemeToggle';
 
 export default function DynamicStorefront({ data }: { data: any }) {
+  /**
+   * [PHASE 5] Hydration Mismatch Koruması
+   *
+   * Temalar ThemeToggle / localStorage'a bağlı olduğu için SSR'de
+   * server ile client arasında HTML uyumsuzluğu oluşabilir.
+   * isMounted flag'i ile tema render'ı yalnızca client mount sonrası
+   * gerçekleşir; böylece Next.js hydration hatası önlenir.
+   */
+  const [isMounted, setIsMounted] = useState(false);
+
   useEffect(() => {
+    setIsMounted(true);
     if (data) {
       console.log('[Storefront Client]: Salon verisi yüklendi:', data);
     }
@@ -37,6 +48,8 @@ export default function DynamicStorefront({ data }: { data: any }) {
       </div>
     );
   }
+
+  if (!isMounted) return null;
 
   const selectedThemeId = data.settings?.selectedThemeId || 'SIMPLE_MINIMALIST';
 

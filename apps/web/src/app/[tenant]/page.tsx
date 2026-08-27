@@ -1,7 +1,9 @@
+import { unstable_noStore as noStore } from "next/cache";
 import { slugify } from "@/lib/slugify";
 import DynamicStorefront from "./DynamicStorefront";
 
 // Next.js Server Side Cache Disabler
+// [PHASE 5] unstable_noStore() garantili olarak route cache'i devre dışı bırakır
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
 export const revalidate = 0;
@@ -43,6 +45,9 @@ export interface SalonData {
 const API_BASE = process.env.API_URL ?? process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 async function getStorefrontData(tenantParam: string): Promise<any | null> {
+  // [PHASE 5] Her request için cache'i kesinlikle devre dışı bırak
+  noStore();
+
   if (!tenantParam) return null;
 
   try {

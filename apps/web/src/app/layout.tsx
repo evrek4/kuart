@@ -1,6 +1,7 @@
 import React from 'react';
 import './globals.css';
 import { ThemeProvider } from '@/components/ThemeProvider';
+import { ToastProvider } from '@/components/ToastProvider';
 
 export const metadata = {
   title: 'Kuaför Art — Salon ve Kuaför Randevu Sistemi',
@@ -52,6 +53,8 @@ export default function RootLayout({
       >
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange={false}>
           {children}
+          {/* [PHASE 5] Global Toast Bildirimleri — Sonner */}
+          <ToastProvider />
         </ThemeProvider>
       </body>
     </html>

@@ -1,7 +1,8 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
+import { toast } from "sonner";
 import { getApiUrl } from "@/lib/api";
 
 interface Service {
@@ -91,6 +92,8 @@ export default function BookingModal({
   const [isLoading, setIsLoading] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  // [PHASE 5] 409 Conflict → slot listesini yenile trigger'ı
+  const [slotRefreshKey, setSlotRefreshKey] = useState(0);
 
   // Blacklist & Deposit States
   const [requiresDeposit, setRequiresDeposit] = useState(true);
@@ -166,32 +169,37 @@ export default function BookingModal({
   const [availableTimes, setAvailableTimes] = useState<string[]>([]);
   const [loadingSlots, setLoadingSlots] = useState(false);
 
-  // Hook to fetch free slots from backend based on duration overlaps
-  useEffect(() => {
-    async function fetchSlots() {
-      if (!selectedStaff || !selectedDate || selectedServices.length === 0) {
-        setAvailableTimes([]);
-        return;
-      }
-      setLoadingSlots(true);
-      try {
-        const res = await fetch(
-          `${API_BASE}/api/appointments/available-slots?staffId=${selectedStaff.id}&date=${selectedDate}&duration=${totalDuration}`,
-          { headers: { "x-tenant-slug": tenantSlug } }
-        );
-        const json = await res.json();
-        if (res.ok && json.success) {
-          setAvailableTimes(json.data || []);
-        }
-      } catch (err) {
-        console.error("Fetch slots failed:", err);
-        setAvailableTimes(["09:00", "10:00", "11:00", "11:30", "13:00", "14:00", "15:00", "16:00", "17:00"]);
-      } finally {
-        setLoadingSlots(false);
-      }
+  // [PHASE 5] fetchSlots callback — 409 Conflict durumunda dışarıdan tetiklenebilir
+  const fetchSlots = useCallback(async () => {
+    if (!selectedStaff || !selectedDate || selectedServices.length === 0) {
+      setAvailableTimes([]);
+      return;
     }
-    fetchSlots();
+    setLoadingSlots(true);
+    // 409 sonrası seçili saati sıfırla
+    setSelectedTime("");
+    try {
+      const res = await fetch(
+        `${API_BASE}/api/appointments/available-slots?staffId=${selectedStaff.id}&date=${selectedDate}&duration=${totalDuration}`,
+        { headers: { "x-tenant-slug": tenantSlug } }
+      );
+      const json = await res.json();
+      if (res.ok && json.success) {
+        setAvailableTimes(json.data || []);
+      }
+    } catch (err) {
+      console.error("Fetch slots failed:", err);
+      setAvailableTimes(["09:00", "10:00", "11:00", "11:30", "13:00", "14:00", "15:00", "16:00", "17:00"]);
+    } finally {
+      setLoadingSlots(false);
+    }
   }, [selectedStaff, selectedDate, selectedServices, totalDuration, API_BASE, tenantSlug]);
+
+  // Hook to fetch free slots from backend based on duration overlaps
+  // slotRefreshKey değiştiğinde (409 sonrası) de yeniden tetiklenir
+  useEffect(() => {
+    fetchSlots();
+  }, [fetchSlots, slotRefreshKey]);
 
   // Toggle service selection (allows choosing multiple services)
   const toggleService = (srv: Service) => {
@@ -255,6 +263,21 @@ export default function BookingModal({
 
       const json = await response.json();
 
+      // [PHASE 5] 429 Rate Limit — OTP gönderim sınırı aşıldı
+      if (response.status === 429) {
+        const msg =
+          json?.error?.message ||
+          "Çok fazla istek attınız. Lütfen 3 dakika bekleyip tekrar deneyin.";
+        setErrorMessage(msg);
+        toast.warning(msg, {
+          id: "otp-rate-limit",
+          description: "OTP güvenlik sınırı aşıldı.",
+          duration: 8000,
+        });
+        setIsLoading(false);
+        return;
+      }
+
       if (response.ok && json.success) {
         setStep(4); // Move to OTP input screen
       } else {
@@ -292,6 +315,17 @@ export default function BookingModal({
 
       const verifyJson = await verifyResponse.json();
 
+      // [PHASE 5] 429 — OTP doğrulama rate-limit
+      if (verifyResponse.status === 429) {
+        const msg =
+          verifyJson?.error?.message ||
+          "Çok fazla istek attınız. Lütfen 3 dakika bekleyip tekrar deneyin.";
+        setErrorMessage(msg);
+        toast.warning(msg, { id: "otp-verify-rate-limit", duration: 8000 });
+        setIsLoading(false);
+        return;
+      }
+
       if (!verifyResponse.ok || !verifyJson.success) {
         setErrorMessage(verifyJson.error?.message || "Doğrulama kodu hatalı veya süresi dolmuş.");
         setIsLoading(false);
@@ -318,6 +352,26 @@ export default function BookingModal({
       });
 
       const bookingJson = await bookingResponse.json();
+
+      // [PHASE 5] 409 Conflict — Race Condition, saat kapıldı
+      if (bookingResponse.status === 409) {
+        const conflictMsg =
+          bookingJson?.error?.message ||
+          "Seçtiğiniz saat dilimi az önce doldu, lütfen başka bir saat seçin.";
+        // Modal KAPANMAZ; kullanıcı adım 2'ye geri döner
+        setErrorMessage(conflictMsg);
+        toast.error(conflictMsg, {
+          id: "booking-conflict",
+          description: "Takvim güncelleniyor...",
+          duration: 6000,
+        });
+        // Adım 2'ye geri al ve slot'ları anında yenile
+        setStep(2);
+        setOtpCode("");
+        setSlotRefreshKey(prev => prev + 1); // fetchSlots useEffect'i tetikler
+        setIsLoading(false);
+        return;
+      }
 
       if (bookingResponse.ok && bookingJson.success) {
         const { paymentRequired: reqPay, paymentAmount: amt } = bookingJson.data;

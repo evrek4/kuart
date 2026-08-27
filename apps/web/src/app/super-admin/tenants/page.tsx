@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
+import { revalidateSuperAdmin, revalidateStorefront } from "@/app/revalidate-actions";
 
 interface SubscriptionPlan {
   id: string;
@@ -160,16 +162,23 @@ export default function TenantsPage() {
         if (json.success) {
           setTenants(tenants.map(t => t.id === editingTenant.id ? { ...t, ...json.data } : t));
           setEditingTenant(null);
+          toast.success("Salon bilgileri güncellendi.", {
+            description: "Değişiklikler anında yansıtılıyor...",
+            duration: 4000,
+          });
+          // [PHASE 5] Super admin + vitrin cache'ini temizle
+          await revalidateSuperAdmin();
+          if (editSlug) await revalidateStorefront(editSlug);
         } else {
-          alert(json.error?.message || "Güncelleme başarısız.");
+          toast.error(json.error?.message || "Güncelleme başarısız.");
         }
       } else {
         const json = await res.json();
-        alert(json.error?.message || "Sunucu hatası: Güncelleme yapılamadı.");
+        toast.error(json.error?.message || "Sunucu hatası: Güncelleme yapılamadı.");
       }
     } catch (err) {
       console.error("Failed to save tenant edits:", err);
-      alert("Bağlantı hatası: Düzenleme kaydedilemedi.");
+      toast.error("Bağlantı hatası: Düzenleme kaydedilemedi.");
     } finally {
       setIsSaving(false);
     }
@@ -191,11 +200,14 @@ export default function TenantsPage() {
         if (editingTenant?.id === deletingTenant.id) {
           setEditingTenant(null);
         }
+        toast.success("Salon başarıyla silindi.", { duration: 4000 });
+        // [PHASE 5] Super admin cache yenile
+        await revalidateSuperAdmin();
       } else {
-        alert(json.error?.message || "Silme işlemi gerçekleştirilemedi.");
+        toast.error(json.error?.message || "Silme işlemi gerçekleştirilemedi.");
       }
     } catch (err) {
-      alert("Bağlantı hatası: Salon silinemedi.");
+      toast.error("Bağlantı hatası: Salon silinemedi.");
     } finally {
       setIsDeleting(false);
     }
