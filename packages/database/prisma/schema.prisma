@@ -63,6 +63,13 @@ model Tenant {
   lastPaymentWarningSentAt DateTime?
   dunningStage             Int       @default(0)
 
+  // Kuaför Rehberi (Directory) Alanları
+  province      String? @db.VarChar(100) // İl (Örn: Ankara)
+  district      String? @db.VarChar(100) // İlçe (Örn: Çankaya)
+  fullAddress   String? @db.Text         // Açık adres
+  promotedLevel String  @default("NONE") // NONE | PROVINCE | DISTRICT
+  promotedUntil DateTime?                // Öne çıkarma bitiş tarihi
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -380,10 +387,13 @@ model SubscriptionPlan {
 // 10. GLOBAL AYARLAR (GlobalSettings)
 // ==========================================
 model GlobalSettings {
-  id                 String @id @default(uuid())
-  cloudflareR2Config Json // { accountId, accessKeyId, secretAccessKey, bucketName }
-  smsConfig          Json // { provider, apiKey, title }
-  posConfig          Json // { provider, apiKey, secretKey }
+  id                 String  @id @default(uuid())
+  cloudflareR2Config Json    // { accountId, accessKeyId, secretAccessKey, bucketName }
+  smsConfig          Json    // { provider, apiKey, title }
+  posConfig          Json    // { provider, apiKey, secretKey }
+
+  // Kuaför Rehberi Modülü Şalteri
+  isDirectoryEnabled Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -538,3 +548,5 @@ model ReviewRequest {
 
   @@index([tenantId])
 }
+
+

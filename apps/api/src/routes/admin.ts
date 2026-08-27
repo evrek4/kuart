@@ -407,6 +407,56 @@ router.post('/tenants/:id/gift', async (req, res) => {
   }
 });
 
+// ==========================================
+// ÖNE ÇIKARMA (PROMOTE) ENDPOINT
+// POST /tenants/:id/promote
+// ==========================================
+router.post('/tenants/:id/promote', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { level, days } = req.body;
+
+    if (!level || !['PROVINCE', 'DISTRICT', 'NONE'].includes(level)) {
+      return res.status(400).json({ success: false, error: { message: 'Geçerli bir promosyon seviyesi seçin (PROVINCE, DISTRICT veya NONE).' } });
+    }
+
+    const tenant = await prisma.tenant.findUnique({ where: { id } });
+    if (!tenant) {
+      return res.status(404).json({ success: false, error: { message: 'Salon bulunamadı.' } });
+    }
+
+    let promotedUntil: Date | null = null;
+    if (level !== 'NONE' && days) {
+      promotedUntil = new Date(Date.now() + Number(days) * 24 * 60 * 60 * 1000);
+    }
+
+    const updated = await prisma.tenant.update({
+      where: { id },
+      data: {
+        promotedLevel: level,
+        promotedUntil: level === 'NONE' ? null : promotedUntil
+      },
+      include: {
+        plan: true,
+        users: { where: { role: 'TENANT' }, select: { id: true, name: true, email: true, phone: true } }
+      }
+    });
+
+    const levelLabel = level === 'PROVINCE' ? 'İl Bazında' : level === 'DISTRICT' ? 'İlçe Bazında' : 'Kaldırıldı';
+    res.json({
+      success: true,
+      message: `${tenant.name} salonu için öne çıkarma güncellendi: ${levelLabel}`,
+      data: {
+        ...updated,
+        mediaCapacity: Number(updated.mediaCapacity),
+        owner: updated.users[0] || null
+      }
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: { message: error.message } });
+  }
+});
+
 // Plans Endpoints
 router.get('/plans', async (req, res) => {
   try {
@@ -515,16 +565,68 @@ router.post('/r2-settings', (req, res) => {
   res.json({ success: true, data: r2Settings });
 });
 
-router.get('/settings', (req, res) => {
-  res.json({ success: true, data: prismaSettings });
+router.get('/settings', async (req, res) => {
+  try {
+    let globalSettings = await prisma.globalSettings.findFirst();
+    if (!globalSettings) {
+      // GlobalSettings yoksa varsayılan değerlerle oluştur
+      globalSettings = await prisma.globalSettings.create({
+        data: {
+          cloudflareR2Config: {},
+          smsConfig: { provider: 'netgsm', apiKey: '', title: 'KuaforArt' },
+          posConfig: { provider: 'iyzico', apiKey: '', secretKey: '' },
+          isDirectoryEnabled: false
+        }
+      });
+    }
+    res.json({
+      success: true,
+      data: {
+        ...prismaSettings,
+        isDirectoryEnabled: globalSettings.isDirectoryEnabled
+      }
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: { message: error.message } });
+  }
 });
 
-router.post('/settings', (req, res) => {
-  const { smsConfig, posConfig } = req.body;
+router.post('/settings', async (req, res) => {
+  const { smsConfig, posConfig, isDirectoryEnabled } = req.body;
   if (smsConfig) prismaSettings.smsConfig = { ...prismaSettings.smsConfig, ...smsConfig };
   if (posConfig) prismaSettings.posConfig = { ...prismaSettings.posConfig, ...posConfig };
-  systemLogs.unshift({ message: `Global SMS/POS ayarları güncellendi.`, timestamp: new Date().toISOString() });
-  res.json({ success: true, data: prismaSettings });
+
+  try {
+    // isDirectoryEnabled değerini GlobalSettings DB'ye kaydet
+    if (isDirectoryEnabled !== undefined) {
+      let globalSettings = await prisma.globalSettings.findFirst();
+      if (globalSettings) {
+        await prisma.globalSettings.update({
+          where: { id: globalSettings.id },
+          data: { isDirectoryEnabled: Boolean(isDirectoryEnabled) }
+        });
+      } else {
+        await prisma.globalSettings.create({
+          data: {
+            cloudflareR2Config: {},
+            smsConfig: prismaSettings.smsConfig,
+            posConfig: prismaSettings.posConfig,
+            isDirectoryEnabled: Boolean(isDirectoryEnabled)
+          }
+        });
+      }
+    }
+    systemLogs.unshift({ message: `Global SMS/POS/Directory ayarları güncellendi.`, timestamp: new Date().toISOString() });
+    res.json({
+      success: true,
+      data: {
+        ...prismaSettings,
+        isDirectoryEnabled: isDirectoryEnabled !== undefined ? Boolean(isDirectoryEnabled) : false
+      }
+    });
+  } catch (error: any) {
+    res.status(500).json({ success: false, error: { message: error.message } });
+  }
 });
 
 // ==========================================

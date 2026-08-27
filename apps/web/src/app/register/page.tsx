@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "@/components/landing/Navbar";
+import { TURKEY_PROVINCES } from "@/data/turkey-provinces";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 
@@ -15,7 +16,10 @@ const registerSchema = z.object({
   ownerName: z.string().min(3, "Yetkili ad soyad en az 3 karakter olmalıdır."),
   phone: z.string().min(10, "Geçersiz telefon numarası. En az 10 karakter giriniz."),
   email: z.string().email("Geçersiz e-posta adresi."),
-  password: z.string().min(5, "Şifre en az 5 karakter olmalıdır.")
+  password: z.string().min(5, "Şifre en az 5 karakter olmalıdır."),
+  province: z.string().min(1, "İl seçimi zorunludur."),
+  district: z.string().min(1, "İlçe seçimi zorunludur."),
+  fullAddress: z.string().min(10, "Açık adres en az 10 karakter olmalıdır.")
 });
 
 type RegisterFormInputs = z.infer<typeof registerSchema>;
@@ -59,10 +63,23 @@ function RegisterForm() {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors }
   } = useForm<RegisterFormInputs>({
     resolver: zodResolver(registerSchema)
   });
+
+  // İl/İlçe dinamik listesi
+  const selectedProvince = watch("province");
+  const availableDistricts = selectedProvince
+    ? (TURKEY_PROVINCES.find((p) => p.name === selectedProvince)?.districts ?? [])
+    : [];
+
+  // İl değişince ilçeyi sıfırla
+  useEffect(() => {
+    setValue("district", "");
+  }, [selectedProvince, setValue]);
 
   // Fetch active plans for step 2
   useEffect(() => {
@@ -107,7 +124,10 @@ function RegisterForm() {
           ownerName: data.ownerName,
           phone: data.phone,
           email: data.email,
-          password: data.password
+          password: data.password,
+          province: data.province,
+          district: data.district,
+          fullAddress: data.fullAddress
         })
       });
 
@@ -263,6 +283,55 @@ function RegisterForm() {
               className="bg-white dark:bg-[#081326] border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-xs text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933]"
             />
             {errors.password && <span className="text-red-500 dark:text-red-400 text-[10px]">{errors.password.message}</span>}
+          </div>
+
+          {/* ── Konum Bilgileri ── */}
+          <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+            <p className="text-[10px] uppercase font-black text-[#0B1933] dark:text-gray-400 tracking-widest mb-3">📍 Salon Konumu</p>
+            <div className="grid grid-cols-2 gap-4">
+              {/* İl */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] uppercase font-bold text-[#0B1933] dark:text-gray-200">İl *</label>
+                <select
+                  {...register("province")}
+                  className="bg-white dark:bg-[#081326] border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-xs text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933]"
+                >
+                  <option value="">İl seçin...</option>
+                  {TURKEY_PROVINCES.map((p) => (
+                    <option key={p.name} value={p.name}>{p.name}</option>
+                  ))}
+                </select>
+                {errors.province && <span className="text-red-500 dark:text-red-400 text-[10px]">{errors.province.message}</span>}
+              </div>
+
+              {/* İlçe */}
+              <div className="flex flex-col gap-1.5">
+                <label className="text-[11px] uppercase font-bold text-[#0B1933] dark:text-gray-200">İlçe *</label>
+                <select
+                  {...register("district")}
+                  disabled={!selectedProvince || availableDistricts.length === 0}
+                  className="bg-white dark:bg-[#081326] border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-xs text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933] disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <option value="">{selectedProvince ? "İlçe seçin..." : "Önce il seçin"}</option>
+                  {availableDistricts.map((d) => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+                {errors.district && <span className="text-red-500 dark:text-red-400 text-[10px]">{errors.district.message}</span>}
+              </div>
+            </div>
+
+            {/* Açık Adres */}
+            <div className="flex flex-col gap-1.5 mt-3">
+              <label className="text-[11px] uppercase font-bold text-[#0B1933] dark:text-gray-200">Açık Adres *</label>
+              <textarea
+                {...register("fullAddress")}
+                rows={2}
+                placeholder="Mahalle, sokak, kapı no ve daire bilgilerini giriniz..."
+                className="bg-white dark:bg-[#081326] border border-gray-300 dark:border-gray-600 rounded-lg px-4 py-2.5 text-xs text-[#0B1933] dark:text-white focus:outline-none focus:ring-1 focus:ring-[#0B1933] dark:focus:ring-[#0B1933] resize-none"
+              />
+              {errors.fullAddress && <span className="text-red-500 dark:text-red-400 text-[10px]">{errors.fullAddress.message}</span>}
+            </div>
           </div>
 
           <button

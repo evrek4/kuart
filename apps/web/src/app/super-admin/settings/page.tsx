@@ -14,6 +14,7 @@ interface GlobalPrismaSettings {
     apiKey?: string;
     secretKey?: string;
   };
+  isDirectoryEnabled?: boolean;
 }
 
 export default function SettingsPage() {
@@ -21,7 +22,11 @@ export default function SettingsPage() {
   const [loadingPrisma, setLoadingPrisma] = useState(true);
   const [savingR2, setSavingR2] = useState(false);
   const [savingPrisma, setSavingPrisma] = useState(false);
+  const [savingDirectory, setSavingDirectory] = useState(false);
   const [notification, setNotification] = useState<string | null>(null);
+
+  // Kuaför Rehberi Modülü Durumu
+  const [isDirectoryEnabled, setIsDirectoryEnabled] = useState(false);
 
   // Cloudflare R2 Settings (JSON based with CDN URL)
   const [r2AccountId, setR2AccountId] = useState("");
@@ -81,6 +86,7 @@ export default function SettingsPage() {
             setPosProvider(data.posConfig.provider || "iyzico");
             setPosApiKey(data.posConfig.apiKey || "");
             setPosSecretKey(data.posConfig.secretKey || "");
+            setIsDirectoryEnabled(data.isDirectoryEnabled ?? false);
           }
         }
       } catch (err) {
@@ -167,6 +173,31 @@ export default function SettingsPage() {
   };
 
   const isLoading = loadingR2 || loadingPrisma;
+
+  // Directory Modülü Toggle Handler
+  const handleDirectoryToggle = async (newValue: boolean) => {
+    setSavingDirectory(true);
+    setIsDirectoryEnabled(newValue);
+    try {
+      const res = await fetch(`${API_BASE}/api/admin/settings`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isDirectoryEnabled: newValue })
+      });
+      const json = await res.json();
+      if (res.ok && json.success) {
+        triggerNotification(`Kuaför Rehberi Modülü ${newValue ? "etkinleştirildi" : "devre dışı bırakıldı"}.`);
+      } else {
+        setIsDirectoryEnabled(!newValue); // Geri al
+        triggerNotification(json.error?.message || "Değişiklik kaydedilemedi.");
+      }
+    } catch {
+      setIsDirectoryEnabled(!newValue);
+      triggerNotification("Bağlantı hatası.");
+    } finally {
+      setSavingDirectory(false);
+    }
+  };
 
   return (
     <div className="flex flex-col gap-6 w-full relative">
@@ -365,6 +396,56 @@ export default function SettingsPage() {
                 )}
               </button>
             </form>
+          </div>
+
+          {/* Kuaför Rehberi Modülü Kartı */}
+          <div className="p-8 rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] shadow-sm flex flex-col gap-6 transition-colors">
+            <div>
+              <h3 className="font-extrabold text-base text-[#0B1933] dark:text-[#F7F8FA] uppercase tracking-wide">📍 Kuaför Rehberi Modülü</h3>
+              <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-1">
+                Bu modül açıldığında kuaförler il/ilçe bazlı listelenebilir ve "Öne Çıkarma" özelliğini kullanabilir.
+                Kapalıyken rehber sayfası ve tüm promote özellikleri erişilemez duruma gelir.
+              </p>
+            </div>
+
+            <div className="flex items-center justify-between p-5 rounded-xl border border-borderlight dark:border-dark-border bg-gray-50 dark:bg-white/5">
+              <div className="flex flex-col gap-0.5">
+                <span className="text-sm font-bold text-[#0B1933] dark:text-[#F7F8FA]">
+                  {isDirectoryEnabled ? "✅ Modül Aktif" : "⏸ Modül Kapalı"}
+                </span>
+                <span className="text-[10px] text-lightText-secondary dark:text-darkText-secondary">
+                  {isDirectoryEnabled
+                    ? "Kuaför Rehberi sayfası kullanıcılara açık durumda."
+                    : "Kuaför Rehberi sayfası gizli, kullanıcılar erişemiyor."}
+                </span>
+              </div>
+
+              {/* Toggle Switch */}
+              <button
+                id="directory-toggle-btn"
+                type="button"
+                disabled={savingDirectory}
+                onClick={() => handleDirectoryToggle(!isDirectoryEnabled)}
+                className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors duration-300 focus:outline-none disabled:opacity-60 ${
+                  isDirectoryEnabled
+                    ? "bg-emerald-500 dark:bg-emerald-400"
+                    : "bg-gray-300 dark:bg-white/20"
+                }`}
+              >
+                <span
+                  className={`inline-block h-5 w-5 transform rounded-full bg-white shadow-md transition-transform duration-300 ${
+                    isDirectoryEnabled ? "translate-x-8" : "translate-x-1"
+                  }`}
+                />
+              </button>
+            </div>
+
+            {savingDirectory && (
+              <div className="flex items-center gap-2 text-xs text-lightText-secondary dark:text-darkText-secondary">
+                <span className="w-3 h-3 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                Kaydediliyor...
+              </div>
+            )}
           </div>
         </div>
       )}

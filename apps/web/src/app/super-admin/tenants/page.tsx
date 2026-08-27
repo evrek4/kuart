@@ -83,6 +83,12 @@ export default function TenantsPage() {
   const [giftNote, setGiftNote] = useState("");
   const [isGifting, setIsGifting] = useState(false);
 
+  // Promote States
+  const [promotingTenant, setPromotingTenant] = useState<Tenant | null>(null);
+  const [promoteLevel, setPromoteLevel] = useState<"PROVINCE" | "DISTRICT" | "NONE">("NONE");
+  const [promoteDays, setPromoteDays] = useState(30);
+  const [isPromoting, setIsPromoting] = useState(false);
+
   const fetchTenants = async () => {
     try {
       const res = await fetch("/api/admin/tenants");
@@ -297,6 +303,37 @@ export default function TenantsPage() {
     }
   };
 
+  const handlePromoteSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!promotingTenant) return;
+    setIsPromoting(true);
+
+    try {
+      const res = await fetch(`/api/admin/tenants/${promotingTenant.id}/promote`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          level: promoteLevel,
+          days: promoteDays
+        })
+      });
+
+      const json = await res.json();
+      if (res.ok && json.success) {
+        toast.success(json.message || "Öne çıkarma başarıyla güncellendi.");
+        setTenants(tenants.map(t => t.id === promotingTenant.id ? { ...t, ...json.data } : t));
+        setPromotingTenant(null);
+      } else {
+        toast.error(json.error?.message || "Öne çıkarma güncellenirken hata oluştu.");
+      }
+    } catch (err) {
+      console.error(err);
+      toast.error("Bağlantı hatası: Öne çıkarma güncellenemedi.");
+    } finally {
+      setIsPromoting(false);
+    }
+  };
+
   return (
     <div className="flex flex-col gap-6 w-full text-neutral-900 dark:text-[#eadef7]">
       {/* Header with New Tenant Button */}
@@ -388,6 +425,16 @@ export default function TenantsPage() {
                           className="px-2.5 py-1.5 rounded-lg border border-borderlight dark:border-dark-border bg-gray-50 dark:bg-[#0A111E] hover:bg-gray-100 dark:hover:bg-dark-highlight text-[11px] font-bold text-lightText-primary dark:text-darkText-primary transition-colors"
                         >
                           Düzenle
+                        </button>
+                        <button
+                          onClick={() => {
+                            setPromotingTenant(tenant);
+                            // @ts-ignore (We haven't explicitly typed promotedLevel in Tenant interface yet, it's ok for admin)
+                            setPromoteLevel(tenant.promotedLevel || "NONE");
+                          }}
+                          className="px-2.5 py-1.5 rounded-lg border border-indigo-500/20 bg-indigo-500/10 hover:bg-indigo-500/20 text-[11px] font-bold text-indigo-700 dark:text-indigo-400 transition-colors flex items-center gap-1"
+                        >
+                          🚀 Öne Çıkar
                         </button>
                         <button
                           onClick={() => setGiftingTenant(tenant)}
@@ -921,6 +968,75 @@ export default function TenantsPage() {
                     <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
                   ) : (
                     "Hediye Süreyi Tanımla"
+                  )}
+                </motion.button>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
+      {/* PROMOTE MODAL */}
+      <AnimatePresence>
+        {promotingTenant && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-sm">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="w-full max-w-md rounded-xl border border-borderlight dark:border-dark-border bg-white dark:bg-[#081326] p-6 shadow-2xl relative text-lightText-primary dark:text-darkText-primary flex flex-col gap-6"
+            >
+              <button
+                onClick={() => setPromotingTenant(null)}
+                className="absolute top-4 right-4 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-[#0A111E] text-lightText-secondary dark:text-darkText-secondary"
+              >
+                ✕
+              </button>
+
+              <div className="border-b border-borderlight dark:border-dark-border pb-4">
+                <h3 className="font-extrabold text-lg text-indigo-700 dark:text-indigo-400 uppercase tracking-wide">🚀 VİTRİNDE ÖNE ÇIKAR</h3>
+                <p className="text-xs text-lightText-secondary dark:text-darkText-secondary mt-0.5">{promotingTenant.name} salonunu rehberde öne çıkarın.</p>
+              </div>
+
+              <form onSubmit={handlePromoteSubmit} className="flex flex-col gap-4 text-xs font-semibold">
+                <div className="flex flex-col gap-1.5">
+                  <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Öne Çıkarma Tipi</label>
+                  <select
+                    value={promoteLevel}
+                    onChange={(e) => setPromoteLevel(e.target.value as "PROVINCE" | "DISTRICT" | "NONE")}
+                    className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-indigo-500"
+                  >
+                    <option value="NONE" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">Standart Liste (Öne Çıkarma Yok)</option>
+                    <option value="DISTRICT" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">İlçe Bazında Öne Çıkar</option>
+                    <option value="PROVINCE" className="bg-white dark:bg-[#0A111E] text-lightText-primary dark:text-white">İl Bazında Öne Çıkar (En Üstte)</option>
+                  </select>
+                </div>
+
+                {promoteLevel !== "NONE" && (
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] uppercase font-bold text-lightText-secondary dark:text-darkText-secondary">Öne Çıkarma Süresi (Gün)</label>
+                    <input
+                      type="number"
+                      required
+                      min={1}
+                      value={promoteDays}
+                      onChange={(e) => setPromoteDays(Number(e.target.value))}
+                      className="bg-white dark:bg-white/5 border border-borderlight dark:border-dark-border rounded-xl px-4 py-2.5 text-xs text-lightText-primary dark:text-darkText-primary focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+                )}
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  type="submit"
+                  disabled={isPromoting}
+                  className="w-full py-3.5 rounded-lg bg-indigo-600 dark:bg-indigo-500 text-white font-bold text-xs tracking-wider uppercase hover:opacity-90 transition-opacity flex items-center justify-center gap-2 mt-2 shadow-sm"
+                >
+                  {isPromoting ? (
+                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  ) : (
+                    "Kaydet"
                   )}
                 </motion.button>
               </form>

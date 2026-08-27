@@ -21,6 +21,7 @@ import publicLandingRouter from './routes/publicLanding';
 import webhooksRouter from './routes/webhooks';
 import { captureRawBody } from './middlewares/webhookSignature';
 import uploadRouter from './routes/upload';
+import directoryRouter from './routes/directory';
 import { getTenantPrisma, prisma } from '@kuafor-art/database';
 import { ApiResponse } from '@kuafor-art/shared-types';
 import { slugify } from './utils/slugify';
@@ -78,6 +79,7 @@ app.use(tenantMiddleware);
 app.use('/uploads', express.static(path.join(process.cwd(), 'public', 'uploads')));
 
 app.use('/api/public', publicLandingRouter);
+app.use('/api/directory', directoryRouter);
 app.use('/api/admin', requireAuth, requireSuperAdmin, adminRouter);
 
 // ==========================================
@@ -382,10 +384,14 @@ app.get('/api/auth/me', requireAuth, async (req: any, res: any) => {
 // 2.7 YENİ SALON / SAAS ÜYE KAYDI (POST /api/storefront/register)
 // ==========================================
 app.post('/api/storefront/register', async (req: any, res: any) => {
-  const { name, ownerName, phone, email, password } = req.body;
+  const { name, ownerName, phone, email, password, province, district, fullAddress } = req.body;
 
   if (!name || !ownerName || !phone || !email || !password) {
     return res.status(400).json({ success: false, error: { message: 'Tüm alanlar zorunludur.' } });
+  }
+
+  if (!province || !district || !fullAddress) {
+    return res.status(400).json({ success: false, error: { message: 'İl, ilçe ve açık adres zorunludur.' } });
   }
 
   try {
@@ -425,7 +431,10 @@ app.post('/api/storefront/register', async (req: any, res: any) => {
           slug,
           planId: defaultPlan!.id,
           mediaCapacity: defaultPlan!.storageLimitMB * 1024 * 1024,
-          isActive: true
+          isActive: true,
+          province: province || null,
+          district: district || null,
+          fullAddress: fullAddress || null
         }
       });
 
