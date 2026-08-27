@@ -877,6 +877,25 @@ class MockPrisma {
                 return { count: initialLength - passwordResetTokens.length };
             }
         };
+        this.globalSettings = {
+            findFirst: async (args) => {
+                return {
+                    id: "gs-1",
+                    isDirectoryEnabled: true,
+                    cloudflareR2Config: {},
+                    smsConfig: {},
+                    posConfig: {},
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                };
+            },
+            update: async (args) => {
+                return args.data;
+            },
+            create: async (args) => {
+                return args.data;
+            }
+        };
         this.$transaction = async (fn) => {
             if (typeof fn === 'function') {
                 return await fn(this);

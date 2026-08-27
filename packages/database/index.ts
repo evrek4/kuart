@@ -821,6 +821,26 @@ class MockPrisma {
     }
   };
 
+  globalSettings = {
+    findFirst: async (args?: any) => {
+      return {
+        id: "gs-1",
+        isDirectoryEnabled: true,
+        cloudflareR2Config: {},
+        smsConfig: {},
+        posConfig: {},
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+    },
+    update: async (args: any) => {
+      return args.data;
+    },
+    create: async (args: any) => {
+      return args.data;
+    }
+  };
+
   $transaction = async (fn: any) => {
     if (typeof fn === 'function') {
       return await fn(this);
