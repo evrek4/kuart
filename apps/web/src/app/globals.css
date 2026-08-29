@@ -1,92 +1,65 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* ============================================================
-   TAILWIND v4 — DARK MODE (class-based)
+   BASE STYLES
    ============================================================ */
-@variant dark (&:where(.dark, .dark *));
-
-/* ============================================================
-   DESIGN TOKEN SYSTEM — tüm custom tokenları buraya tanımlıyoruz
-   Tailwind v4'te tailwind.config.js yerine @theme kullanılır.
-   ============================================================ */
-@theme {
-  /* === FONT FAMILIES === */
-  --font-family-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-family-serif: 'Playfair Display', ui-serif, Georgia, serif;
-
-  /* === BRAND COLORS === */
-  /* Navy / Primary */
-  --color-navy-900: #0B1933;
-  --color-navy-950: #060D1A;
-
-  /* Gold Accent */
-  --color-gold: #C9A84C;
-
-  /* Primary (for focus rings etc.) */
-  --color-primary: #0B1933;
-
-  /* === LIGHT MODE BACKGROUNDS === */
-  --color-warmbg: #F8F8F6;
-  --color-lightbg: #FFFFFF;
-  --color-lightbg-secondary: #F8F9FA;
-
-  /* === LIGHT MODE TEXT === */
-  --color-lightText-primary: #0B1933;
-  --color-lightText-secondary: #4A5568;
-  --color-lightText-muted: #9CA3AF;
-
-  /* === LIGHT MODE BORDERS === */
-  --color-borderlight: #E5E7EB;
-
-  /* === DARK MODE (dark-*) BACKGROUNDS === */
-  --color-dark-DEFAULT: #0A111E;
-  --color-dark-card: #0D1B32;
-  --color-dark-highlight: #0E2040;
-  --color-dark-nav: #060D1A;
-
-  /* === DARK MODE TEXT === */
-  --color-darkText-primary: #F7F8FA;
-  --color-darkText-secondary: #A8B4C8;
-  --color-darkText-muted: #6B7A90;
-
-  /* === DARK MODE BORDERS === */
-  --color-dark-border: #1E2D45;
-}
-
-/* ============================================================
-   BASE STYLES — body background ve text varsayılanları
-   ============================================================ */
-html, body {
-  @apply bg-white dark:bg-dark-DEFAULT text-lightText-primary dark:text-darkText-primary;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+@layer base {
+  html, body {
+    background-color: #ffffff;
+    color: #0B1933;
+    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  }
+  .dark body {
+    background-color: #081326;
+    color: #F7F8FA;
+  }
 }
 
 /* ============================================================
    GLASS CARD UTILITY
    ============================================================ */
-.glass-card {
-  background-color: rgba(255, 255, 255, 0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 0.75rem;
-  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease-in-out;
-}
+@layer utilities {
+  .glass-card {
+    background-color: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease-in-out;
+  }
 
-.dark .glass-card {
-  background-color: rgba(13, 27, 50, 0.92);
-  border-color: rgba(255, 255, 255, 0.06);
-  box-shadow: none;
+  .dark .glass-card {
+    background-color: rgba(13, 27, 50, 0.92);
+    border-color: rgba(255, 255, 255, 0.06);
+    box-shadow: none;
+  }
+
+  .gold-glow {
+    box-shadow: 0 0 25px -5px rgba(201, 168, 76, 0.2);
+  }
+
+  .dark .gold-glow {
+    box-shadow: 0 0 25px -5px rgba(201, 168, 76, 0.3);
+  }
 }
 
 /* ============================================================
-   GOLD GLOW UTILITY
+   SCROLLBAR STYLING
    ============================================================ */
-.gold-glow {
-  box-shadow: 0 0 25px -5px rgba(201, 168, 76, 0.2);
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
 }
-
-.dark .gold-glow {
-  box-shadow: 0 0 25px -5px rgba(201, 168, 76, 0.3);
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(201, 168, 76, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(201, 168, 76, 0.6);
 }

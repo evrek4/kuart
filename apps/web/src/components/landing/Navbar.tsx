@@ -14,6 +14,7 @@ export default function Navbar({ cmsData }: NavbarProps = {}) {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const [isDirectoryEnabled, setIsDirectoryEnabled] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,6 +32,21 @@ export default function Navbar({ cmsData }: NavbarProps = {}) {
     // Observe html class changes (e.g. next-themes toggling)
     const observer = new MutationObserver(readTheme);
     observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+
+    // Fetch Directory Status
+    const fetchDirectoryStatus = async () => {
+      try {
+        const apiBase = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+        const res = await fetch(`${apiBase}/api/directory/status`);
+        const json = await res.json();
+        if (json.success && json.isDirectoryEnabled) {
+          setIsDirectoryEnabled(true);
+        }
+      } catch (err) {
+        console.warn("Directory status fetch error:", err);
+      }
+    };
+    fetchDirectoryStatus();
 
     return () => {
       window.removeEventListener('scroll', handleScroll);
@@ -69,6 +85,11 @@ export default function Navbar({ cmsData }: NavbarProps = {}) {
 
         {/* Desktop Nav Links */}
         <nav className="hidden md:flex items-center gap-10 text-[15px] font-medium text-lightText-secondary dark:text-darkText-secondary">
+          {isDirectoryEnabled && (
+            <Link href="/rehber" className="text-gold hover:opacity-80 transition-opacity font-semibold flex items-center gap-1">
+              Kuaför Rehberi
+            </Link>
+          )}
           <a href="/#features" className="hover:text-lightText-primary dark:hover:text-darkText-primary transition-colors">
             Hizmetler
           </a>
@@ -133,6 +154,11 @@ export default function Navbar({ cmsData }: NavbarProps = {}) {
       {mobileMenuOpen && (
         <div className="md:hidden bg-white dark:bg-dark-DEFAULT border-b border-borderlight dark:border-dark-border px-6 py-6 shadow-sm">
           <nav className="flex flex-col space-y-4 font-medium text-lightText-secondary dark:text-darkText-secondary">
+            {isDirectoryEnabled && (
+              <Link href="/rehber" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-borderlight dark:border-dark-border text-gold font-semibold">
+                Kuaför Rehberi
+              </Link>
+            )}
             <a href="/#features" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-borderlight dark:border-dark-border">Hizmetler</a>
             <a href="/#how-it-works" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-borderlight dark:border-dark-border">Nasıl Çalışır</a>
             <a href="/#pricing" onClick={() => setMobileMenuOpen(false)} className="py-2 border-b border-borderlight dark:border-dark-border">Fiyatlandırma</a>

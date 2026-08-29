@@ -663,7 +663,7 @@ if (process.env.NODE_ENV !== 'production' || !process.env.VERCEL) {
   app.listen(Number(PORT), '0.0.0.0', () => {
     console.log(`Kuafor.art API Server running on http://0.0.0.0:${PORT}`);
     // Sadece yerel/sunucu ortamında WhatsApp'ı başlat (Vercel serverless desteklemez)
-    initializeWhatsAppClient();
+    // initializeWhatsAppClient(); // Devrede dışı (Terminali QR koda boğmaması için)
   });
 }
 

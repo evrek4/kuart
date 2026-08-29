@@ -3,6 +3,20 @@ import { prisma } from '@kuafor-art/database';
 
 const router = Router();
 
+// GET /api/directory/status
+// Anonim erişime açık - Sadece modülün aktif olup olmadığını döner
+router.get('/status', async (req, res) => {
+  try {
+    const globalSettings = await prisma.globalSettings.findFirst();
+    return res.json({
+      success: true,
+      isDirectoryEnabled: globalSettings?.isDirectoryEnabled ?? false
+    });
+  } catch (error: any) {
+    return res.status(500).json({ success: false, error: { message: error.message } });
+  }
+});
+
 // GET /api/directory/salons
 // Anonim erişime açık - Kimlik doğrulama gerektirmez
 router.get('/salons', async (req, res) => {

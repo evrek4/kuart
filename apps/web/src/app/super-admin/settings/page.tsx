@@ -47,11 +47,21 @@ export default function SettingsPage() {
 
   const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "";
 
+  const getToken = () =>
+    typeof document !== "undefined"
+      ? document.cookie.split("; ").find((r) => r.startsWith("kuafor-token="))?.split("=")[1]
+      : null;
+
   // Load Cloudflare R2 settings
   useEffect(() => {
     async function loadR2Settings() {
       try {
-        const res = await fetch(`${API_BASE}/api/admin/r2-settings`);
+        const token = getToken();
+        const res = await fetch(`${API_BASE}/api/admin/r2-settings`, {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
         if (res.ok) {
           const json = await res.json();
           if (json.success && json.data) {
@@ -75,7 +85,12 @@ export default function SettingsPage() {
   useEffect(() => {
     async function loadPrismaSettings() {
       try {
-        const res = await fetch(`${API_BASE}/api/admin/settings`);
+        const token = getToken();
+        const res = await fetch(`${API_BASE}/api/admin/settings`, {
+          headers: {
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+          },
+        });
         if (res.ok) {
           const json = await res.json();
           if (json.success && json.data) {
@@ -108,9 +123,13 @@ export default function SettingsPage() {
     setSavingR2(true);
 
     try {
+      const token = getToken();
       const res = await fetch(`${API_BASE}/api/admin/r2-settings`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           accountId: r2AccountId,
           accessKey: r2AccessKey,
@@ -139,9 +158,13 @@ export default function SettingsPage() {
     setSavingPrisma(true);
 
     try {
+      const token = getToken();
       const res = await fetch(`${API_BASE}/api/admin/settings`, {
         method: "PUT",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({
           cloudflareR2Config: {}, // kept empty/deprecated since we use R2 config json endpoint
           smsConfig: {
@@ -179,9 +202,13 @@ export default function SettingsPage() {
     setSavingDirectory(true);
     setIsDirectoryEnabled(newValue);
     try {
+      const token = getToken();
       const res = await fetch(`${API_BASE}/api/admin/settings`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ isDirectoryEnabled: newValue })
       });
       const json = await res.json();
