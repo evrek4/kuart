@@ -37,8 +37,8 @@ export function requireAuth(req: any, res: Response, next: NextFunction) {
 
 export function requireTenantAdmin(req: any, res: Response, next: NextFunction) {
   requireAuth(req, res, () => {
-    if (!req.user || (req.user.role !== 'TENANT_ADMIN' && req.user.role !== 'SUPER_ADMIN')) {
-      return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Erişim reddedildi: Bu işlem için TENANT_ADMIN yetkisi gereklidir.' } });
+    if (!req.user || (req.user.role !== 'TENANT_ADMIN' && req.user.role !== 'TENANT' && req.user.role !== 'SUPER_ADMIN')) {
+      return res.status(403).json({ success: false, error: { code: 'FORBIDDEN', message: 'Erişim reddedildi: Bu işlem için TENANT veya TENANT_ADMIN yetkisi gereklidir.' } });
     }
     
     // Strict Tenant Isolation
